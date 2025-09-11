@@ -1,7 +1,7 @@
 # Under The Weather
 A WordPress plugin to create lightweight and customizable weather widgets, powered by the OpenWeather API, that cache and present weather data with multiple style options
 
-![Under The Weather WordPress Plugin Icon](http://plugins.svn.wordpress.org/under-the-weather/assets/icon-256x256.png)
+![Under The Weather WordPress Plugin Icon](https://ps.w.org/under-the-weather/assets/icon-256x256.png)
 
 * **Contributors:** sethsm
 * **Tags:** weather, openweather, forecast, cache, widget
@@ -32,6 +32,10 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Easy to Use:** Simply add a `<div>` with data attributes to any post or page to display the widget.
+
+---
+
+![Under The Weather WordPress Plugin Banner](https://ps.w.org/under-the-weather/assets/banner-1544x500.png)
 
 ## Installation
 
@@ -190,19 +194,19 @@ No. To retrieve fresh weather data every time a widget page loads, you can unche
 
 ## Screenshots
 
-![The weather widget displaying current conditions with the Weather Icons](http://plugins.svn.wordpress.org/under-the-weather/assets/screenshot-1.png)
+![The weather widget displaying current conditions with the Weather Icons](https://ps.w.org/under-the-weather/assets/screenshot-1.png)
 The weather widget displaying current conditions with the Weather Icons.
 
-![The weather widget displaying "Today's Forecast" with the Weather Icons font set](http://plugins.svn.wordpress.org/under-the-weather/assets/screenshot-2.png)
+![The weather widget displaying "Today's Forecast" with the Weather Icons font set](https://ps.w.org/under-the-weather/assets/screenshot-2.png)
 The weather widget displaying "Today's Forecast" with the Weather Icons font set.
 
-![The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled](http://plugins.svn.wordpress.org/under-the-weather/assets/screenshot-3.png)
+![The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled](https://ps.w.org/under-the-weather/assets/screenshot-3.png)
 The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled.
 
-![The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API](http://plugins.svn.wordpress.org/under-the-weather/assets/screenshot-4.png)
+![The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API](https://ps.w.org/under-the-weather/assets/screenshot-4.png)
 The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API.
 
-![The plugin's comprehensive settings page](http://plugins.svn.wordpress.org/under-the-weather/assets/screenshot-5.png)
+![The plugin's comprehensive settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
 The plugin's comprehensive settings page.
 
 ---
