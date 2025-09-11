@@ -41,16 +41,16 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 ### From the WordPress Plugin Directory File
 1.  Log in to your WordPress Admin Dashboard.
-2.  Navigate to Plugins > Add Plugin in the left-hand menu.
+2.  Navigate to **Plugins > Add Plugin** in the left-hand menu.
 3.  Search for the plugin: Under The Weather.
-4.  Install the plugin: Once you locate the [correct plugin](https://wordpress.org/plugins/under-the-weather/), click the "Install Now" button next to it.
-5.  Activate the plugin: After the installation is complete, click the "Activate Plugin" button that appears.
+4.  Install the plugin: Once you locate the [correct plugin](https://wordpress.org/plugins/under-the-weather/), click the **"Install Now"** button next to it.
+5.  Activate the plugin: After the installation is complete, click the **"Activate Plugin"** button that appears.
 
 ### From a Zip File
 1.  Download a copy of the plugin, available in the WordPress Plugin Directory [Under The Weather](https://wordpress.org/plugins/under-the-weather/) webpage. 
-2.  Upload the `under-the-weather` folder to the `/wp-content/plugins/` directory 
-3.  Activate the plugin through the 'Plugins' menu in WordPress.
-4.  Navigate to `Settings > Under The Weather` to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0. by OpenWeather.
+2.  Upload the **under-the-weather** folder to the `/wp-content/plugins/` directory 
+3.  Activate the plugin through the **Plugins** menu in WordPress.
+4.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0. by OpenWeather.
 
 ---
 
@@ -65,20 +65,24 @@ To display the weather widget on a post, page, or in a template file, add a simp
 
 **Examples:**
 
+```html
 <div class="weather-widget" 
      data-lat="34.1186" 
      data-lon="-118.3004" 
      data-location-name="Los Angeles, California">
 </div>
+```
 
 To show the weather for a location in Celsius, you would add `data-unit="metric"`:
 
+```html
 <div class="weather-widget" 
      data-lat="48.8566" 
      data-lon="2.3522" 
      data-location-name="Paris, France"
      data-unit="metric">
 </div>
+```
 
 The plugin's JavaScript will automatically find this element and populate it with the forecast.
 
@@ -123,11 +127,13 @@ Adds the unit symbol (F or C) next to the main temperature. This option allows y
 
 If you uncheck **Load Plugin JavaScript**, you can load the Under The Weather scripts manually on select pages by adding the following template tag to your theme files (e.g., footer.php):
 
+```php
 <?php
 if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
    under_the_weather_load_scripts_manually(); 
 } 
 ?>
+```
 
 For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
@@ -167,12 +173,14 @@ if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
 
 For example, if you only intend to display the weather widget on events pages, you could add this targeted script to your theme's footer.php file:
 
+```php
 <?php
 // Only load the weather script on single pages of the 'event' post type.
 if ( is_singular('event') && function_exists('under_the_weather_load_scripts_manually') ) {
     under_the_weather_load_scripts_manually(); 
 } 
 ?>
+```
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
@@ -195,18 +203,23 @@ No. To retrieve fresh weather data every time a widget page loads, you can unche
 ## Screenshots
 
 ![The weather widget displaying current conditions with the Weather Icons](https://ps.w.org/under-the-weather/assets/screenshot-1.png)
+
 The weather widget displaying current conditions with the Weather Icons.
 
 ![The weather widget displaying "Today's Forecast" with the Weather Icons font set](https://ps.w.org/under-the-weather/assets/screenshot-2.png)
+
 The weather widget displaying "Today's Forecast" with the Weather Icons font set.
 
 ![The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled](https://ps.w.org/under-the-weather/assets/screenshot-3.png)
+
 The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled.
 
 ![The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API](https://ps.w.org/under-the-weather/assets/screenshot-4.png)
+
 The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API.
 
 ![The plugin's comprehensive settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
+
 The plugin's comprehensive settings page.
 
 ---
