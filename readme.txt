@@ -11,15 +11,13 @@ Donate link: https://www.paypal.com/donate/?hosted_button_id=M3B2Q94PGVVWL
 Plugin URI:  https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
 Author URI:  https://www.sethcreates.com/plugins-for-wordpress/
 
-
-A lightweight and customizable weather widget, powered by the OpenWeather API, that caches and presents weather data with multiple style options
-
+A lightweight and customizable weather widget, powered by the OpenWeather API, that caches and presents weather data with multiple style options.
 
 == Description ==
 
 Under The Weather is a powerful yet simple plugin designed to display location-specific weather forecasts on your WordPress site. Built with performance in mind, it uses a server-side caching system (WordPress Transients) to minimize API calls and ensure your site remains fast.
 
-This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins. Under The Weather is  completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JavaScript frameworks.
+This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins. Under The Weather is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JavaScript frameworks.
 
 **Key Features:**
 
