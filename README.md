@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, widget
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 1.7
+* **Stable tag:** 1.7.1
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -246,6 +246,11 @@ Here are the links to their terms of service and privacy policy:
 
 ## Changelog
 
+### 1.7.1
+* **FIX:** Completed nonce verification to prevent CSRF attacks on tab switching
+* **IMPROVEMENT:** Added format validation to verify that the OpenWeather API key is a 32-character alphanumeric string
+* **IMPROVEMENT:** Escape URL in JavaScript Localization
+  
 ### 1.7
 * **SECURITY:** Added nonce verification to the admin settings tabs to protect against CSRF attacks.
 * **DEV:** Implemented PHPCS ignore comments for the necessary direct database queries, resolving plugin checker warnings.
