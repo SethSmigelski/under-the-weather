@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, widget
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 1.7
+Stable tag: 1.7.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -35,7 +35,6 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 1.  Upload the entire `under-the-weather` folder to the `/wp-content/plugins/` directory.
 2.  Activate the plugin through the 'Plugins' menu in WordPress.
 3.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0. by OpenWeather.
-
 
 == Usage ==
 
@@ -194,6 +193,11 @@ Here are the links to their terms of service and privacy policy:
 * **Privacy Policy:** [https://openweather.co.uk/privacy-policy](https://openweather.co.uk/privacy-policy)
 
 == Changelog ==
+
+= 1.7.1 =
+* FIX: Completed nonce verification to prevent CSRF attacks on tab switching
+* IMPROVEMENT: Added format validation to verify that the OpenWeather API key is a 32-character alphanumeric string
+* IMPROVEMENT: Escape URL in JavaScript Localization
 
 = 1.7 =
 * SECURITY: Added nonce verification to the admin settings tabs to protect against CSRF attacks.
