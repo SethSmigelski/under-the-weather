@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.7
+ * Version:           1.7.1
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -69,7 +69,15 @@ function under_the_weather_settings_init() {
  */
 function under_the_weather_sanitize_settings($input) {
     $new_input = [];
-    if (isset($input['api_key'])) { $new_input['api_key'] = sanitize_text_field($input['api_key']); }
+    if (isset($input['api_key'])) {
+        $api_key = sanitize_text_field($input['api_key']);
+        if (empty($api_key) || under_the_weather_validate_api_key($api_key)) {
+            $new_input['api_key'] = $api_key;
+        } else {
+            add_settings_error('under_the_weather_settings', 'invalid_api_key', 
+                __('Invalid API key format. Please check your OpenWeather API key.', 'under-the-weather'));
+        }
+    }
     if (isset($input['expiration']) && in_array($input['expiration'], ['1','2','3','6'])) { $new_input['expiration'] = $input['expiration']; }
     if (isset($input['style_set']) && in_array($input['style_set'], ['default_images', 'weather_icons_font'])) { $new_input['style_set'] = $input['style_set']; }
     if (isset($input['display_mode']) && in_array($input['display_mode'], ['current', 'today_forecast'])) { $new_input['display_mode'] = $input['display_mode']; }
@@ -82,6 +90,11 @@ function under_the_weather_sanitize_settings($input) {
     $new_input['enqueue_style'] = isset($input['enqueue_style']) ? '1' : '0';
     $new_input['enqueue_script'] = isset($input['enqueue_script']) ? '1' : '0';
     return $new_input;
+}
+
+// OpenWeather API keys are 32 character alphanumeric strings
+function under_the_weather_validate_api_key($api_key) {   
+    return preg_match('/^[a-zA-Z0-9]{32}$/', $api_key);
 }
 
 // Field Callback Functions (Function names updated)
@@ -137,8 +150,8 @@ function under_the_weather_settings_page_html() {
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         <h2 class="nav-tab-wrapper">
-            <a href="?page=under-the-weather&tab=main_settings" class="nav-tab <?php echo esc_attr($active_tab == 'main_settings' ? 'nav-tab-active' : ''); ?>"><?php esc_html_e('Settings', 'under-the-weather'); ?></a>
-            <a href="?page=under-the-weather&tab=performance_report" class="nav-tab <?php echo esc_attr($active_tab == 'performance_report' ? 'nav-tab-active' : ''); ?>"><?php esc_html_e('Performance Report', 'under-the-weather'); ?></a>
+            <a href="<?php echo esc_url(wp_nonce_url('?page=under-the-weather&tab=main_settings', $nonce_action, $nonce_name)); ?>" class="nav-tab <?php echo esc_attr($active_tab == 'main_settings' ? 'nav-tab-active' : ''); ?>"><?php esc_html_e('Settings', 'under-the-weather'); ?></a>
+            <a href="<?php echo esc_url(wp_nonce_url('?page=under-the-weather&tab=performance_report', $nonce_action, $nonce_name)); ?>" class="nav-tab <?php echo esc_attr($active_tab == 'performance_report' ? 'nav-tab-active' : ''); ?>"><?php esc_html_e('Performance Report', 'under-the-weather'); ?></a>
         </h2>
 
         <?php if ($active_tab == 'main_settings') : ?>
@@ -235,7 +248,7 @@ function under_the_weather_load_scripts_manually() {
     wp_localize_script('under-the-weather-script', 'under_the_weather_settings', $settings_for_js);
 
     // **NEW** Pass the plugin's base URL to the script for loading local images.
-    $plugin_url_data = ['url' => plugins_url('/', __FILE__)];
+    $plugin_url_data = ['url' => esc_url_raw(plugins_url('/', __FILE__))];
     wp_localize_script('under-the-weather-script', 'under_the_weather_plugin_url', $plugin_url_data);
 }
 
