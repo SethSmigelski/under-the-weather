@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.7.2
+ * Version:           1.7.3
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -60,6 +60,9 @@ function under_the_weather_settings_init() {
     // Section for "Advanced Settings"
     add_settings_section('under_the_weather_advanced_section', __('Advanced Settings', 'under-the-weather'), null, $page_slug);
     add_settings_field('under_the_weather_enable_cache', __('Enable Cache', 'under-the-weather'), 'under_the_weather_enable_cache_field_html', $page_slug, 'under_the_weather_advanced_section');
+    add_settings_field('under_the_weather_enable_rate_limit', __('Enable Rate Limiting', 'under-the-weather'), 'under_the_weather_enable_rate_limit_field_html', $page_slug, 'under_the_weather_advanced_section');
+    add_settings_field('under_the_weather_rate_limit_count', __('Requests per Hour', 'under-the-weather'), 'under_the_weather_rate_limit_count_field_html', $page_slug, 'under_the_weather_advanced_section');
+	
     add_settings_field('under_the_weather_enqueue_style', __('Load Plugin CSS', 'under-the-weather'), 'under_the_weather_enqueue_style_field_html', $page_slug, 'under_the_weather_advanced_section');
     add_settings_field('under_the_weather_enqueue_script', __('Load Plugin JavaScript', 'under-the-weather'), 'under_the_weather_enqueue_script_field_html', $page_slug, 'under_the_weather_advanced_section');
 }
@@ -83,6 +86,13 @@ function under_the_weather_sanitize_settings($input) {
     if (isset($input['display_mode']) && in_array($input['display_mode'], ['current', 'today_forecast'])) { $new_input['display_mode'] = $input['display_mode']; }
     if (isset($input['forecast_days']) && in_array($input['forecast_days'], ['2','3','4','5','6'])) { $new_input['forecast_days'] = $input['forecast_days']; }
     
+	// sanitization for Rate Limit options
+    $new_input['enable_rate_limit'] = isset($input['enable_rate_limit']) ? '1' : '0';
+    if (isset($input['rate_limit_count']) && is_numeric($input['rate_limit_count'])) {
+		$count = absint($input['rate_limit_count']);
+    	$new_input['rate_limit_count'] = max(10, min(1000, $count)); // Enforce 10-1000 range
+    }
+	
     $new_input['show_details'] = isset($input['show_details']) ? '1' : '0';
     $new_input['show_unit'] = isset($input['show_unit']) ? '1' : '0';
     $new_input['show_timestamp'] = isset($input['show_timestamp']) ? '1' : '0';
@@ -127,6 +137,17 @@ function under_the_weather_show_details_field_html() { $options = get_option('un
 function under_the_weather_show_unit_field_html() { $options = get_option('under_the_weather_settings'); $value = isset($options['show_unit']) ? $options['show_unit'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_unit]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Show the temperature unit symbol (F or C) in the primary display.', 'under-the-weather'); }
 function under_the_weather_show_timestamp_field_html() { $options = get_option('under_the_weather_settings'); $value = isset($options['show_timestamp']) ? $options['show_timestamp'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_timestamp]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Show last updated time.', 'under-the-weather'); }
 function under_the_weather_enable_cache_field_html() { $options = get_option('under_the_weather_settings'); $value = isset($options['enable_cache']) ? $options['enable_cache'] : '1'; echo "<input type='checkbox' name='under_the_weather_settings[enable_cache]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Cache API results to improve performance and reduce API calls.', 'under-the-weather'); }
+function under_the_weather_enable_rate_limit_field_html() {
+    $options = get_option('under_the_weather_settings');
+    $value = isset($options['enable_rate_limit']) ? $options['enable_rate_limit'] : '0'; // Default to OFF
+    echo "<input type='checkbox' name='under_the_weather_settings[enable_rate_limit]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Protect against excessive API requests from a single IP address.', 'under-the-weather');
+}
+function under_the_weather_rate_limit_count_field_html() {
+    $options = get_option('under_the_weather_settings');
+    $value = isset($options['rate_limit_count']) ? $options['rate_limit_count'] : '100'; // Default to 100
+    echo '<input type="number" name="under_the_weather_settings[rate_limit_count]" value="' . esc_attr($value) . '" class="small-text" min="10" max="1000">';
+    echo '<p class="description">' . esc_html__('Maximum requests per IP per hour. Default is 100.', 'under-the-weather') . '</p>';
+}
 function under_the_weather_enqueue_style_field_html() { $options = get_option('under_the_weather_settings'); $value = isset($options['enqueue_style']) ? $options['enqueue_style'] : '1'; echo "<input type='checkbox' name='under_the_weather_settings[enqueue_style]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Load plugin CSS.', 'under-the-weather'); }
 function under_the_weather_enqueue_script_field_html() { $options = get_option('under_the_weather_settings'); $value = isset($options['enqueue_script']) ? $options['enqueue_script'] : '1'; echo "<input type='checkbox' name='under_the_weather_settings[enqueue_script]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Load plugin JavaScript.', 'under-the-weather'); }
 
@@ -196,6 +217,12 @@ function under_the_weather_handle_clear_cache_action() {
         delete_option('under_the_weather_usage_stats'); // Option name updated
 
         add_settings_error('under_the_weather_settings', 'cache_cleared', __('All weather caches and performance stats have been cleared.', 'under-the-weather'), 'success');
+		// Also clear rate limit transients
+		$rate_limit_prefix = '_transient_utw_rate_limit_';
+		$rate_limit_timeout_prefix = '_transient_timeout_utw_rate_limit_';
+		
+		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", $wpdb->esc_like($rate_limit_prefix) . '%'));
+		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", $wpdb->esc_like($rate_limit_timeout_prefix) . '%'));
     }
 }
 
@@ -252,6 +279,7 @@ function under_the_weather_load_scripts_manually() {
     wp_localize_script('under-the-weather-script', 'under_the_weather_plugin_url', $plugin_url_data);
 }
 
+
 // =============================================================================
 // SECTION 3: REST API ENDPOINT & HELPERS
 // =============================================================================
@@ -290,7 +318,22 @@ add_action('rest_api_init', function () {
                 }
             ]
         ],
-        'permission_callback' => '__return_true'
+        'permission_callback' => function() {
+            $options = get_option('under_the_weather_settings');
+            
+            // Only check the rate limit IF the setting is enabled
+            if (!empty($options['enable_rate_limit'])) {
+                if (!under_the_weather_check_rate_limit()) {
+                    return new WP_Error(
+                        'rate_limit_exceeded',
+                        __('Rate limit exceeded. Please try again later.', 'under-the-weather'),
+                        ['status' => 429]
+                    );
+                }
+            }
+            // If not enabled, or if the check passes, allow the request.
+            return true;
+        }
     ]);
 });
 function under_the_weather_validate_latitude($value) {
@@ -298,19 +341,16 @@ function under_the_weather_validate_latitude($value) {
     $lat = floatval($value);
     return ($lat >= -90 && $lat <= 90);
 }
-
 function under_the_weather_validate_longitude($value) {
     if (!is_numeric($value)) return false;
     $lon = floatval($value);
     return ($lon >= -180 && $lon <= 180);
 }
 function under_the_weather_validate_location_name($location) {
-    
     // Must be 1-100 characters
     if (strlen($location) < 1 || strlen($location) > 100) {
         return false;
-    }
-    
+    } 
     // Remove obviously malicious patterns while allowing international characters
     // Block HTML tags, script tags, and common injection patterns
     $dangerous_patterns = [
@@ -322,13 +362,11 @@ function under_the_weather_validate_location_name($location) {
         '/&#x?\d+;/',         // HTML entities (could hide malicious code)
         '/[<>"\'\{\}]/',      // Potentially dangerous characters
     ];
-    
     foreach ($dangerous_patterns as $pattern) {
         if (preg_match($pattern, $location)) {
             return false;
         }
     }
-    
     // Allow unicode letters, numbers, spaces, common punctuation for place names
     // This includes accented characters, Asian characters, etc.
     if (!preg_match('/^[\p{L}\p{N}\s\-\'\.,\(\)\/]+$/u', $location)) {
@@ -336,6 +374,46 @@ function under_the_weather_validate_location_name($location) {
     }
     return $location;
 }
+
+// Add this function to handle rate limiting
+function under_the_weather_check_rate_limit() {
+	$options = get_option('under_the_weather_settings');
+    // Get the client's IP address
+    $client_ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    
+    // Handle proxies and load balancers
+    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $forwarded_ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $client_ip = trim($forwarded_ips[0]);
+    } elseif (!empty($_SERVER['HTTP_X_REAL_IP'])) {
+        $client_ip = $_SERVER['HTTP_X_REAL_IP'];
+    }
+    
+    // Create a unique key for this IP
+    $rate_limit_key = 'utw_rate_limit_' . hash('sha256', $client_ip);
+    
+    // Get current request count
+    $current_requests = get_transient($rate_limit_key);
+    
+    // Define limits
+    $max_requests = isset($options['rate_limit_count']) ? absint($options['rate_limit_count']) : 100;
+    $time_window = 3600; // Per hour (in seconds)
+    
+    if ($current_requests === false) {
+        // First request from this IP in the time window
+        set_transient($rate_limit_key, 1, $time_window);
+        return true;
+    }
+    
+    if ($current_requests >= $max_requests) {
+        return false; // Rate limit exceeded
+    }
+    
+    // Increment the counter
+    set_transient($rate_limit_key, $current_requests + 1, $time_window);
+    return true;
+}
+
 function under_the_weather_is_numeric_callback($value) { return is_numeric($value); }
 function under_the_weather_get_icon_class($icon_code) { $icon_map = [ '01d' => 'wi-day-sunny', '01n' => 'wi-night-clear', '02d' => 'wi-day-cloudy', '02n' => 'wi-night-alt-cloudy', '03d' => 'wi-cloud', '03n' => 'wi-cloud', '04d' => 'wi-cloudy', '04n' => 'wi-cloudy', '09d' => 'wi-showers', '09n' => 'wi-night-alt-showers', '10d' => 'wi-day-rain', '10n' => 'wi-night-alt-rain', '11d' => 'wi-thunderstorm', '11n' => 'wi-night-alt-thunderstorm', '13d' => 'wi-snow', '13n' => 'wi-night-alt-snow', '50d' => 'wi-fog', '50n' => 'wi-night-fog', ]; return isset($icon_map[$icon_code]) ? $icon_map[$icon_code] : 'wi-na'; }
 function under_the_weather_update_usage_stats($type) { $stats = get_option('under_the_weather_usage_stats', []); $today = wp_date('Y-m-d'); if (!isset($stats[$today])) { $stats[$today] = ['api' => 0, 'cache' => 0]; } if ($type === 'api' || $type === 'cache') { $stats[$today][$type]++; } if (count($stats) > 7) { $stats = array_slice($stats, -7, 7, true); } update_option('under_the_weather_usage_stats', $stats); }
