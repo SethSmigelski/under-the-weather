@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.7.1
+ * Version:           1.7.2
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -256,7 +256,86 @@ function under_the_weather_load_scripts_manually() {
 // SECTION 3: REST API ENDPOINT & HELPERS
 // =============================================================================
 
-add_action('rest_api_init', function () { register_rest_route('under-the-weather/v1', '/forecast', [ 'methods' => 'GET', 'callback' => 'under_the_weather_get_forecast_data', 'args' => [ 'lat' => ['required' => true, 'validate_callback' => 'under_the_weather_is_numeric_callback'], 'lon' => ['required' => true, 'validate_callback' => 'under_the_weather_is_numeric_callback'], 'location_name' => ['required' => true, 'sanitize_callback' => 'sanitize_text_field'], 'unit' => ['required' => false, 'default' => 'imperial', 'validate_callback' => function($param) { return in_array($param, ['imperial', 'metric']); }] ], 'permission_callback' => '__return_true' ]); });
+add_action('rest_api_init', function () { 
+    register_rest_route('under-the-weather/v1', '/forecast', [
+        'methods' => 'GET',
+        'callback' => 'under_the_weather_get_forecast_data',
+        'args' => [
+            'lat' => [
+                'required' => true,
+                'validate_callback' => 'under_the_weather_validate_latitude',
+                'sanitize_callback' => function($value) {
+                    return floatval($value);
+                }
+            ],
+            'lon' => [
+                'required' => true,
+                'validate_callback' => 'under_the_weather_validate_longitude',
+                'sanitize_callback' => function($value) {
+                    return floatval($value);
+                }
+            ],
+            'location_name' => [
+                'required' => true,
+                'validate_callback' => function($value) {
+                    return under_the_weather_validate_location_name($value) !== false;
+                },
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
+            'unit' => [
+                'required' => false,
+                'default' => 'imperial',
+                'validate_callback' => function($param) {
+                    return in_array($param, ['imperial', 'metric'], true);
+                }
+            ]
+        ],
+        'permission_callback' => '__return_true'
+    ]);
+});
+function under_the_weather_validate_latitude($value) {
+    if (!is_numeric($value)) return false;
+    $lat = floatval($value);
+    return ($lat >= -90 && $lat <= 90);
+}
+
+function under_the_weather_validate_longitude($value) {
+    if (!is_numeric($value)) return false;
+    $lon = floatval($value);
+    return ($lon >= -180 && $lon <= 180);
+}
+function under_the_weather_validate_location_name($location) {
+    
+    // Must be 1-100 characters
+    if (strlen($location) < 1 || strlen($location) > 100) {
+        return false;
+    }
+    
+    // Remove obviously malicious patterns while allowing international characters
+    // Block HTML tags, script tags, and common injection patterns
+    $dangerous_patterns = [
+        '/<[^>]*>/',           // HTML tags
+        '/javascript:/i',      // JavaScript protocol
+        '/on\w+\s*=/i',       // Event handlers (onclick, onload, etc.)
+        '/data:/i',           // Data URLs
+        '/vbscript:/i',       // VBScript
+        '/&#x?\d+;/',         // HTML entities (could hide malicious code)
+        '/[<>"\'\{\}]/',      // Potentially dangerous characters
+    ];
+    
+    foreach ($dangerous_patterns as $pattern) {
+        if (preg_match($pattern, $location)) {
+            return false;
+        }
+    }
+    
+    // Allow unicode letters, numbers, spaces, common punctuation for place names
+    // This includes accented characters, Asian characters, etc.
+    if (!preg_match('/^[\p{L}\p{N}\s\-\'\.,\(\)\/]+$/u', $location)) {
+        return false;
+    }
+    return $location;
+}
 function under_the_weather_is_numeric_callback($value) { return is_numeric($value); }
 function under_the_weather_get_icon_class($icon_code) { $icon_map = [ '01d' => 'wi-day-sunny', '01n' => 'wi-night-clear', '02d' => 'wi-day-cloudy', '02n' => 'wi-night-alt-cloudy', '03d' => 'wi-cloud', '03n' => 'wi-cloud', '04d' => 'wi-cloudy', '04n' => 'wi-cloudy', '09d' => 'wi-showers', '09n' => 'wi-night-alt-showers', '10d' => 'wi-day-rain', '10n' => 'wi-night-alt-rain', '11d' => 'wi-thunderstorm', '11n' => 'wi-night-alt-thunderstorm', '13d' => 'wi-snow', '13n' => 'wi-night-alt-snow', '50d' => 'wi-fog', '50n' => 'wi-night-fog', ]; return isset($icon_map[$icon_code]) ? $icon_map[$icon_code] : 'wi-na'; }
 function under_the_weather_update_usage_stats($type) { $stats = get_option('under_the_weather_usage_stats', []); $today = wp_date('Y-m-d'); if (!isset($stats[$today])) { $stats[$today] = ['api' => 0, 'cache' => 0]; } if ($type === 'api' || $type === 'cache') { $stats[$today][$type]++; } if (count($stats) > 7) { $stats = array_slice($stats, -7, 7, true); } update_option('under_the_weather_usage_stats', $stats); }
