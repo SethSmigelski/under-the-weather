@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, widget
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 1.7.1
+Stable tag: 1.7.4
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -29,6 +29,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Easy to Use:** Simply add a `<div>` with data attributes to any post or page to display the widget.
+* **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API. This provides a clear look at how the caching system is working to keep your site fast and your API calls low.
 
 == Installation ==
 
@@ -96,10 +97,11 @@ Shows how long ago the weather data was updated from the source. This option hel
 Adds the unit symbol (F or C) next to the main temperature. This option allows you to select whether or not the widget should include the temperature unit symbol in the primary temperature display.
 
 **Advanced Settings**
-**Enable Cache:**  You can uncheck this box, if you would like to use this plugin without the benefit of the caching function. 
+**Enable Cache:**  You can uncheck this box, if you would like to use this plugin without the benefit of the caching function.
 
-**Asset Loading:** For the plugin to function correctly, the
-**Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files as part of your theme's own optimized assets.
+**Enable Rate Limiting:** Check this box to protect your site against excessive API requests from a single IP address. You can set the maximum number of requests per hour (default is 100). This helps prevent malicious traffic from exhausting your API quota. 
+
+**Asset Loading:** For the plugin to function correctly, the **Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files as part of your theme's own optimized assets.
 
 If you uncheck **Load Plugin JavaScript**, you can load the Under The Weather scripts manually on select pages by adding the following template tag to your theme files (e.g., footer.php):
 
@@ -138,6 +140,10 @@ If you're feeling patient, just wait for the weather widget to update after the 
 = Does the Weather Widget work in Fahrenheit or Celsius? =
 
 Both. By default, the weather widget will show a forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). Additionally, checking the box for "Display Unit Symbol" on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
+
+= What does the "Enable Rate Limiting" setting do? =
+
+This is a security feature that limits the number of times a single visitor (identified by their IP address) can request weather data in one hour. Enabling it helps protect your OpenWeather API key from being overused by automated bots or malicious users. For most websites, the default limit of 100 requests per hour is generous, but you can adjust it if needed. The rate limit is turned off by default to ensure maximum performance for all users.
 
 = Can I load the JavaScripts myself? =
 
@@ -193,6 +199,18 @@ Here are the links to their terms of service and privacy policy:
 * **Privacy Policy:** [https://openweather.co.uk/privacy-policy](https://openweather.co.uk/privacy-policy)
 
 == Changelog ==
+
+= 1.7.4 =
+* IMPROVEMENT: The Performance Report now displays rate-limiting status, including a "Blocked Requests" column in the data table and a status box to show if the feature is active.  This will log the occurrence of any blocked requests.
+* IMPROVEMENT: Refined styling for the Performance Report
+
+= 1.7.3 =
+* NEW: Added an optional, user-configurable rate-limiting feature to the REST API endpoint to protect against API quota exhaustion and resource abuse.
+* IMPROVEMENT: The "Requests per Hour" for the rate limit can be configured on the settings page.
+
+= 1.7.2 =
+* SECURITY: Enhanced input validation for REST API parameters - added coordinate range validation (-90 to 90 for latitude, -180 to 180 for longitude) and location name screening to prevent XSS and injection attacks
+* IMPROVEMENT: Separated validation and sanitization logic in REST API for better error handling
 
 = 1.7.1 =
 * FIX: Completed nonce verification to prevent CSRF attacks on tab switching
