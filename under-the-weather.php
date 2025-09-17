@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.7.3
+ * Version:           1.7.4
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance. (Prefix updated)
-define( 'UNDER_THE_WEATHER_VERSION', '1.7' );
+define( 'UNDER_THE_WEATHER_VERSION', '1.7.4' );
 
 // =============================================================================
 // SECTION 1: SETTINGS PAGE & CACHE CLEARING
@@ -90,8 +90,10 @@ function under_the_weather_sanitize_settings($input) {
     $new_input['enable_rate_limit'] = isset($input['enable_rate_limit']) ? '1' : '0';
     if (isset($input['rate_limit_count']) && is_numeric($input['rate_limit_count'])) {
 		$count = absint($input['rate_limit_count']);
-    	$new_input['rate_limit_count'] = max(10, min(1000, $count)); // Enforce 10-1000 range
-    }
+		$new_input['rate_limit_count'] = max(10, min(1000, $count));
+	} else {
+		$new_input['rate_limit_count'] = 100; // Ensure default exists
+	}
 	
     $new_input['show_details'] = isset($input['show_details']) ? '1' : '0';
     $new_input['show_unit'] = isset($input['show_unit']) ? '1' : '0';
@@ -214,7 +216,8 @@ function under_the_weather_handle_clear_cache_action() {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The recommended way to delete multiple transients by a prefix.
         $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", $wpdb->esc_like($prefix_timeout) . '%'));
         
-        delete_option('under_the_weather_usage_stats'); // Option name updated
+        delete_option('under_the_weather_usage_stats'); 
+		delete_option('under_the_weather_ratelimit_stats'); 
 
         add_settings_error('under_the_weather_settings', 'cache_cleared', __('All weather caches and performance stats have been cleared.', 'under-the-weather'), 'success');
 		// Also clear rate limit transients
@@ -324,6 +327,7 @@ add_action('rest_api_init', function () {
             // Only check the rate limit IF the setting is enabled
             if (!empty($options['enable_rate_limit'])) {
                 if (!under_the_weather_check_rate_limit()) {
+					under_the_weather_log_ratelimit_block();
                     return new WP_Error(
                         'rate_limit_exceeded',
                         __('Rate limit exceeded. Please try again later.', 'under-the-weather'),
@@ -475,6 +479,27 @@ function under_the_weather_get_forecast_data($request) {
     return new WP_REST_Response($weather_data, 200); 
 }
 
+/**
+ * Logs a rate limit block event.
+ */
+function under_the_weather_log_ratelimit_block() {
+    $stats = get_option('under_the_weather_ratelimit_stats', []);
+    $today = wp_date('Y-m-d');
+
+    if (!isset($stats[$today])) {
+        $stats[$today] = ['blocked' => 0];
+    }
+    
+    $stats[$today]['blocked']++;
+
+    // Keep only the last 7 days of data
+    if (count($stats) > 7) {
+        $stats = array_slice($stats, -7, 7, true);
+    }
+    
+    update_option('under_the_weather_ratelimit_stats', $stats);
+}
+
 // =============================================================================
 // SECTION 4: USAGE REPORT DISPLAY
 // =============================================================================
@@ -483,21 +508,31 @@ function under_the_weather_get_forecast_data($request) {
  * Renders the HTML for the performance report tab. (Function name updated)
  */
 function under_the_weather_display_performance_report_html() {
-    $stats = get_option('under_the_weather_usage_stats', []);
+    $options = get_option('under_the_weather_settings'); // Get settings for status box
+    $usage_stats = get_option('under_the_weather_usage_stats', []);
+    $ratelimit_stats = get_option('under_the_weather_ratelimit_stats', []); // Get the new rate limit stats
     $report_data = [];
     $max_value = 1;
 
     for ($i = 6; $i >= 0; $i--) {
         $date = wp_date('Y-m-d', strtotime("-$i days"));
-        $day_stats = isset($stats[$date]) ? $stats[$date] : ['api' => 0, 'cache' => 0];
-        $report_data[$date] = $day_stats;
-        $max_value = max($max_value, $day_stats['api'], $day_stats['cache']);
+        $day_usage = isset($usage_stats[$date]) ? $usage_stats[$date] : ['api' => 0, 'cache' => 0];
+        $day_ratelimit = isset($ratelimit_stats[$date]) ? $ratelimit_stats[$date] : ['blocked' => 0];
+        
+        // Combine the data
+        $report_data[$date] = [
+            'api'     => $day_usage['api'],
+            'cache'   => $day_usage['cache'],
+            'blocked' => $day_ratelimit['blocked']
+        ];
+        
+        $max_value = max($max_value, $day_usage['api'], $day_usage['cache']);
     }
     ?>
     <div class="under-the-weather-usage-report">
         <h2><?php esc_html_e('Last 7 Days of Activity', 'under-the-weather'); ?></h2>
         <p><?php esc_html_e('This report shows the number of times weather data was served from the cache versus making a new call to the OpenWeather API.', 'under-the-weather'); ?></p>
-        
+
         <div class="under-the-weather-chart-container">
             <?php foreach ($report_data as $date => $data) : ?>
                 <div class="under-the-weather-chart-day">
@@ -522,6 +557,20 @@ function under_the_weather_display_performance_report_html() {
                 <span class="under-the-weather-legend-color cache"></span> <?php esc_html_e('Cache Hits', 'under-the-weather'); ?>
             </div>
         </div>
+        
+        <div class="under-the-weather-status-box">
+            <h4><?php esc_html_e('Rate Limit Status', 'under-the-weather'); ?></h4>
+            <?php if (!empty($options['enable_rate_limit'])) : ?>
+                <p><?php
+                    printf(
+                        esc_html__('Rate limiting is currently ACTIVE, blocking requests in excess of %s per hour from a single IP address.', 'under-the-weather'),
+                        '<strong>' . esc_html($options['rate_limit_count'] ?? 100) . '</strong>'
+                    );
+                ?></p>
+            <?php else : ?>
+                <p><?php esc_html_e('Rate limiting is currently DISABLED.', 'under-the-weather'); ?></p>
+            <?php endif; ?>
+        </div>
 
         <h3><?php esc_html_e('Raw Data', 'under-the-weather'); ?></h3>
         <table class="wp-list-table widefat striped under-the-weather-data-table">
@@ -530,6 +579,7 @@ function under_the_weather_display_performance_report_html() {
                     <th><?php esc_html_e('Date', 'under-the-weather'); ?></th>
                     <th><?php esc_html_e('API Hits', 'under-the-weather'); ?></th>
                     <th><?php esc_html_e('Cache Hits', 'under-the-weather'); ?></th>
+                    <th><?php esc_html_e('Blocked Requests', 'under-the-weather'); ?></th> 
                     <th><?php esc_html_e('Total Requests', 'under-the-weather'); ?></th>
                 </tr>
             </thead>
@@ -539,11 +589,13 @@ function under_the_weather_display_performance_report_html() {
                         <td><?php echo esc_html(wp_date('F j, Y', strtotime($date))); ?></td>
                         <td><?php echo esc_html($data['api']); ?></td>
                         <td><?php echo esc_html($data['cache']); ?></td>
+                        <td><?php echo esc_html($data['blocked']); ?></td>
                         <td><?php echo esc_html($data['api'] + $data['cache']); ?></td>
+                        
                     </tr>
                 <?php endforeach; ?>
                  <?php if (empty($report_data)) : ?>
-                    <tr><td colspan="4"><?php esc_html_e('No usage data recorded yet.', 'under-the-weather'); ?></td></tr>
+                    <tr><td colspan="5"><?php esc_html_e('No usage data recorded yet.', 'under-the-weather'); ?></td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
