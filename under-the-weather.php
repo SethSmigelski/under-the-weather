@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.7.4
+ * Version:           1.7.5
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -13,15 +13,15 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// Define a constant for the plugin version for easy maintenance. (Prefix updated)
-define( 'UNDER_THE_WEATHER_VERSION', '1.7.4' );
+// Define a constant for the plugin version for easy maintenance.
+define( 'UNDER_THE_WEATHER_VERSION', '1.7.5' );
 
 // =============================================================================
 // SECTION 1: SETTINGS PAGE & CACHE CLEARING
 // =============================================================================
 
 /**
- * Add the plugin's settings page to the admin menu. (Function name updated)
+ * Add the plugin's settings page to the admin menu.
  */
 add_action('admin_menu', 'under_the_weather_add_admin_menu');
 function under_the_weather_add_admin_menu() {
@@ -35,7 +35,7 @@ function under_the_weather_add_admin_menu() {
 }
 
 /**
- * Register all settings, sections, and fields for the admin page. (Function name updated)
+ * Register all settings, sections, and fields for the admin page.
  */
 add_action('admin_init', 'under_the_weather_settings_init');
 function under_the_weather_settings_init() {
@@ -68,7 +68,7 @@ function under_the_weather_settings_init() {
 }
 
 /**
- * Sanitize and validate all settings before saving to the database. (Function name updated)
+ * Sanitize and validate all settings before saving to the database.
  */
 function under_the_weather_sanitize_settings($input) {
     $new_input = [];
@@ -109,7 +109,7 @@ function under_the_weather_validate_api_key($api_key) {
     return preg_match('/^[a-zA-Z0-9]{32}$/', $api_key);
 }
 
-// Field Callback Functions (Function names updated)
+// Field Callback Functions
 function under_the_weather_settings_section_callback() { echo '<p>' . esc_html__('Enter your OpenWeather API key and choose how long to cache the weather data.', 'under-the-weather') . '</p>'; }
 function under_the_weather_display_section_callback() { echo '<p>' . esc_html__('Control how the weather widget appears on your site.', 'under-the-weather') . '</p>'; }
 
@@ -154,7 +154,7 @@ function under_the_weather_enqueue_style_field_html() { $options = get_option('u
 function under_the_weather_enqueue_script_field_html() { $options = get_option('under_the_weather_settings'); $value = isset($options['enqueue_script']) ? $options['enqueue_script'] : '1'; echo "<input type='checkbox' name='under_the_weather_settings[enqueue_script]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Load plugin JavaScript.', 'under-the-weather'); }
 
 /**
- * Renders the main settings page. (Function name updated)
+ * Renders the main settings page.
  */
 function under_the_weather_settings_page_html() {
     // Define the nonce action and name for clarity
@@ -201,32 +201,75 @@ function under_the_weather_settings_page_html() {
 }
 
 /**
- * Handles the form submission for the clear cache button. (Function name updated)
+ * Handles the form submission for the clear cache button.
  */
 add_action('admin_init', 'under_the_weather_handle_clear_cache_action');
 function under_the_weather_handle_clear_cache_action() {
     if (isset($_POST['under_the_weather_action']) && $_POST['under_the_weather_action'] === 'clear_cache' && check_admin_referer('under_the_weather_clear_cache_nonce', 'under_the_weather_clear_cache_nonce_field') && current_user_can('manage_options')) {
-        global $wpdb;
-        $prefix = '_transient_under_the_weather_'; // Transient prefix updated
-        $prefix_timeout = '_transient_timeout_under_the_weather_'; // Transient prefix updated
         
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The recommended way to delete multiple transients by a prefix.
-        $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", $wpdb->esc_like($prefix) . '%'));
-		
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The recommended way to delete multiple transients by a prefix.
-        $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", $wpdb->esc_like($prefix_timeout) . '%'));
+        // Use the safer function instead of direct database queries
+        $cache_cleared = under_the_weather_clear_transients_safely();
+        $rate_limit_cleared = under_the_weather_clear_rate_limit_transients_safely();
         
-        delete_option('under_the_weather_usage_stats'); 
-		delete_option('under_the_weather_ratelimit_stats'); 
-
-        add_settings_error('under_the_weather_settings', 'cache_cleared', __('All weather caches and performance stats have been cleared.', 'under-the-weather'), 'success');
-		// Also clear rate limit transients
-		$rate_limit_prefix = '_transient_utw_rate_limit_';
-		$rate_limit_timeout_prefix = '_transient_timeout_utw_rate_limit_';
-		
-		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", $wpdb->esc_like($rate_limit_prefix) . '%'));
-		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", $wpdb->esc_like($rate_limit_timeout_prefix) . '%'));
+        // Clear options
+        $usage_cleared = delete_option('under_the_weather_usage_stats');
+        $ratelimit_cleared = delete_option('under_the_weather_ratelimit_stats');
+        
+        if ($cache_cleared && $rate_limit_cleared) {
+            add_settings_error('under_the_weather_settings', 'cache_cleared', 
+                __('All weather caches and performance stats have been cleared.', 'under-the-weather'), 'success');
+        } else {
+            add_settings_error('under_the_weather_settings', 'cache_clear_failed', 
+                __('Some caches could not be cleared. Please try again or contact support.', 'under-the-weather'), 'error');
+        }
     }
+}
+function under_the_weather_clear_transients_safely() {
+    global $wpdb;
+    
+    $prefix = $wpdb->esc_like('_transient_under_the_weather_') . '%';
+    $timeout_prefix = $wpdb->esc_like('_transient_timeout_under_the_weather_') . '%';
+    
+    $result1 = $wpdb->query($wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+        $prefix
+    ));
+    
+    $result2 = $wpdb->query($wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 
+        $timeout_prefix
+    ));
+    
+    if ($result1 === false || $result2 === false) {
+        error_log('UTW: Failed to clear weather transients - DB error');
+        return false;
+    }
+    
+    return true;
+}
+
+function under_the_weather_clear_rate_limit_transients_safely() {
+    global $wpdb;
+    
+    $prefix = $wpdb->esc_like('_transient_utw_rate_limit_') . '%';
+    $timeout_prefix = $wpdb->esc_like('_transient_timeout_utw_rate_limit_') . '%';
+    
+    $result1 = $wpdb->query($wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+        $prefix
+    ));
+    
+    $result2 = $wpdb->query($wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 
+        $timeout_prefix
+    ));
+    
+    if ($result1 === false || $result2 === false) {
+        error_log('UTW: Failed to clear rate limit transients - DB error');
+        return false;
+    }
+    
+    return true;
 }
 
 // =============================================================================
@@ -260,7 +303,7 @@ function under_the_weather_enqueue_admin_styles($hook) {
 }
 
 /**
- * Loads the plugin's main script and localizes data. (Function name updated)
+ * Loads the plugin's main script and localizes data.
  */
 function under_the_weather_load_scripts_manually() {
     $options = get_option('under_the_weather_settings');
@@ -421,6 +464,25 @@ function under_the_weather_check_rate_limit() {
 function under_the_weather_is_numeric_callback($value) { return is_numeric($value); }
 function under_the_weather_get_icon_class($icon_code) { $icon_map = [ '01d' => 'wi-day-sunny', '01n' => 'wi-night-clear', '02d' => 'wi-day-cloudy', '02n' => 'wi-night-alt-cloudy', '03d' => 'wi-cloud', '03n' => 'wi-cloud', '04d' => 'wi-cloudy', '04n' => 'wi-cloudy', '09d' => 'wi-showers', '09n' => 'wi-night-alt-showers', '10d' => 'wi-day-rain', '10n' => 'wi-night-alt-rain', '11d' => 'wi-thunderstorm', '11n' => 'wi-night-alt-thunderstorm', '13d' => 'wi-snow', '13n' => 'wi-night-alt-snow', '50d' => 'wi-fog', '50n' => 'wi-night-fog', ]; return isset($icon_map[$icon_code]) ? $icon_map[$icon_code] : 'wi-na'; }
 function under_the_weather_update_usage_stats($type) { $stats = get_option('under_the_weather_usage_stats', []); $today = wp_date('Y-m-d'); if (!isset($stats[$today])) { $stats[$today] = ['api' => 0, 'cache' => 0]; } if ($type === 'api' || $type === 'cache') { $stats[$today][$type]++; } if (count($stats) > 7) { $stats = array_slice($stats, -7, 7, true); } update_option('under_the_weather_usage_stats', $stats); }
+
+// Enhanced error handling for the API calls:
+function under_the_weather_safe_api_call($api_url) {
+    $response = wp_remote_get($api_url, [
+        'timeout' => 10,
+        'sslverify' => true,
+        'user-agent' => 'WordPress/Under-The-Weather-Plugin/' . UNDER_THE_WEATHER_VERSION
+    ]);
+    if (is_wp_error($response)) {
+        error_log('UTW API Error: ' . $response->get_error_message());
+        return false;
+    }
+    $code = wp_remote_retrieve_response_code($response);
+    if ($code !== 200) {
+        error_log("UTW API returned status: $code");
+        return false;
+    }
+    return wp_remote_retrieve_body($response);
+}
 function under_the_weather_get_forecast_data($request) { 
     $options = get_option('under_the_weather_settings'); 
     $api_key = isset($options['api_key']) ? $options['api_key'] : ''; 
@@ -451,14 +513,15 @@ function under_the_weather_get_forecast_data($request) {
     $lat = $request['lat']; 
     $lon = $request['lon']; 
     $api_url = "https://api.openweathermap.org/data/3.0/onecall?lat={$lat}&lon={$lon}&appid={$api_key}&units={$unit}"; 
-    $response = wp_remote_get($api_url); 
     
-    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) { 
-        return new WP_REST_Response(__('Could not fetch new weather data from OpenWeather.', 'under-the-weather'), 502); 
-    } 
-    
+	//Check API Response
+	$response_body = under_the_weather_safe_api_call($api_url);
+	if ($response_body === false) {
+		return new WP_REST_Response(__('Could not fetch new weather data from OpenWeather.', 'under-the-weather'), 502);
+	}
+	
+	$weather_data = json_decode($response_body); 
     under_the_weather_update_usage_stats('api'); 
-    $weather_data = json_decode(wp_remote_retrieve_body($response)); 
     
     if (json_last_error() !== JSON_ERROR_NONE) return new WP_REST_Response(__('Error decoding weather data.', 'under-the-weather'), 500); 
     
@@ -505,7 +568,7 @@ function under_the_weather_log_ratelimit_block() {
 // =============================================================================
 
 /**
- * Renders the HTML for the performance report tab. (Function name updated)
+ * Renders the HTML for the performance report tab.
  */
 function under_the_weather_display_performance_report_html() {
     $options = get_option('under_the_weather_settings'); // Get settings for status box
@@ -568,7 +631,7 @@ function under_the_weather_display_performance_report_html() {
                     );
                 ?></p>
             <?php else : ?>
-                <p><?php esc_html_e('Rate limiting is currently DISABLED.', 'under-the-weather'); ?></p>
+                <p><?php esc_html_e('Rate limiting is currently DISABLED.  This is the default preference.', 'under-the-weather'); ?></p>
             <?php endif; ?>
         </div>
 
