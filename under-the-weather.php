@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.7.5
+ * Version:           1.7.6
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '1.7.5' );
+define( 'UNDER_THE_WEATHER_VERSION', '1.7.6' );
 
 // =============================================================================
 // SECTION 1: SETTINGS PAGE & CACHE CLEARING
@@ -464,8 +464,30 @@ function under_the_weather_check_rate_limit() {
 function under_the_weather_is_numeric_callback($value) { return is_numeric($value); }
 function under_the_weather_get_icon_class($icon_code) { $icon_map = [ '01d' => 'wi-day-sunny', '01n' => 'wi-night-clear', '02d' => 'wi-day-cloudy', '02n' => 'wi-night-alt-cloudy', '03d' => 'wi-cloud', '03n' => 'wi-cloud', '04d' => 'wi-cloudy', '04n' => 'wi-cloudy', '09d' => 'wi-showers', '09n' => 'wi-night-alt-showers', '10d' => 'wi-day-rain', '10n' => 'wi-night-alt-rain', '11d' => 'wi-thunderstorm', '11n' => 'wi-night-alt-thunderstorm', '13d' => 'wi-snow', '13n' => 'wi-night-alt-snow', '50d' => 'wi-fog', '50n' => 'wi-night-fog', ]; return isset($icon_map[$icon_code]) ? $icon_map[$icon_code] : 'wi-na'; }
 function under_the_weather_update_usage_stats($type) { $stats = get_option('under_the_weather_usage_stats', []); $today = wp_date('Y-m-d'); if (!isset($stats[$today])) { $stats[$today] = ['api' => 0, 'cache' => 0]; } if ($type === 'api' || $type === 'cache') { $stats[$today][$type]++; } if (count($stats) > 7) { $stats = array_slice($stats, -7, 7, true); } update_option('under_the_weather_usage_stats', $stats); }
+/**
+ * Logs a rate limit block event.
+ */
+function under_the_weather_log_ratelimit_block() {
+    $stats = get_option('under_the_weather_ratelimit_stats', []);
+    $today = wp_date('Y-m-d');
 
-// Enhanced error handling for the API calls:
+    if (!isset($stats[$today])) {
+        $stats[$today] = ['blocked' => 0];
+    }
+    
+    $stats[$today]['blocked']++;
+
+    // Keep only the last 7 days of data
+    if (count($stats) > 7) {
+        $stats = array_slice($stats, -7, 7, true);
+    }
+    
+    update_option('under_the_weather_ratelimit_stats', $stats);
+}
+
+/**
+ * Enhanced error handling for the API calls.
+ */
 function under_the_weather_safe_api_call($api_url) {
     $response = wp_remote_get($api_url, [
         'timeout' => 10,
@@ -483,6 +505,79 @@ function under_the_weather_safe_api_call($api_url) {
     }
     return wp_remote_retrieve_body($response);
 }
+
+/**
+ * Validate API Response.
+ */
+function under_the_weather_validate_api_response($data) {
+    if (!is_object($data)) {
+        error_log('UTW: API response is not an object');
+        return false;
+    }
+    
+    // Validate current weather data exists
+    if (!isset($data->current) || !is_object($data->current)) {
+        error_log('UTW: Missing current weather data');
+        return false;
+    }
+    
+    // Validate and sanitize temperature
+    if (isset($data->current->temp)) {
+		$temp = floatval($data->current->temp);
+		// Check units to determine appropriate range
+		$unit = isset($data->units) ? $data->units : 'imperial';
+		$temp_range = ($unit === 'metric') ? [-50, 60] : [-60, 150]; // Celsius vs Fahrenheit
+		
+		if ($temp < $temp_range[0] || $temp > $temp_range[1]) {
+			error_log('UTW: Invalid temperature value: ' . $temp . ' for unit: ' . $unit);
+			$data->current->temp = ($unit === 'metric') ? 20 : 70; // More appropriate fallback
+		}
+		$data->current->temp = $temp;
+	}
+    
+    // Validate humidity (0-100%)
+    if (isset($data->current->humidity)) {
+        $humidity = intval($data->current->humidity);
+        $data->current->humidity = max(0, min(100, $humidity));
+    }
+    
+    // Sanitize weather description
+    if (isset($data->current->weather[0]->description)) {
+        $description = sanitize_text_field($data->current->weather[0]->description);
+        $data->current->weather[0]->description = $description;
+    }
+    
+    // Validate icon code format
+    if (isset($data->current->weather[0]->icon)) {
+        $icon = $data->current->weather[0]->icon;
+        if (!preg_match('/^[0-9]{2}[dn]$/', $icon)) {
+            error_log('UTW: Invalid icon code: ' . $icon);
+            $data->current->weather[0]->icon = '01d'; // Fallback to clear sky
+        }
+    }
+    
+    // Validate daily forecast data
+    if (isset($data->daily) && is_array($data->daily)) {
+        foreach ($data->daily as $day) {
+            if (isset($day->temp->max)) {
+                $day->temp->max = floatval($day->temp->max);
+                if ($day->temp->max < -100 || $day->temp->max > 150) {
+                    $day->temp->max = 70; // Reasonable fallback
+                }
+            }
+            
+            if (isset($day->weather[0]->description)) {
+                $day->weather[0]->description = sanitize_text_field($day->weather[0]->description);
+            }
+        }
+    }
+    
+    return $data;
+}
+
+/**
+ * The Weather API call.
+ */
 function under_the_weather_get_forecast_data($request) { 
     $options = get_option('under_the_weather_settings'); 
     $api_key = isset($options['api_key']) ? $options['api_key'] : ''; 
@@ -525,6 +620,11 @@ function under_the_weather_get_forecast_data($request) {
     
     if (json_last_error() !== JSON_ERROR_NONE) return new WP_REST_Response(__('Error decoding weather data.', 'under-the-weather'), 500); 
     
+	$weather_data = under_the_weather_validate_api_response($weather_data);
+	if ($weather_data === false) {
+		return new WP_REST_Response(__('Invalid weather data received.', 'under-the-weather'), 502);
+	}
+	
     $weather_data->fetched_at = time(); 
     $weather_data->units = $unit; 
     
@@ -540,27 +640,6 @@ function under_the_weather_get_forecast_data($request) {
     }
     
     return new WP_REST_Response($weather_data, 200); 
-}
-
-/**
- * Logs a rate limit block event.
- */
-function under_the_weather_log_ratelimit_block() {
-    $stats = get_option('under_the_weather_ratelimit_stats', []);
-    $today = wp_date('Y-m-d');
-
-    if (!isset($stats[$today])) {
-        $stats[$today] = ['blocked' => 0];
-    }
-    
-    $stats[$today]['blocked']++;
-
-    // Keep only the last 7 days of data
-    if (count($stats) > 7) {
-        $stats = array_slice($stats, -7, 7, true);
-    }
-    
-    update_option('under_the_weather_ratelimit_stats', $stats);
 }
 
 // =============================================================================
@@ -631,7 +710,7 @@ function under_the_weather_display_performance_report_html() {
                     );
                 ?></p>
             <?php else : ?>
-                <p><?php esc_html_e('Rate limiting is currently DISABLED.  This is the default preference.', 'under-the-weather'); ?></p>
+                <p><?php esc_html_e('Rate limiting is currently DISABLED. This is the default preference.', 'under-the-weather'); ?></p>
             <?php endif; ?>
         </div>
 
