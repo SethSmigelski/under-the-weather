@@ -203,13 +203,13 @@ Here are the links to their terms of service and privacy policy:
 == Changelog ==
 
 = 1.7.6 =
-SECURITY: Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data
+* SECURITY: Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data
 
 = 1.7.5 =
-IMPROVEMENT: Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging
-IMPROVEMENT: Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback
-IMPROVEMENT: Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities
-IMPROVEMENT: Added custom User-Agent identification for OpenWeather API requests following best practices
+* IMPROVEMENT: Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging
+* IMPROVEMENT: Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback
+* IMPROVEMENT: Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities
+* IMPROVEMENT: Added custom User-Agent identification for OpenWeather API requests following best practices
 
 = 1.7.4 =
 * IMPROVEMENT: The Performance Report now displays rate-limiting status, including a "Blocked Requests" column in the data table and a status box to show if the feature is active.  This will log the occurrence of any blocked requests.
