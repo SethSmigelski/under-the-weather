@@ -1,3 +1,19 @@
+// Validate Coordinates
+function validateCoordinates(lat, lon) {
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(lon);
+    return (latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180);
+}
+
+// Validate data
+function validateWeatherData(data) {
+    return data && 
+           data.current && 
+           data.daily && 
+           Array.isArray(data.daily) && 
+           data.daily.length > 0;
+} 
+
 document.addEventListener('DOMContentLoaded', function() {
 
   const widget = document.querySelector('.weather-widget');
@@ -9,16 +25,35 @@ document.addEventListener('DOMContentLoaded', function() {
   const lon = widget.dataset.lon;
   const locationName = widget.dataset.locationName;
   const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+  const nonce = under_the_weather_settings?.nonce;
+	if (!nonce) {
+		widget.innerHTML = '<p>Configuration error. Please refresh the page.</p>';
+		return;
+	}
 
   if (!lat || !lon || !locationName) {
     widget.innerHTML = 'Location data is missing.';
     return;
-  }
+  } else if (!validateCoordinates(lat, lon)) {
+    widget.innerHTML = 'Invalid location coordinates.';
+    return;
+  } else {
+	widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
+  } 
 
   const apiUrl = `/wp-json/under-the-weather/v1/forecast?lat=${lat}&lon=${lon}&location_name=${encodeURIComponent(locationName)}&unit=${unit}`;
 
-  fetch(apiUrl)
+  fetch(apiUrl, {
+    signal: controller.signal,
+    headers: {
+        'X-WP-Nonce': under_the_weather_settings.nonce
+    }
+  })
     .then(response => {
+	  clearTimeout(timeoutId);
       if (!response.ok) {
         response.text().then(text => {
             console.error('Error fetching weather data:', text);
@@ -29,13 +64,16 @@ document.addEventListener('DOMContentLoaded', function() {
       return response.json();
     })
     .then(data => {
+	    if (!validateWeatherData(data)) {
+			throw new Error('The weather data structure is invalid');
+		}
       displayWeather(data, widget);
     })
     .catch(error => {
       console.error('Network Error:', error);
+	  widget.innerHTML = `<p>Unable to load weather data. Please try again later.</p>`;
     });
 });
-
 
 function displayWeather(data, widget) {
     const { style_set, display_mode, forecast_days, show_details, show_timestamp, show_unit } = under_the_weather_settings;
@@ -50,8 +88,7 @@ function displayWeather(data, widget) {
         if (style_set === 'weather_icons_font') {
             return `<i class="wi ${weather.icon_class}"></i>`;
         } else {
-            // You'll need to pass the base URL of your plugin to your script
-// using wp_localize_script in your main PHP file.
+    // Pass the base URL of the plugin tothe script using wp_localize_script in the main PHP file.
 return `<img src="${under_the_weather_plugin_url.url}images/default-weather-images-${weather.icon}.png" alt="${weather.description}">`;
         }
     }
