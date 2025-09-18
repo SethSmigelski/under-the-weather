@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, widget
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 1.7.4
+* **Stable tag:** 1.7.6
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -163,7 +163,9 @@ Both. By default, the weather widget will show a forecast in Fahrenheit. If you 
 
 ### What does the "Enable Rate Limiting" setting do?
 
-This is a security feature that limits the number of times a single visitor (identified by their IP address) can request weather data in one hour. Enabling it helps protect your OpenWeather API key from being overused by automated bots or malicious users. For most websites, the default limit of 100 requests per hour is generous, but you can adjust it if needed. The rate limit is turned off by default to ensure maximum performance for all users.
+This is a security feature that limits the number of times a single visitor (identified by their IP address) can request weather data in one hour. Enabling it helps protect your OpenWeather API key from being overused by automated bots or malicious users. For most websites, the default limit of 100 requests per hour is generous, but you can adjust it if needed.
+
+The rate limit is turned off by default to ensure maximum performance for all users.  If you notice an unexpected increase in weather requests in the performance report, go ahead and turn on rate limiting to see if something is afoot.
 
 ### Can I load the JavaScripts myself?
 
@@ -251,6 +253,15 @@ Here are the links to their terms of service and privacy policy:
 ---
 
 ## Changelog
+
+### 1.7.6
+SECURITY:**  Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data
+
+### 1.7.5
+* **IMPROVEMENT:**  Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging
+* **IMPROVEMENT:**  Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback
+* **IMPROVEMENT:**  Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities
+* **IMPROVEMENT:**  Added custom User-Agent identification for OpenWeather API requests following best practices
 
 ### 1.7.4
 * **IMPROVEMENT:** The Performance Report now displays rate-limiting status, including a "Blocked Requests" column in the data table and a status box to show if the feature is active.  This will log the occurrence of any blocked requests.
