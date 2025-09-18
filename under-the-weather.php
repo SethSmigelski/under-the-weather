@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.7.6
+ * Version:           1.7.7
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '1.7.6' );
+define( 'UNDER_THE_WEATHER_VERSION', '1.7.7' );
 
 // =============================================================================
 // SECTION 1: SETTINGS PAGE & CACHE CLEARING
@@ -317,10 +317,11 @@ function under_the_weather_load_scripts_manually() {
         'show_details'   => !empty($options['show_details']),
         'show_timestamp' => !empty($options['show_timestamp']),
         'show_unit'      => !empty($options['show_unit']),
+        'nonce'          => wp_create_nonce('wp_rest'),
     ];
     wp_localize_script('under-the-weather-script', 'under_the_weather_settings', $settings_for_js);
 
-    // **NEW** Pass the plugin's base URL to the script for loading local images.
+    // Pass the plugin's base URL to the script for loading local images.
     $plugin_url_data = ['url' => esc_url_raw(plugins_url('/', __FILE__))];
     wp_localize_script('under-the-weather-script', 'under_the_weather_plugin_url', $plugin_url_data);
 }
