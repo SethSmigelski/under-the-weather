@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, widget
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 1.7.6
+* **Stable tag:** 1.7.7
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -254,8 +254,15 @@ Here are the links to their terms of service and privacy policy:
 
 ## Changelog
 
+### 1.7.7
+* **SECURITY:** Added nonce verification to JavaScript REST API requests to prevent CSRF attacks on weather data endpoints.
+* **IMPROVEMENT:** Added front-end validation for coordinates to prevent unnecessary API calls with invalid data.
+* **IMPROVEMENT:** Added front-end validation to ensure weather data is complete before display, providing protection against unexpected or bad API responses.
+* **IMPROVEMENT:** Added a "Loading..." message to improve user experience while the widget fetches weather data. This message appears after data checks have passed and before the weather is shown.
+* **IMPROVEMENT:** Implemented a 10-second timeout for API requests to prevent the widget from hanging indefinitely.
+  
 ### 1.7.6
-SECURITY:**  Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data
+* **SECURITY:**  Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data
 
 ### 1.7.5
 * **IMPROVEMENT:**  Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging
