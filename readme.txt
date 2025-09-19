@@ -15,21 +15,21 @@ A lightweight and customizable weather widget, powered by the OpenWeather API, t
 
 == Description ==
 
-Under The Weather is a powerful yet simple plugin designed to display location-specific weather forecasts on your WordPress site. Built with performance in mind, it uses a server-side caching system (WordPress Transients) to minimize API calls and ensure your site remains fast.
+Under The Weather is a powerful yet simple plugin designed to display location-specific weather forecasts on your WordPress site. With performance in mind, Under The Weather uses a server-side caching system (WordPress Transients) to minimize API calls and ensure your site remains fast.
 
-This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins. Under The Weather is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JavaScript frameworks.
+This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins. Under The Weather is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JavaScript frameworks. Built with modern security practices, including input validation, CSRF protection, and optional rate limiting to protect your site and API quota.
 
 **Key Features:**
 
+* **Stylish Weather Widgets:** Choose between default OpenWeather images or the crisp Weather Icons font set.
+* **Easy to Use:** Simply add a `<div>` with data attributes to any webpage to display the widget.
 * **Server-Side Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for all users.
-* **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
+* **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
 * **Highly Customizable:** Use the detailed settings page to control everything from cache duration to the number of forecast days.
-* **Multiple Styles:** Choose between default OpenWeather images or the crisp Weather Icons font set.
 * **Flexible Display:** Show either the current live weather or the high/low forecast for the current day.
+* **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
-* **Easy to Use:** Simply add a `<div>` with data attributes to any post or page to display the widget.
-* **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API. This provides a clear look at how the caching system is working to keep your site fast and your API calls low.
 
 == Installation ==
 
@@ -182,7 +182,7 @@ Yes. You can modify the appearance of the Weather Icons Fonts by making customiz
 
 = Do I need to use the plugin's caching function? =
 
-No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. While the caching system provides a great benefit for reducing API hits, turning off this function during your initial widget setup may be useful. 
+No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
 
 == Credits ==
 
