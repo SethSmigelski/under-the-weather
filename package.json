@@ -1,6 +1,6 @@
 {
   "name": "under-the-weather",
-  "version": "1.7.7",
+  "version": "1.8",
   "description": "A lightweight and customizable weather widget, powered by the OpenWeather API, that caches and presents weather data with multiple style options.",
   "private": true
 }
