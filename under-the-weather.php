@@ -195,7 +195,7 @@ function under_the_weather_enqueue_script_field_html() {
 	$options = get_option('under_the_weather_settings'); $value = isset($options['enqueue_script']) ? $options['enqueue_script'] : '1'; echo "<input type='checkbox' name='under_the_weather_settings[enqueue_script]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Load plugin JavaScript.', 'under-the-weather');
 }
 function under_the_weather_geocoding_section_callback() {
-    echo '<p>' . esc_html__('Enter a location to find its coordinates and generate a ready-to-use widget div.', 'under-the-weather') . '</p>';
+	echo '<p>' . esc_html__('Enter a location to find its coordinates and generate a ready-to-use widget div. This tool uses OpenStreetMap\'s geocoding service to look up coordinates.', 'under-the-weather') . '</p>';
 }
 
 function under_the_weather_geocoding_field_html() {
@@ -232,7 +232,7 @@ function under_the_weather_settings_page_html() {
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         <h2 class="nav-tab-wrapper">
             <a href="<?php echo esc_url(wp_nonce_url('?page=under-the-weather&tab=main_settings', $nonce_action, $nonce_name)); ?>" class="nav-tab <?php echo esc_attr($active_tab == 'main_settings' ? 'nav-tab-active' : ''); ?>"><?php esc_html_e('Settings', 'under-the-weather'); ?></a>
-            <a href="<?php echo esc_url(wp_nonce_url('?page=under-the-weather&tab=coordinate_finder', $nonce_action, $nonce_name)); ?>" class="nav-tab <?php echo $active_tab == 'coordinate_finder' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Coordinate Finder', 'under-the-weather'); ?></a>
+            <a href="<?php echo esc_url(wp_nonce_url('?page=under-the-weather&tab=coordinate_finder', $nonce_action, $nonce_name)); ?>" class="nav-tab <?php echo esc_attr($active_tab == 'coordinate_finder' ? 'nav-tab-active' : ''); ?>"><?php esc_html_e('Coordinate Finder', 'under-the-weather'); ?></a>
             <a href="<?php echo esc_url(wp_nonce_url('?page=under-the-weather&tab=performance_report', $nonce_action, $nonce_name)); ?>" class="nav-tab <?php echo esc_attr($active_tab == 'performance_report' ? 'nav-tab-active' : ''); ?>"><?php esc_html_e('Performance Report', 'under-the-weather'); ?></a>
         </h2>
 
