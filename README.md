@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, widget
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 1.7.7
+* **Stable tag:** 1.8
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -33,6 +33,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
+* **Coordinate Finder Tool:** An easy-to-use tool on the settings page retrieves latitude and longitude coordinates by location name and generates ready-to-use widget `<div>`s.
   
 ---
 
@@ -139,6 +140,19 @@ if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
 
 For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
+---
+
+## Coordinate Finder
+
+The plugin includes a Coordinate Finder tool to generate a ready-to-use widget div.  Don't know the latitude and longitude for your desired location? No problem. Just follow these steps: 
+
+1. Navigate to **Settings > Under The Weather** and click on the **Coordinate Finder** tab.
+2. Type a location name into the search box (e.g., "Los Angeles, CA").
+3. Click the **"Find Coordinates"** button.
+4. The tool will display the generated `<div>` with the correct coordinates and location name.
+5. Use the **"Copy Code"** button to copy the HTML and paste it into a post, page, or widget.
+
+The tool also keeps a history of your last 5 searches, so you can easily copy a previous result.
 
 ---
 
@@ -146,6 +160,16 @@ For most users, simply leaving these boxes checked is the best way to use the we
 
 ### What API key do I need?
 This plugin works with the **OpenWeather One Call API 3.0**. You can get a free API key by signing up on the OpenWeather website. Make sure you have subscribed to the One Call API on your account's API page.
+
+###  How can I monitor how many OpenWeather API calls the plugin is making?
+
+Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
+
+Seeing how the plugin's cache system reduces the number of API calls demonstrates its effectiveness. Use the Performance Report to examine how modifying the cache expiration time affects the rate of cached requests.
+
+###  Do I need to use the plugin's caching function?
+
+No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
 
 ### The weather isn't updating. Why?
 
@@ -166,6 +190,10 @@ Both. By default, the weather widget will show a forecast in Fahrenheit. If you 
 This is a security feature that limits the number of times a single visitor (identified by their IP address) can request weather data in one hour. Enabling it helps protect your OpenWeather API key from being overused by automated bots or malicious users. For most websites, the default limit of 100 requests per hour is generous, but you can adjust it if needed.
 
 The rate limit is turned off by default to ensure maximum performance for all users.  If you notice an unexpected increase in weather requests in the performance report, go ahead and turn on rate limiting to see if something is afoot.
+
+### What if I don't know the latitude and longitude for a weather location?
+
+The plugin has a built-in **Coordinate Finder** tool. Navigate to **Settings > Under The Weather** and click the **Coordinate Finder** tab. Simply type in a location name, and the tool will look up the coordinates and provide you with the exact `<div>` code to copy and paste.
 
 ### Can I load the JavaScripts myself?
 
@@ -192,19 +220,12 @@ if ( is_singular('event') && function_exists('under_the_weather_load_scripts_man
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
-###  How can I monitor how many OpenWeather API calls the plugin is making?
-
-Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
-
-Seeing how the plugin's cache system reduces the number of API calls demonstrates its effectiveness. Use the Performance Report to examine how modifying the cache expiration time affects the rate of cached requests.
 
 ###  Are there additional ways to customize this plugin?
 
 Yes. You can modify the appearance of the Weather Icons Fonts by making customizations using CSS. The Weather Icons Fonts are sharp, scalable, and can be customized through CSS to match your website's color palette. 
 
-###  Do I need to use the plugin's caching function?
 
-No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
 
 ---
 
@@ -230,18 +251,23 @@ The Under The Weather Performance Report depicting seven days of information on 
 
 The plugin's comprehensive settings page.
 
+![The Coordinate Finder tool, which generates widget code from a location name.](https://ps.w.org/under-the-weather/assets/screenshot-6.png)
+
+The Coordinate Finder tool, which generates widget code from a location name.
+
 ---
 
 ## Credits
 
-Weather Data: OpenWeather
-Icon Font: Weather Icons by Erik Flowers
+* **Weather Data:**  OpenWeather
+* **Icon Font:**  Weather Icons by Erik Flowers
+* **Geocoding & Map Data:** Data © OpenStreetMap contributors
 
 ---
 
 ## External Services
 
-[cite_start]This plugin connects to the [OpenWeatherMap API](https://openweathermap.org/api) to retrieve weather forecast data. [cite: 36] in order to provide weather information, the following data is sent to the service:
+* **OpenWeatherMap API:** [cite_start]This plugin connects to the [OpenWeatherMap API](https://openweathermap.org/api) to retrieve weather forecast data. [cite: 36] in order to provide weather information, the following data is sent to the service:
 
 * [cite_start]**Location Coordinates:** The latitude and longitude provided in the widget settings are sent to fetch the weather for that specific location. [cite: 30, 37]
 * **API Key:** Your OpenWeatherMap API key is sent to authenticate the request.
@@ -250,9 +276,22 @@ Here are the links to their terms of service and privacy policy:
 * **Terms of Service:** [https://openweather.co.uk/storage/app/media/Terms/Openweather_terms_and_conditions_of_sale.pdf](https://openweather.co.uk/storage/app/media/Terms/Openweather_terms_and_conditions_of_sale.pdf)
 * **Privacy Policy:** [https://openweather.co.uk/privacy-policy](https://openweather.co.uk/privacy-policy)
 
+* **Nominatim (OpenStreetMap) API:** The Coordinate Finder tool sends the location name entered by the administrator to the Nominatim geocoding service to retrieve latitude and longitude coordinates.
+
+Here is the link to their privacy policy:
+    * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
+
 ---
 
 ## Changelog
+
+### 1.8
+* **NEW:** Added a "Coordinate Finder" tool on the settings page to look up location coordinates and generate widget code.
+* **IMPROVEMENT:** The Coordinate Finder includes a history of your last 5 searches for easy access.
+* **IMPROVEMENT:** The plugin settings page is now organized into three tabs: Settings, Coordinate Finder, and Performance Report.
+
+### 1.7.8
+* **SECURITY:** Improved sanitization and validation for rate-limiting feature.
 
 ### 1.7.7
 * **SECURITY:** Added nonce verification to JavaScript REST API requests to prevent CSRF attacks on weather data endpoints.
