@@ -210,7 +210,7 @@ No. To retrieve fresh weather data every time a widget page loads, you can unche
 
 == External Services ==
 
-[* **OpenWeatherMap API:** cite_start]This plugin connects to the [OpenWeatherMap API](https://openweathermap.org/api) to retrieve weather forecast data. [cite: 36] In order to provide weather information, the following data is sent to the service:
+* **OpenWeatherMap API:** [cite_start]This plugin connects to the [OpenWeatherMap API](https://openweathermap.org/api) to retrieve weather forecast data. [cite: 36] In order to provide weather information, the following data is sent to the service:
 
 * [cite_start]**Location Coordinates:** The latitude and longitude provided in the widget settings are sent to fetch the weather for that specific location. [cite: 30, 37]
 * **API Key:** Your OpenWeatherMap API key is sent to authenticate the request.
@@ -221,7 +221,7 @@ Here are the links to their terms of service and privacy policy:
 
 * **Nominatim (OpenStreetMap) API:** The Coordinate Finder tool sends the location name entered by the administrator to the Nominatim geocoding service to retrieve latitude and longitude coordinates.
 
-Here are the links to their privacy policy:
+Here is the link to their privacy policy:
     * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
 
 == Changelog ==
