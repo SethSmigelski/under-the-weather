@@ -141,6 +141,16 @@ The tool also keeps a history of your last 5 searches, so you can easily copy a 
 
 This plugin works with the **OpenWeather One Call API 3.0**. You can get a free API key by signing up on the OpenWeather website. Make sure you have subscribed to the One Call API on your account's API page.
 
+= How can I monitor how many OpenWeather API calls the plugin is making? =
+
+Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
+
+Seeing how the plugin's cache system reduces the number of API calls demonstrates its effectiveness. Use the Performance Report to examine how modifying the cache expiration time affects the rate of cached requests.
+
+= Do I need to use the plugin's caching function? =
+
+No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
+
 = The weather isn't updating. Why? =
 
 The plugin caches the weather data on your server to improve performance and reduce API calls. The data will only be fetched again after the "Cache Expiration Time" you set on the settings page has passed. If you need to force an immediate update, go to **Settings > Under The Weather** and click the "Clear All Weather Caches" button.
@@ -188,19 +198,9 @@ if ( is_singular('event') && function_exists('under_the_weather_load_scripts_man
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
-= How can I monitor how many OpenWeather API calls the plugin is making? =
-
-Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
-
-Seeing how the plugin's cache system reduces the number of API calls demonstrates its effectiveness. Use the Performance Report to examine how modifying the cache expiration time affects the rate of cached requests.
-
 = Are there additional ways to customize this plugin? =
 
 Yes. You can modify the appearance of the Weather Icons Fonts by making customizations using CSS. The Weather Icons Fonts are sharp, scalable, and can be customized through CSS to match your website's color palette. 
-
-= Do I need to use the plugin's caching function? =
-
-No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
 
 == Credits ==
 
