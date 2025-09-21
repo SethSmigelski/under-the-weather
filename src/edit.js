@@ -99,13 +99,14 @@ export default function Edit({ attributes, setAttributes }) {
 					<strong>{__(' Under The Weather Forecast', 'under-the-weather')}</strong>
 				</p>
                 {locationName ? (
-                    <p><Icon icon="location-alt" />
-						{` ${__('Location:', 'under-the-weather')} ${locationName}`}
-					</p>
-					<p><Icon icon="admin-settings" />
-						{` ${__('Unit:', 'under-the-weather')} ${unit}`}
-					</p>
-					
+				    <>
+						<p><Icon icon="location-alt" />
+							{` ${__('Location:', 'under-the-weather')} ${locationName}`}
+						</p>
+						<p><Icon icon="admin-settings" />
+							{` ${__('Unit:', 'under-the-weather')} ${unit}`}
+						</p>
+					</>
                 ) : (
 					<p><Icon icon="megaphone" />
                     {` ${__('Please configure the weather widget in the block settings.', 'under-the-weather')}`}
