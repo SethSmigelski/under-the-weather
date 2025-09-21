@@ -35,5 +35,6 @@
     "html": false
   },
   "textdomain": "under-the-weather",
-  "editorScript": "file:./index.js"
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
 }
