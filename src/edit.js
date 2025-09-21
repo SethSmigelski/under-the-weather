@@ -1,7 +1,7 @@
 // src/edit.js
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, ToggleControl, Button, Modal } from '@wordpress/components';
+import { PanelBody, TextControl, ToggleControl, Button, Modal, Icon } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 
