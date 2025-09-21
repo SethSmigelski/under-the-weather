@@ -1,9 +1,7 @@
-name: Build WordPress Block
+name: Build Block for Testing
 
 on:
-  push:
-    branches:
-      - main # Or your default branch
+  workflow_dispatch: # This makes the action manually triggerable
 
 jobs:
   build:
@@ -16,16 +14,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Or your preferred Node.js version
+          node-version: '20'
 
       - name: Install dependencies
-        run: npm install # Or yarn install, depending on your package manager
+        run: npm install
 
       - name: Build WordPress Block
-        run: npm run build # This command uses @wordpress/scripts to compile src to build
+        run: npm run build
 
       - name: Upload build folder as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wordpress-block-build
-          path: build/ # Adjust if your build folder is named differently or located elsewhere
+          name: under-the-weather-build
+          path: build/ # Adjust if your block's build folder is elsewhere
