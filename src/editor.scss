@@ -1,8 +1,10 @@
-// src/editor.scss
-
+/* Force CSS generation */
 .wp-block-under-the-weather-widget {
     border: 2px solid #bbb;
-	background-color: #f9f9f9;
-	border-radius: 10px;
-	padding: 0rem 2rem;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 0 2rem;
+    
+    /* Add this to ensure it's not empty */
+    position: relative;
 }
