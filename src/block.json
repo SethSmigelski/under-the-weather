@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "under-the-weather/widget",
   "version": "1.0.6",
-  "title": "Weather Widget",
+  "title": "Under The Weather Forecast",
   "category": "widgets",
   "icon": "cloud",
   "description": "Displays a weather forecast for a specific location.",
