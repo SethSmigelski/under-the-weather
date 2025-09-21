@@ -152,7 +152,7 @@ The plugin includes a Coordinate Finder tool to generate a ready-to-use widget d
 4. The tool will display the generated `<div>` with the correct coordinates and location name.
 5. Use the **"Copy Code"** button to copy the HTML and paste it into a post, page, or widget.
 
-The tool also keeps a history of your last 5 searches, so you can easily copy a previous result.
+The tool automatically saves a history of your last 5 searches, which persists between sessions. You can easily copy code from previous searches without having to look them up again.
 
 ---
 
@@ -287,8 +287,9 @@ Here is the link to their privacy policy:
 
 ### 1.8
 * **NEW:** Added a "Coordinate Finder" tool on the settings page to look up location coordinates and generate widget code.
-* **IMPROVEMENT:** The Coordinate Finder includes a history of your last 5 searches for easy access.
+* **IMPROVEMENT:** The Coordinate Finder includes a persistent history of your last 5 searches that saves between sessions using WordPress user meta.
 * **IMPROVEMENT:** The plugin settings page is now organized into three tabs: Settings, Coordinate Finder, and Performance Report.
+* **IMPROVEMENT:** Enhanced input validation and sanitization for the geocoding tool with proper JSON handling.
 
 ### 1.7.8
 * **SECURITY:** Improved sanitization and validation for rate-limiting feature.
