@@ -1,0 +1,31 @@
+name: Build WordPress Block
+
+on:
+  push:
+    branches:
+      - main # Or your default branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Or your preferred Node.js version
+
+      - name: Install dependencies
+        run: npm install # Or yarn install, depending on your package manager
+
+      - name: Build WordPress Block
+        run: npm run build # This command uses @wordpress/scripts to compile src to build
+
+      - name: Upload build folder as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordpress-block-build
+          path: build/ # Adjust if your build folder is named differently or located elsewhere
