@@ -61,12 +61,12 @@ export default function Edit({ attributes, setAttributes }) {
                         {__('Find Coordinates by Name', 'under-the-weather')}
                     </Button>
                     <hr />
-                    <ToggleControl
-                        label={__('Unit System', 'under-the-weather')}
-                        checked={unit === 'metric'}
-                        onChange={(isChecked) => setAttributes({ unit: isChecked ? 'metric' : 'imperial' })}
-                        help={isChecked ? __('Display in Celsius', 'under-the-weather') : __('Display in Fahrenheit', 'under-the-weather')}
-                    />
+					<ToggleControl
+						label={__('Unit System', 'under-the-weather')}
+						checked={unit === 'metric'}
+						onChange={(isChecked) => setAttributes({ unit: isChecked ? 'metric' : 'imperial' })}
+						help={unit === 'metric' ? __('Display in Celsius', 'under-the-weather') : __('Display in Fahrenheit', 'under-the-weather')}
+					/>
                 </PanelBody>
             </InspectorControls>
 
