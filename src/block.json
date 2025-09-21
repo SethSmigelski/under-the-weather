@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "under-the-weather/widget",
+  "version": "1.0.0",
+  "title": "Weather Widget",
+  "category": "widgets",
+  "icon": "cloud",
+  "description": "Displays a weather forecast for a specific location.",
+  "attributes": {
+    "locationName": {
+      "type": "string",
+      "source": "attribute",
+      "selector": ".weather-widget",
+      "attribute": "data-location-name"
+    },
+    "latitude": {
+      "type": "string",
+      "source": "attribute",
+      "selector": ".weather-widget",
+      "attribute": "data-lat"
+    },
+    "longitude": {
+      "type": "string",
+      "source": "attribute",
+      "selector": ".weather-widget",
+      "attribute": "data-lon"
+    },
+    "unit": {
+      "type": "string",
+      "default": "imperial"
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "textdomain": "under-the-weather",
+  "editorScript": "file:./index.js"
+}
