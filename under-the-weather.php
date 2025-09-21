@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           1.8
+ * Version:           1.8.0
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '1.8' );
+define( 'UNDER_THE_WEATHER_VERSION', '1.8.0' );
 
 // =============================================================================
 // SECTION 1: SETTINGS PAGE & CACHE CLEARING
@@ -292,6 +292,14 @@ function under_the_weather_handle_clear_cache_action() {
         }
     }
 }
+
+// Log errors in debug mode:
+function under_the_weather_log($message) {
+    if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+        error_log('UTW: ' . $message);
+    }
+}
+
 function under_the_weather_clear_transients_safely() {
     global $wpdb;
     
@@ -309,9 +317,7 @@ function under_the_weather_clear_transients_safely() {
     ));
     
     if ($result1 === false || $result2 === false) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-			error_log('UTW: Failed to clear weather transients - DB error');
-		}
+		under_the_weather_log('Failed to clear weather transients - DB error');
         return false;
     }
     
@@ -335,9 +341,7 @@ function under_the_weather_clear_rate_limit_transients_safely() {
     ));
     
     if ($result1 === false || $result2 === false) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-			error_log('UTW: Failed to clear rate limit transients - DB error');
-		}
+		under_the_weather_log('Failed to clear rate limit transients - DB error');
         return false;
     }
     
@@ -367,6 +371,65 @@ function under_the_weather_enqueue_assets() {
         under_the_weather_load_scripts_manually();
     } 
 }
+/**
+ * Save Previous Searches for Coordinate Finder.
+ */
+add_action('wp_ajax_utw_save_search_history', 'under_the_weather_save_search_history');
+function under_the_weather_save_search_history() {
+    check_ajax_referer('utw_geocoder_nonce', 'nonce');
+    
+    if (!current_user_can('manage_options')) {
+        wp_die('Unauthorized');
+    }
+	
+    // Intentionally not sanitized here - JSON string must be decoded first, 
+	// Individual elements are sanitized below
+    $history_raw = wp_unslash($_POST['history'] ?? '');
+    
+    $decoded = json_decode($history_raw, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        under_the_weather_log('Geocoder: JSON decode failed for user ' . get_current_user_id());
+        wp_send_json_error();
+    }
+    
+    // Sanitize the individual items AFTER decoding
+    $sanitized_history = [];
+    foreach ($decoded as $item) {
+        if (isset($item['locationName']) && isset($item['widgetHtml'])) {
+            $sanitized_history[] = [
+                'locationName' => sanitize_text_field($item['locationName']),
+                'widgetHtml' => wp_kses($item['widgetHtml'], [
+                    'div' => [
+                        'class' => [],
+                        'data-lat' => [],
+                        'data-lon' => [],
+                        'data-location-name' => []
+                    ]
+                ])
+            ];
+        }
+    }
+    
+    if (empty($sanitized_history)) {
+        wp_send_json_error();
+    }
+    
+    $result = update_user_meta(get_current_user_id(), 'utw_geocoder_history', $sanitized_history);
+    wp_send_json_success();
+}
+
+add_action('wp_ajax_utw_get_search_history', 'under_the_weather_get_search_history');
+function under_the_weather_get_search_history() {
+    check_ajax_referer('utw_geocoder_nonce', 'nonce');
+    
+    if (!current_user_can('manage_options')) {
+        wp_die('Unauthorized');
+    }
+    
+    $history = get_user_meta(get_current_user_id(), 'utw_geocoder_history', true);
+    wp_send_json_success($history ?: []);
+}
 
 /**
  * Loads settings page styles and geocoder script location coordinates lookup tool.
@@ -378,6 +441,11 @@ function under_the_weather_enqueue_admin_assets($hook) {
 	} 
     wp_enqueue_style('under-the-weather-admin-styles', plugins_url('css/admin-styles.min.css', __FILE__), [], UNDER_THE_WEATHER_VERSION); 
 	wp_enqueue_script('under-the-weather-geocoder', plugins_url('js/admin-geocoder.js', __FILE__), [], UNDER_THE_WEATHER_VERSION, true);
+    
+    // Localize script with nonce
+    wp_localize_script('under-the-weather-geocoder', 'utwGeocoderData', [
+        'nonce' => wp_create_nonce('utw_geocoder_nonce')
+    ]);
 }
 
 /**
@@ -598,17 +666,13 @@ function under_the_weather_safe_api_call($api_url) {
         'sslverify' => true,
         'user-agent' => 'WordPress/Under-The-Weather-Plugin/' . UNDER_THE_WEATHER_VERSION
     ]);
-    if (is_wp_error($response)) {		
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-			error_log('UTW API Error: ' . $response->get_error_message());
-		}
+    if (is_wp_error($response)) {
+		under_the_weather_log('API Error: ' . $response->get_error_message());		
         return false;
     }
     $code = wp_remote_retrieve_response_code($response);
-    if ($code !== 200) {		
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-			error_log("UTW API returned status: $code");
-		} 
+    if ($code !== 200) {
+		under_the_weather_log("API returned status: $code");			
         return false;
     }
     return wp_remote_retrieve_body($response);
@@ -619,17 +683,13 @@ function under_the_weather_safe_api_call($api_url) {
  */
 function under_the_weather_validate_api_response($data) {
     if (!is_object($data)) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-			error_log('UTW: API response is not an object');
-		}
+		under_the_weather_log('API response is not an object');	
         return false;
     }
     
     // Validate current weather data exists
     if (!isset($data->current) || !is_object($data->current)) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-			error_log('UTW: Missing current weather data');
-		}
+		under_the_weather_log('Missing current weather data');	
         return false;
     }
     
@@ -641,9 +701,7 @@ function under_the_weather_validate_api_response($data) {
 		$temp_range = ($unit === 'metric') ? [-50, 60] : [-60, 150]; // Celsius vs Fahrenheit
 		
 		if ($temp < $temp_range[0] || $temp > $temp_range[1]) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-				error_log('UTW: Invalid temperature value: ' . $temp . ' for unit: ' . $unit);
-			}
+			under_the_weather_log('Invalid temperature value: ' . $temp . ' for unit: ' . $unit);	
 			$data->current->temp = ($unit === 'metric') ? 20 : 70; // More appropriate fallback
 		}
 		$data->current->temp = $temp;
@@ -665,9 +723,7 @@ function under_the_weather_validate_api_response($data) {
     if (isset($data->current->weather[0]->icon)) {
         $icon = $data->current->weather[0]->icon;
         if (!preg_match('/^[0-9]{2}[dn]$/', $icon)) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-				error_log('UTW: Invalid icon code: ' . $icon);
-			}
+			under_the_weather_log('Invalid icon code: ' . $icon);	
             $data->current->weather[0]->icon = '01d'; // Fallback to clear sky
         }
     }
@@ -821,6 +877,7 @@ function under_the_weather_display_performance_report_html() {
             <?php if (!empty($options['enable_rate_limit'])) : ?>
                 <p><?php
                     printf(
+						/* translators: %s is the maximum number of requests, a bolded number like 100. */
                         esc_html__('Rate limiting is currently ACTIVE, blocking requests in excess of %s per hour from a single IP address.', 'under-the-weather'),
                         '<strong>' . esc_html($options['rate_limit_count'] ?? 100) . '</strong>'
                     );
