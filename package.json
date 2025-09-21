@@ -1,6 +1,13 @@
 {
   "name": "under-the-weather",
-  "version": "1.8",
+  "version": "1.9.0",
   "description": "A lightweight and customizable weather widget, powered by the OpenWeather API, that caches and presents weather data with multiple style options.",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^27.0.0"
+  }
 }
