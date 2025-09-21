@@ -1,7 +1,7 @@
 // src/edit.js
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, ToggleControl, Button, Modal, Icon } from '@wordpress/components';
+import { PanelBody, TextControl, ToggleControl, Button, Modal } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 
 export default function Edit({ attributes, setAttributes }) {
@@ -94,22 +94,21 @@ export default function Edit({ attributes, setAttributes }) {
             )}
 
             <div {...useBlockProps()}>
-                <p>
-					<Icon icon="sun" /> 
+                <p><span className="dashicons dashicons-cloud" /> 
 					<strong>{__(' Under The Weather Forecast', 'under-the-weather')}</strong>
 				</p>
                 {locationName ? (
 				    <>
-						<p><Icon icon="location-alt" />
+						<p><span className="dashicons dashicons-location-alt" />
 							{` ${__('Location:', 'under-the-weather')} ${locationName}`}
 						</p>
-						<p><Icon icon="admin-settings" />
+						<p><span className="dashicons dashicons-admin-settings" />
 							{` ${__('Unit:', 'under-the-weather')} ${unit}`}
 						</p>
 					</>
                 ) : (
-					<p><Icon icon="megaphone" />
-                    {` ${__('Please configure the weather widget in the block settings.', 'under-the-weather')}`}
+					<p><span className="dashicons dashicons-megaphone" />
+                    	{` ${__('Please configure the weather widget in the block settings.', 'under-the-weather')}`}
 					</p>
                 )}
             </div>
