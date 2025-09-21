@@ -116,22 +116,22 @@ export default function Edit({ attributes, setAttributes }) {
             )}
 
             <div {...useBlockProps()}>
-                <p><Icon icon={weatherIcon} /> 
-					<strong>{__(' Under The Weather Forecast', 'under-the-weather')}</strong>
-				</p>
+                <h2><Icon icon={weatherIcon} /> 
+					{__(' Under The Weather Forecast', 'under-the-weather')}
+				</h2>
                 {locationName ? (
 				    <>
 						<p><Icon icon={locationIcon} />
-							{` ${__('Location:', 'under-the-weather')} ${locationName}`}
+							{` ${__('Location:', 'under-the-weather')} <strong>${locationName}</strong>`}
 						</p>
 						<p><Icon icon={degreesIcon} />
-							{` ${__('Unit:', 'under-the-weather')} ${unit}`}
+							{` ${__('Unit:', 'under-the-weather')} <strong>${unit}</strong>`}
 						</p>
 					</>
                 ) : (
 					    <div className="utw-placeholder">
 					        <p><Icon icon={wrenchIcon} />
-		                    	{` ${__('Please configure the weather widget in the block settings.', 'under-the-weather')}`}
+		                    	{` ${__('<strong>Add a Location:</strong> Please configure the weather widget in the block settings.', 'under-the-weather')}`}
 							</p>
 					        <Button 
 					            variant="primary" 
