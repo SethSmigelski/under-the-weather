@@ -122,16 +122,20 @@ export default function Edit({ attributes, setAttributes }) {
                 {locationName ? (
 				    <>
 						<p><Icon icon={locationIcon} />
-							{` ${__('Location:', 'under-the-weather')} <strong>${locationName}</strong>`}
+						    {` ${__('Location:', 'under-the-weather')} `}
+						    <strong>{locationName}</strong>
 						</p>
 						<p><Icon icon={degreesIcon} />
-							{` ${__('Unit:', 'under-the-weather')} <strong>${unit}</strong>`}
+							{` ${__('Unit:', 'under-the-weather')} `}
+    						<strong>{unit}</strong>
+
 						</p>
 					</>
                 ) : (
 					    <div className="utw-placeholder">
 					        <p><Icon icon={wrenchIcon} />
-		                    	{` ${__('<strong>Add a Location:</strong> Please configure the weather widget in the block settings.', 'under-the-weather')}`}
+		                    	<strong>{__('Add Location:', 'under-the-weather')}</strong>
+    							{` ${__('Please configure the weather widget in the block settings.', 'under-the-weather')}`}
 							</p>
 					        <Button 
 					            variant="primary" 
