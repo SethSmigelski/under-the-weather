@@ -15,6 +15,7 @@ export default function Edit({ attributes, setAttributes }) {
 	const [lastRequestTime, setLastRequestTime] = useState(0);
 	const [requestCount, setRequestCount] = useState(0);
 	const { openGeneralSidebar } = useDispatch('core/edit-post');
+	const { createErrorNotice } = useDispatch('core/notices');
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
     const findCoordinates = () => {
@@ -22,17 +23,26 @@ export default function Edit({ attributes, setAttributes }) {
 	    const cleanSearchTerm = searchTerm.trim();
 	    
 	    if (!cleanSearchTerm) {
-	        alert(__('Please enter a location name.', 'under-the-weather'));
+			createErrorNotice(
+		        __('Please enter a location name.', 'under-the-weather'),
+		        { type: 'snackbar' } 
+		    );
 	        return;
 	    }
 	    
 	    if (cleanSearchTerm.length < 2) {
-	        alert(__('Location name must be at least 2 characters.', 'under-the-weather'));
+			createErrorNotice(
+		        __('Location name must be at least 2 characters.', 'under-the-weather'),
+		        { type: 'snackbar' } 
+		    );
 	        return;
 	    }
 	    
 	    if (cleanSearchTerm.length > 100) {
-	        alert(__('Location name is too long. Please use a shorter name.', 'under-the-weather'));
+			createErrorNotice(
+		        __('Location name is too long. Please use a shorter name.', 'under-the-weather'),
+		        { type: 'snackbar' } 
+		    );
 	        return;
 	    }
 	    
@@ -46,7 +56,10 @@ export default function Edit({ attributes, setAttributes }) {
 	    
 	    for (const pattern of dangerousPatterns) {
 	        if (pattern.test(cleanSearchTerm)) {
-	            alert(__('Invalid characters in location name. Please use only letters, numbers, spaces, and basic punctuation.', 'under-the-weather'));
+			createErrorNotice(
+		        __('Invalid characters in location name. Please use only letters, numbers, spaces, and basic punctuation.', 'under-the-weather'),
+		        { type: 'snackbar' } 
+		    );
 	            return;
 	        }
 	    }
@@ -57,7 +70,10 @@ export default function Edit({ attributes, setAttributes }) {
         
         if (now - lastRequestTime < oneMinute) {
             if (requestCount >= 5) {
-                alert(__('Too many requests. Please wait a moment before searching again.', 'under-the-weather'));
+				createErrorNotice(
+			        __('Too many requests. Please wait a moment before searching again.', 'under-the-weather'),
+			        { type: 'snackbar' } 
+			    );
                 return;
             }
             setRequestCount(prev => prev + 1);
@@ -123,7 +139,10 @@ export default function Edit({ attributes, setAttributes }) {
 	        setSearchResults(validResults);
 	        
 	        if (validResults.length === 0) {
-	            alert(__('No locations found. Please try a different search term.', 'under-the-weather'));
+				createErrorNotice(
+			        __('No locations found. Please try a different search term.', 'under-the-weather'),
+			        { type: 'snackbar' } 
+			    );
 	        }
 	    })
 		.catch(error => {
