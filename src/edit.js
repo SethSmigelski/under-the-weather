@@ -9,8 +9,6 @@ import { weatherIcon, degreesIcon, locationIcon, wrenchIcon } from './icons';
 /**
  * Converts a string to title case.
  * e.g., "los angeles" becomes "Los Angeles".
- * @param {string} str The string to convert.
- * @returns {string} The title-cased string.
  */
 const titleCase = (str) => {
   if (!str) return '';
