@@ -250,8 +250,11 @@ export default function Edit({ attributes, setAttributes }) {
 						</p>
 						<p><Icon icon={degreesIcon} />
 							{` ${__('Unit:', 'under-the-weather')} `}
-    						<strong>{unit.charAt(0).toUpperCase() + unit.slice(1)}</strong>
-
+							<strong>
+							    {unit === 'metric' 
+							        ? __('Celsius', 'under-the-weather') 
+							        : __('Fahrenheit', 'under-the-weather')}
+							</strong>
 						</p>
 					</>
                 ) : (
