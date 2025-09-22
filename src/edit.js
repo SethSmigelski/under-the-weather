@@ -163,7 +163,7 @@ export default function Edit({ attributes, setAttributes }) {
 				errorMessage = __('Network error. Please check your connection and try again.', 'under-the-weather');
 			}
 			
-			alert(errorMessage);
+			createErrorNotice(errorMessage, { type: 'snackbar' });
 		});
     };
 
