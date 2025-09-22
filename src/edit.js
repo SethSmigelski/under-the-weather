@@ -11,20 +11,140 @@ export default function Edit({ attributes, setAttributes }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+	const [lastRequestTime, setLastRequestTime] = useState(0);
+	const [requestCount, setRequestCount] = useState(0);
 	const { openGeneralSidebar } = useDispatch('core/edit-post');
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
     const findCoordinates = () => {
-        if (!searchTerm) return;
-        setIsLoading(true);
-        const apiUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchTerm)}&format=json&limit=5`;
+		    // Validate input
+	    const cleanSearchTerm = searchTerm.trim();
+	    
+	    if (!cleanSearchTerm) {
+	        alert(__('Please enter a location name.', 'under-the-weather'));
+	        return;
+	    }
+	    
+	    if (cleanSearchTerm.length < 2) {
+	        alert(__('Location name must be at least 2 characters.', 'under-the-weather'));
+	        return;
+	    }
+	    
+	    if (cleanSearchTerm.length > 100) {
+	        alert(__('Location name is too long. Please use a shorter name.', 'under-the-weather'));
+	        return;
+	    }
+	    
+	    // Check for potentially malicious patterns
+	    const dangerousPatterns = [
+	        /<[^>]*>/,           // HTML tags
+	        /javascript:/i,      // JavaScript protocol
+	        /on\w+\s*=/i,       // Event handlers
+	        /[<>"\'{}\[\]]/      // Suspicious characters
+	    ];
+	    
+	    for (const pattern of dangerousPatterns) {
+	        if (pattern.test(cleanSearchTerm)) {
+	            alert(__('Invalid characters in location name. Please use only letters, numbers, spaces, and basic punctuation.', 'under-the-weather'));
+	            return;
+	        }
+	    }
 
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                setSearchResults(data || []);
-                setIsLoading(false);
-            });
+		// Rate limiting: max 5 requests per minute
+        const now = Date.now();
+        const oneMinute = 60 * 1000;
+        
+        if (now - lastRequestTime < oneMinute) {
+            if (requestCount >= 5) {
+                alert(__('Too many requests. Please wait a moment before searching again.', 'under-the-weather'));
+                return;
+            }
+            setRequestCount(prev => prev + 1);
+        } else {
+            setRequestCount(1);
+            setLastRequestTime(now);
+        }
+        
+        setIsLoading(true);
+		const apiUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanSearchTerm)}&format=json&limit=5`;
+		
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 10000);
+		
+        fetch(apiUrl, {
+	        method: 'GET',
+	        headers: {
+	            'User-Agent': 'WordPress Under-The-Weather Plugin'
+	        },
+    		signal: controller.signal
+	    })
+	    .then(response => {
+			clearTimeout(timeoutId);
+	        if (!response.ok) {
+	            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+	        }
+	        
+	        const contentType = response.headers.get('content-type');
+	        if (!contentType || !contentType.includes('application/json')) {
+	            throw new Error('Invalid response format from geocoding service');
+	        }
+	        
+	        return response.json();
+	    })
+	    .then(data => {
+	        setIsLoading(false);
+	        
+	        // Validate API response structure
+	        if (!Array.isArray(data)) {
+	            throw new Error('Unexpected response format');
+	        }
+	        
+	        // Validate and sanitize each result
+	        const validResults = data.filter(result => {
+	            return (
+	                result &&
+	                typeof result.lat === 'string' &&
+	                typeof result.lon === 'string' &&
+	                typeof result.display_name === 'string' &&
+	                !isNaN(parseFloat(result.lat)) &&
+	                !isNaN(parseFloat(result.lon)) &&
+	                parseFloat(result.lat) >= -90 &&
+	                parseFloat(result.lat) <= 90 &&
+	                parseFloat(result.lon) >= -180 &&
+	                parseFloat(result.lon) <= 180
+	            );
+	        });
+	        
+	        if (validResults.length === 0 && data.length > 0) {
+	            throw new Error('No valid location results found');
+	        }
+	        
+	        setSearchResults(validResults);
+	        
+	        if (validResults.length === 0) {
+	            alert(__('No locations found. Please try a different search term.', 'under-the-weather'));
+	        }
+	    })
+		.catch(error => {
+			clearTimeout(timeoutId);
+			setIsLoading(false);
+			setSearchResults([]);
+			
+			console.error('Geocoding error:', error);
+			
+			// User-friendly error messages
+			let errorMessage = __('Unable to search for locations. Please try again.', 'under-the-weather');
+			
+			if (error.name === 'AbortError') {
+				errorMessage = __('Request timed out. Please try again.', 'under-the-weather');
+			} else if (error.message.includes('HTTP 429')) {
+				errorMessage = __('Too many requests to the location service. Please wait a moment and try again.', 'under-the-weather');
+			} else if (error.message.includes('network') || error.message.includes('fetch')) {
+				errorMessage = __('Network error. Please check your connection and try again.', 'under-the-weather');
+			}
+			
+			alert(errorMessage);
+		});
     };
 
 	// Block Icons credits: Phosphor Icon Set - https://github.com/phosphor-icons/
