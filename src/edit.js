@@ -6,6 +6,21 @@ import { useState } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 import { weatherIcon, degreesIcon, locationIcon, wrenchIcon } from './icons'; 
 
+/**
+ * Converts a string to title case.
+ * e.g., "los angeles" becomes "Los Angeles".
+ * @param {string} str The string to convert.
+ * @returns {string} The title-cased string.
+ */
+const titleCase = (str) => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 export default function Edit({ attributes, setAttributes }) {
     const { locationName, latitude, longitude, unit } = attributes;
     const [isModalOpen, setModalOpen] = useState(false);
@@ -171,7 +186,7 @@ export default function Edit({ attributes, setAttributes }) {
         setAttributes({
             latitude: parseFloat(result.lat).toFixed(4),
             longitude: parseFloat(result.lon).toFixed(4),
-            locationName: searchTerm,
+            locationName: titleCase(searchTerm)
         });
         closeModal();
     };
