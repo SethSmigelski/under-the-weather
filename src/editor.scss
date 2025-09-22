@@ -13,3 +13,20 @@
 .wp-block-under-the-weather-widget svg{
 	fill: #222; margin-right:5px;
 }
+.coordinator-finder-results {
+    margin-top: 20px;
+}
+
+.coordinator-finder-result-item {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f0f0f0;
+    text-align: left;
+    height: auto;
+
+    &:hover {
+        background: #e0e0e0;
+    }
+}
