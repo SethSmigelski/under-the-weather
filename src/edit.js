@@ -223,13 +223,18 @@ export default function Edit({ attributes, setAttributes }) {
                     <Button variant="primary" onClick={findCoordinates} isBusy={isLoading}>
                         {__('Search', 'under-the-weather')}
                     </Button>
-                    <div className="coordinator-finder-results" style={{ marginTop: '20px' }}>
+                    <div className="coordinator-finder-results">
                         {searchResults.map((result, index) => (
-                            <div key={index} style={{ marginBottom: '10px', padding: '10px', background: '#f0f0f0', cursor: 'pointer' }} onClick={() => selectLocation(result)}>
-                                <strong>{result.display_name}</strong>
-                                <br />
-                                <small>Lat: {parseFloat(result.lat).toFixed(4)}, Lon: {parseFloat(result.lon).toFixed(4)}</small>
-                            </div>
+							<Button 
+							    key={index} 
+							    isTertiary
+							    className="coordinator-finder-result-item"
+							    onClick={() => selectLocation(result)}
+							>
+							    <strong>{result.display_name}</strong>
+							    <br />
+							    <small>Lat: {parseFloat(result.lat).toFixed(4)}, Lon: {parseFloat(result.lon).toFixed(4)}</small>
+							</Button>
                         ))}
                     </div>
                 </Modal>
@@ -247,7 +252,7 @@ export default function Edit({ attributes, setAttributes }) {
 						</p>
 						<p><Icon icon={degreesIcon} />
 							{` ${__('Unit:', 'under-the-weather')} `}
-    						<strong>{unit}</strong>
+    						<strong>{unit.charAt(0).toUpperCase() + unit.slice(1)}</strong>
 
 						</p>
 					</>
