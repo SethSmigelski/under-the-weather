@@ -32,7 +32,7 @@
         background: #f9f9f9;
     }
 }
-.components-text-control__input.has-error {
+.components-base-control.has-error .components-text-control__input {
     border-color: #d63638;
     box-shadow: 0 0 0 1px #d63638;
 }
