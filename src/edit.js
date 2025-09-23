@@ -6,58 +6,6 @@ import { useState } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 import { weatherIcon, degreesIcon, locationIcon, wrenchIcon } from './icons'; 
 
-// Converts a string to title case. e.g., "los angeles" becomes "Los Angeles".
-const titleCase = (str) => {
-  if (!str) return '';
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-};
-
-const [coordinateErrors, setCoordinateErrors] = useState({
-    latitude: '',
-    longitude: ''
-});
-
-// Validate coordinate inputs
-const validateLatitude = (value) => {
-    if (!value || value.trim() === '') {
-        return ''; // Allow empty values
-    }
-    
-    const num = parseFloat(value);
-    
-    if (isNaN(num)) {
-        return __('Latitude must be a number', 'under-the-weather');
-    }
-    
-    if (num < -90 || num > 90) {
-        return __('Latitude must be between -90 and 90', 'under-the-weather');
-    }
-    
-    return '';
-};
-
-const validateLongitude = (value) => {
-    if (!value || value.trim() === '') {
-        return ''; // Allow empty values
-    }
-    
-    const num = parseFloat(value);
-    
-    if (isNaN(num)) {
-        return __('Longitude must be a number', 'under-the-weather');
-    }
-    
-    if (num < -180 || num > 180) {
-        return __('Longitude must be between -180 and 180', 'under-the-weather');
-    }
-    
-    return '';
-};
-
 export default function Edit({ attributes, setAttributes }) {
     const { locationName, latitude, longitude, unit } = attributes;
     const [isModalOpen, setModalOpen] = useState(false);
@@ -66,8 +14,60 @@ export default function Edit({ attributes, setAttributes }) {
     const [isLoading, setIsLoading] = useState(false);
 	const [lastRequestTime, setLastRequestTime] = useState(0);
 	const [requestCount, setRequestCount] = useState(0);
+	const [coordinateErrors, setCoordinateErrors] = useState({
+        latitude: '',
+        longitude: ''
+    });
 	const { openGeneralSidebar } = useDispatch('core/edit-post');
 	const { createErrorNotice } = useDispatch('core/notices');
+
+	// Validate coordinate inputs
+	const validateLatitude = (value) => {
+	    if (!value || value.trim() === '') {
+	        return ''; // Allow empty values
+	    }
+	    
+	    const num = parseFloat(value);
+	    
+	    if (isNaN(num)) {
+	        return __('Latitude must be a number', 'under-the-weather');
+	    }
+	    
+	    if (num < -90 || num > 90) {
+	        return __('Latitude must be between -90 and 90', 'under-the-weather');
+	    }
+	    
+	    return '';
+	};
+	
+	const validateLongitude = (value) => {
+	    if (!value || value.trim() === '') {
+	        return ''; // Allow empty values
+	    }
+	    
+	    const num = parseFloat(value);
+	    
+	    if (isNaN(num)) {
+	        return __('Longitude must be a number', 'under-the-weather');
+	    }
+	    
+	    if (num < -180 || num > 180) {
+	        return __('Longitude must be between -180 and 180', 'under-the-weather');
+	    }
+	    
+	    return '';
+	};
+		
+	// Converts a string to title case. e.g., "los angeles" becomes "Los Angeles".
+	const titleCase = (str) => {
+	  if (!str) return '';
+	  return str
+	    .toLowerCase()
+	    .split(' ')
+	    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+	    .join(' ');
+	};
+	
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
     const findCoordinates = () => {
