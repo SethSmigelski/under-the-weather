@@ -53,8 +53,9 @@ export default function Edit({ attributes, setAttributes }) {
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
     const findCoordinates = () => {
-		    // Validate input
-	    const cleanSearchTerm = searchTerm.trim();
+	
+	// Validate Location input
+	const cleanSearchTerm = searchTerm.trim();
 	    
 	    if (!cleanSearchTerm) {
 			createErrorNotice(
