@@ -250,7 +250,7 @@ export default function Edit({ attributes, setAttributes }) {
 					            latitude: error
 					        }));
 					    }}
-					    help={coordinateErrors.latitude || __('e.g., 34.0522 (between -90 and 90)', 'under-the-weather')}
+					    help={coordinateErrors.latitude || __('e.g., 34.1195 (between -90 and 90)', 'under-the-weather')}
 					    className={coordinateErrors.latitude ? 'has-error' : ''}
                     />
                     <TextControl
@@ -264,7 +264,7 @@ export default function Edit({ attributes, setAttributes }) {
 					            longitude: error
 					        }));
 					    }}
-					    help={coordinateErrors.longitude || __('e.g., -118.2437 (between -180 and 180)', 'under-the-weather')}
+					    help={coordinateErrors.longitude || __('e.g., -118.3005 (between -180 and 180)', 'under-the-weather')}
 					    className={coordinateErrors.longitude ? 'has-error' : ''}
                     />
                     <Button variant="secondary" onClick={openModal}>
