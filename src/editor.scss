@@ -32,3 +32,12 @@
         background: #f9f9f9;
     }
 }
+.components-text-control__input.has-error {
+    border-color: #d63638;
+    box-shadow: 0 0 0 1px #d63638;
+}
+.components-base-control__help {
+    &.error {
+        color: #d63638;
+    }
+}
