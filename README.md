@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, widget
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 1.8
+* **Stable tag:** 2.0
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -19,13 +19,15 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 
 ## Description
 
-Under The Weather is a powerful yet simple plugin designed to display location-specific weather forecasts on your WordPress site. With performance in mind, Under The Weather uses a server-side caching system (WordPress Transients) to minimize API calls and ensure your site remains fast.
+Under The Weather is a powerful yet simple plugin designed to display location-specific weather forecasts on your WordPress site. Featuring a dedicated "Under The Weather Forecast" block to add and customize weather widgets directly in the WordPress editor for a seamless workflow.
 
-This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins. Under The Weather is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JavaScript frameworks. Built with modern security practices, including input validation, CSRF protection, and optional rate limiting to protect your site and API quota.
+With performance in mind, Under The Weather uses a server-side caching system (WordPress Transients) to minimize API calls and ensure your site remains fast. Under The Weather is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JavaScript frameworks. Built with modern security practices, including input validation, CSRF protection, and optional rate limiting to protect your site and API quota.
+
+This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins.
 
 ### Key Features:
 * **Stylish Weather Widgets:** Choose between default OpenWeather images or the crisp Weather Icons font set.
-* **Easy to Use:** Simply add a `<div>` with data attributes to any webpage to display the widget.
+* **Easy to Use:** Add weather widgets using the WordPress block editor or by placing a simple `<div>` with data attributes anywhere on your site.
 * **Server-Side Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for all users.
 * **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
 * **Highly Customizable:** Use the detailed settings page to control everything from cache duration to the number of forecast days.
@@ -33,7 +35,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
-* **Coordinate Finder Tool:** An easy-to-use tool on the settings page retrieves latitude and longitude coordinates by location name and generates ready-to-use widget `<div>`s.
+* **Coordinate Finder Tools:** An easy-to-use tool on the settings page retrieves latitude and longitude coordinates by location name and generates ready-to-use widget `<div>`s.  Pressing the "Find Coordinates by Name" button in the "Under The Weather Forecast" block automatically fills in the location's coordinates.
   
 ---
 
@@ -58,6 +60,21 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 ## Usage
 
+The Under The Weather plugin offers two ways to add a weather forecast: using the block editor or manually placing a `<div>`.
+
+### Using the Block Editor (Recommended)
+
+1.  Open the post or page where you want to display the weather.
+2.  Click the block inserter icon (+) to add a new block.
+3.  Search for "Under The Weather Forecast" and add the block.
+4. Configure your location using either:
+   - Manual entry of coordinates in the block settings sidebar
+   - The built-in coordinate finder that searches by location name and fills in the coordinates for you
+5. Choose your preferred units (Imperial/Fahrenheit or Metric/Celsius)
+6. Publish or update your post - the weather will display automatically!
+
+
+### Manual Placement (Classic Editor & Themes)
 To display the weather widget on a post, page, or in a template file, add a simple `<div>` element with the class `weather-widget` and the required data attributes.
 
 * `data-lat`: The latitude for the forecast.
@@ -144,13 +161,25 @@ For most users, simply leaving these boxes checked is the best way to use the we
 
 ## Coordinate Finder
 
-The plugin includes a Coordinate Finder tool to generate a ready-to-use widget div.  Don't know the latitude and longitude for your desired location? No problem. Just follow these steps: 
+Don't know the latitude and longitude for your desired location? No problem. The Under The Weather plugin will find coordinates for you.
+
+### In the WordPress Block Editor
+
+1. Add an **"Under The Weather Forecast"** block to your post or page. 
+2. Open the Block Settings
+3. Click the **"Find Coordinates by Name"** button.
+4. Type in the name of your location.
+5. Press **"Search."**
+6. When search results appear, click on your desired location.
+7. The location's coordinates will be automatically entered into the latitude and longitude settings for the weather forecast.
+
+### In the Plugin Settings Page
 
 1. Navigate to **Settings > Under The Weather** and click on the **Coordinate Finder** tab.
 2. Type a location name into the search box (e.g., "Los Angeles, CA").
 3. Click the **"Find Coordinates"** button.
 4. The tool will display the generated `<div>` with the correct coordinates and location name.
-5. Use the **"Copy Code"** button to copy the HTML and paste it into a post, page, or widget.
+5. Use the **"Copy Code"** button to copy the ready-to-use widget HTML and paste it into a post, page, or widget.
 
 The tool automatically saves a history of your last 5 searches, which persists between sessions. You can easily copy code from previous searches without having to look them up again.
 
@@ -185,15 +214,27 @@ If you're feeling patient, just wait for the weather widget to update after the 
 
 Both. By default, the weather widget will show a forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). Additionally, checking the box for "Display Unit Symbol" on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
 
+### What if I don't know the latitude and longitude for a weather location?
+
+The plugin offers two methods for looking up coordinates using its built-in **Coordinate Finder** tool: 
+* **In the Settings Page: ** Navigate to **Settings > Under The Weather** and click the **Coordinate Finder** tab. Simply type in a location name, and the tool will look up the coordinates and provide you with the exact `<div>` code to copy and paste.
+* **In the Editor:** While using the **Under The Weather Forecast** block, click on the **Find Coordinates By Name** button. The coordinates for your chosen location will be filled in for you automatically.
+
+### How do I use the weather block?
+
+In the WordPress block editor, simply search for "Under The Weather Forecast" when adding a new block. The block includes a built-in coordinate finder, so you can search for locations by name rather than manually entering latitude and longitude. Configure your preferences in the block settings sidebar, and the weather will appear automatically on your published page.
+
+### Can I still use the manual div method if I prefer it?
+
+Absolutely! The traditional method of adding `<div class="weather-widget">` with data attributes still works perfectly. The new block is simply an additional, more user-friendly option for those using the WordPress block editor. 
+
+The `<div>` method is particularly useful for theme developers and sites that dynamically populate widget attributes from post meta or custom fields.
+
 ### What does the "Enable Rate Limiting" setting do?
 
 This is a security feature that limits the number of times a single visitor (identified by their IP address) can request weather data in one hour. Enabling it helps protect your OpenWeather API key from being overused by automated bots or malicious users. For most websites, the default limit of 100 requests per hour is generous, but you can adjust it if needed.
 
 The rate limit is turned off by default to ensure maximum performance for all users.  If you notice an unexpected increase in weather requests in the performance report, go ahead and turn on rate limiting to see if something is afoot.
-
-### What if I don't know the latitude and longitude for a weather location?
-
-The plugin has a built-in **Coordinate Finder** tool. Navigate to **Settings > Under The Weather** and click the **Coordinate Finder** tab. Simply type in a location name, and the tool will look up the coordinates and provide you with the exact `<div>` code to copy and paste.
 
 ### Can I load the JavaScripts myself?
 
@@ -220,12 +261,9 @@ if ( is_singular('event') && function_exists('under_the_weather_load_scripts_man
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
-
 ###  Are there additional ways to customize this plugin?
 
 Yes. You can modify the appearance of the Weather Icons Fonts by making customizations using CSS. The Weather Icons Fonts are sharp, scalable, and can be customized through CSS to match your website's color palette. 
-
-
 
 ---
 
@@ -255,13 +293,18 @@ The plugin's comprehensive settings page.
 
 The Coordinate Finder tool, which generates widget code from a location name.
 
+![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
+
+The "Under The Weather Forecast" block in the WordPress editor.
+
 ---
 
 ## Credits
 
 * **Weather Data:**  OpenWeather
-* **Icon Font:**  Weather Icons by Erik Flowers
+* **Weather Icon Font:**  Weather Icons by Erik Flowers
 * **Geocoding & Map Data:** Data © OpenStreetMap contributors
+* **Block Icons:**  Phosphor
 
 ---
 
@@ -285,6 +328,14 @@ Here is the link to their privacy policy:
 
 ## Changelog
 
+### 2.0
+* NEW: Introduced the "Under The Weather Forecast" custom block for seamless integration with the WordPress block editor.
+* NEW: Included a built-in Coordinate Finder in the "Under The Weather Forecast" custom block for location search capabilities without leaving the editor
+* NEW: Included custom SVG icons (Phosphor icon set) to enhance the block's visual appearance in the editor.
+* IMPROVEMENT: Streamlined workflow - no need to manually code HTML divs when using the block editor.
+* IMPROVEMENT: Block previews the location name and temperature unit directly in the editor.
+* IMPROVEMENT: Added input validation, rate limiting, request timeout, and response validation for location searches from the Custom block, accompanied by user-friendly error messages.
+
 ### 1.8
 * **NEW:** Added a "Coordinate Finder" tool on the settings page to look up location coordinates and generate widget code.
 * **IMPROVEMENT:** The Coordinate Finder includes a persistent history of your last 5 searches that saves between sessions using WordPress user meta.
@@ -302,30 +353,30 @@ Here is the link to their privacy policy:
 * **IMPROVEMENT:** Implemented a 10-second timeout for API requests to prevent the widget from hanging indefinitely.
   
 ### 1.7.6
-* **SECURITY:**  Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data
+* **SECURITY:**  Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data.
 
 ### 1.7.5
-* **IMPROVEMENT:**  Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging
-* **IMPROVEMENT:**  Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback
-* **IMPROVEMENT:**  Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities
-* **IMPROVEMENT:**  Added custom User-Agent identification for OpenWeather API requests following best practices
+* **IMPROVEMENT:**  Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging.
+* **IMPROVEMENT:**  Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback.
+* **IMPROVEMENT:**  Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities.
+* **IMPROVEMENT:**  Added custom User-Agent identification for OpenWeather API requests following best practices.
 
 ### 1.7.4
 * **IMPROVEMENT:** The Performance Report now displays rate-limiting status, including a "Blocked Requests" column in the data table and a status box to show if the feature is active.  This will log the occurrence of any blocked requests.
-* **IMPROVEMENT:** Refined styling for the Performance Report
+* **IMPROVEMENT:** Refined styling for the Performance Report.
 
 ### 1.7.3
 * **NEW:** Added an optional, user-configurable rate-limiting feature to the REST API endpoint to protect against API quota exhaustion and resource abuse.
 * **IMPROVEMENT:** The "Requests per Hour" for the rate limit can be configured on the settings page.
 
 ### 1.7.2
-* **SECURITY:** Enhanced input validation for REST API parameters - added coordinate range validation (-90 to 90 for latitude, -180 to 180 for longitude) and location name screening to prevent XSS and injection attacks
-* **IMPROVEMENT:** Separated validation and sanitization logic in REST API for better error handling
+* **SECURITY:** Enhanced input validation for REST API parameters - added coordinate range validation (-90 to 90 for latitude, -180 to 180 for longitude) and location name screening to prevent XSS and injection attacks.
+* **IMPROVEMENT:** Separated validation and sanitization logic in REST API for better error handling.
 
 ### 1.7.1
-* **FIX:** Completed nonce verification to prevent CSRF attacks on tab switching
-* **IMPROVEMENT:** Added format validation to verify that the OpenWeather API key is a 32-character alphanumeric string
-* **IMPROVEMENT:** Escape URL in JavaScript Localization
+* **FIX:** Completed nonce verification to prevent CSRF attacks on tab switching.
+* **IMPROVEMENT:** Added format validation to verify that the OpenWeather API key is a 32-character alphanumeric string.
+* **IMPROVEMENT:** Escape URL in JavaScript Localization.
   
 ### 1.7
 * **SECURITY:** Added nonce verification to the admin settings tabs to protect against CSRF attacks.
@@ -371,3 +422,6 @@ This version includes an Enable Cache setting. This setting may be helpful when 
 
 ### 1.5
 This version includes significant code quality and security updates. The template tag for manually loading scripts has been renamed from `utw_load_scripts_manually()` to `under_the_weather_load_scripts_manually()`. Please update your theme files if you are using this function.
+
+### 2.0
+This version includes a "Under The Weather Forecast" block for the WordPress block editor.
