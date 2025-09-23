@@ -1,6 +1,6 @@
 === Under The Weather ===
 Contributors: sethsm
-Tags: weather, openweather, forecast, cache, widget
+Tags: weather, openweather, forecast, cache, block
 Requires at least: 5.0
 Tested up to: 6.8
 Stable tag: 2.0
@@ -32,7 +32,8 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
-* **Coordinate Finder Tool:** An easy-to-use tool on the settings page retrieves latitude and longitude coordinates by location name and generates ready-to-use widget `<div>`s.
+* **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
+* **Block Editor Coordinate Finder:** Search for locations by name and automatically fill in coordinates without ever leaving the block editor.
 
 == Installation ==
 
@@ -253,9 +254,9 @@ Yes. You can modify the appearance of the Weather Icons Fonts by making customiz
 
 == External Services ==
 
-* **OpenWeatherMap API:** [cite_start]This plugin connects to the [OpenWeatherMap API](https://openweathermap.org/api) to retrieve weather forecast data. [cite: 36] In order to provide weather information, the following data is sent to the service:
+* **OpenWeatherMap API:** This plugin connects to the [OpenWeatherMap API](https://openweathermap.org/api) to retrieve weather forecast data. To provide weather information, the following data is sent to the service:
 
-* [cite_start]**Location Coordinates:** The latitude and longitude provided in the widget settings are sent to fetch the weather for that specific location. [cite: 30, 37]
+* **Location Coordinates:** The latitude and longitude provided in the widget settings are sent to fetch the weather for that specific location.
 * **API Key:** Your OpenWeatherMap API key is sent to authenticate the request.
 
 Here are the links to their terms of service and privacy policy:
