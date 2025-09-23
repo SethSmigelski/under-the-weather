@@ -6,10 +6,7 @@ import { useState } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 import { weatherIcon, degreesIcon, locationIcon, wrenchIcon } from './icons'; 
 
-/**
- * Converts a string to title case.
- * e.g., "los angeles" becomes "Los Angeles".
- */
+// Converts a string to title case. e.g., "los angeles" becomes "Los Angeles".
 const titleCase = (str) => {
   if (!str) return '';
   return str
@@ -17,6 +14,48 @@ const titleCase = (str) => {
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+};
+
+const [coordinateErrors, setCoordinateErrors] = useState({
+    latitude: '',
+    longitude: ''
+});
+
+// Validate coordinate inputs
+const validateLatitude = (value) => {
+    if (!value || value.trim() === '') {
+        return ''; // Allow empty values
+    }
+    
+    const num = parseFloat(value);
+    
+    if (isNaN(num)) {
+        return __('Latitude must be a number', 'under-the-weather');
+    }
+    
+    if (num < -90 || num > 90) {
+        return __('Latitude must be between -90 and 90', 'under-the-weather');
+    }
+    
+    return '';
+};
+
+const validateLongitude = (value) => {
+    if (!value || value.trim() === '') {
+        return ''; // Allow empty values
+    }
+    
+    const num = parseFloat(value);
+    
+    if (isNaN(num)) {
+        return __('Longitude must be a number', 'under-the-weather');
+    }
+    
+    if (num < -180 || num > 180) {
+        return __('Longitude must be between -180 and 180', 'under-the-weather');
+    }
+    
+    return '';
 };
 
 export default function Edit({ attributes, setAttributes }) {
@@ -204,11 +243,29 @@ export default function Edit({ attributes, setAttributes }) {
                         label={__('Latitude', 'under-the-weather')}
                         value={latitude}
                         onChange={(val) => setAttributes({ latitude: val })}
+					    onBlur={(e) => {
+					        const error = validateLatitude(e.target.value);
+					        setCoordinateErrors(prev => ({
+					            ...prev,
+					            latitude: error
+					        }));
+					    }}
+					    help={coordinateErrors.latitude || __('e.g., 34.0522 (between -90 and 90)', 'under-the-weather')}
+					    className={coordinateErrors.latitude ? 'has-error' : ''}
                     />
                     <TextControl
                         label={__('Longitude', 'under-the-weather')}
                         value={longitude}
                         onChange={(val) => setAttributes({ longitude: val })}
+					    onBlur={(e) => {
+					        const error = validateLongitude(e.target.value);
+					        setCoordinateErrors(prev => ({
+					            ...prev,
+					            longitude: error
+					        }));
+					    }}
+					    help={coordinateErrors.longitude || __('e.g., -118.2437 (between -180 and 180)', 'under-the-weather')}
+					    className={coordinateErrors.longitude ? 'has-error' : ''}
                     />
                     <Button variant="secondary" onClick={openModal}>
                         {__('Find Coordinates by Name', 'under-the-weather')}
