@@ -14,48 +14,30 @@ export default function Edit({ attributes, setAttributes }) {
     const [isLoading, setIsLoading] = useState(false);
 	const [lastRequestTime, setLastRequestTime] = useState(0);
 	const [requestCount, setRequestCount] = useState(0);
-	const [coordinateErrors, setCoordinateErrors] = useState({
-        latitude: '',
-        longitude: ''
-    });
 	const { openGeneralSidebar } = useDispatch('core/edit-post');
 	const { createErrorNotice } = useDispatch('core/notices');
 
 	// Validate coordinate inputs
 	const validateLatitude = (value) => {
-	    if (!value || value.trim() === '') {
-	        return ''; // Allow empty values
-	    }
-	    
+	    if (!value || value.trim() === '') return; // Exit if empty
+	
 	    const num = parseFloat(value);
-	    
-	    if (isNaN(num)) {
-	        return __('Latitude must be a number', 'under-the-weather');
+	    const message = __('Latitude must be a number between -90 and 90.', 'under-the-weather');
+	
+	    if (isNaN(num) || num < -90 || num > 90) {
+	        createErrorNotice(message, { type: 'snackbar' });
 	    }
-	    
-	    if (num < -90 || num > 90) {
-	        return __('Latitude must be between -90 and 90', 'under-the-weather');
-	    }
-	    
-	    return '';
 	};
 	
 	const validateLongitude = (value) => {
-	    if (!value || value.trim() === '') {
-	        return ''; // Allow empty values
-	    }
+	    if (!value || value.trim() === '') return; // Exit if empty
 	    
 	    const num = parseFloat(value);
+	    const message = __('Longitude must be a number between -180 and 180.', 'under-the-weather');
 	    
-	    if (isNaN(num)) {
-	        return __('Longitude must be a number', 'under-the-weather');
+	    if (isNaN(num) || num < -180 || num > 180) {
+	        createErrorNotice(message, { type: 'snackbar' });
 	    }
-	    
-	    if (num < -180 || num > 180) {
-	        return __('Longitude must be between -180 and 180', 'under-the-weather');
-	    }
-	    
-	    return '';
 	};
 		
 	// Converts a string to title case. e.g., "los angeles" becomes "Los Angeles".
@@ -239,34 +221,20 @@ export default function Edit({ attributes, setAttributes }) {
                         help={__('e.g., Los Angeles, California', 'under-the-weather')}
                     />
                     <hr />
-                    <TextControl
-                        label={__('Latitude', 'under-the-weather')}
-                        value={latitude}
-                        onChange={(val) => setAttributes({ latitude: val })}
-					    onBlur={(e) => {
-					        const error = validateLatitude(e.target.value);
-					        setCoordinateErrors(prev => ({
-					            ...prev,
-					            latitude: error
-					        }));
-					    }}
-					    help={coordinateErrors.latitude || __('e.g., 34.1195 (between -90 and 90)', 'under-the-weather')}
-					    className={coordinateErrors.latitude ? 'has-error' : ''}
-                    />
-                    <TextControl
-                        label={__('Longitude', 'under-the-weather')}
-                        value={longitude}
-                        onChange={(val) => setAttributes({ longitude: val })}
-					    onBlur={(e) => {
-					        const error = validateLongitude(e.target.value);
-					        setCoordinateErrors(prev => ({
-					            ...prev,
-					            longitude: error
-					        }));
-					    }}
-					    help={coordinateErrors.longitude || __('e.g., -118.3005 (between -180 and 180)', 'under-the-weather')}
-					    className={coordinateErrors.longitude ? 'has-error' : ''}
-                    />
+					<TextControl
+					    label={__('Latitude', 'under-the-weather')}
+					    value={latitude}
+					    onChange={(val) => setAttributes({ latitude: val })}
+					    onBlur={(e) => validateLatitude(e.target.value)}
+					    help={__('e.g., 34.1195 (between -90 and 90)', 'under-the-weather')}
+					/>
+					<TextControl
+					    label={__('Longitude', 'under-the-weather')}
+					    value={longitude}
+					    onChange={(val) => setAttributes({ longitude: val })}
+					    onBlur={(e) => validateLongitude(e.target.value)}
+					    help={__('e.g., -118.3005 (between -180 and 180)', 'under-the-weather')}
+					/>
                     <Button variant="secondary" onClick={openModal}>
                         {__('Find Coordinates by Name', 'under-the-weather')}
                     </Button>
