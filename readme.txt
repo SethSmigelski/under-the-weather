@@ -133,13 +133,25 @@ For most users, simply leaving these boxes checked is the best way to use the we
 
 == Coordinate Finder ==
 
-The plugin includes a Coordinate Finder tool to generate a ready-to-use widget div.  Don't know the latitude and longitude for your desired location? No problem. Just follow these steps: 
+Don't know the latitude and longitude for your desired location? No problem. The Under The Weather plugin will find coordinates for you.
+
+= In the WordPress Block Editor =
+
+1. Add an **"Under The Weather Forecast"** block to your post or page. 
+2. Open the Block Settings
+3. Click the **"Find Coordinates by Name"** button.
+4. Type in the name of your location.
+5. Press **"Search."**
+6. When search results appear, click on your desired location.
+7. The location's coordinates will be automatically entered into the latitude and longitude settings for the weather forecast.
+
+= In the Plugin Settings Page =
 
 1. Navigate to **Settings > Under The Weather** and click on the **Coordinate Finder** tab.
 2. Type a location name into the search box (e.g., "Los Angeles, CA").
 3. Click the **"Find Coordinates"** button.
 4. The tool will display the generated `<div>` with the correct coordinates and location name.
-5. Use the **"Copy Code"** button to copy the HTML and paste it into a post, page, or widget.
+5. Use the **"Copy Code"** button to copy the ready-to-use widget HTML and paste it into a post, page, or widget.
 
 The tool automatically saves a history of your last 5 searches, which persists between sessions. You can easily copy code from previous searches without having to look them up again.
 
