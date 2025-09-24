@@ -218,7 +218,7 @@ Both. By default, the weather widget will show a forecast in Fahrenheit. If you 
 ### What if I don't know the latitude and longitude for a weather location?
 
 The plugin offers two methods for looking up coordinates using its built-in **Coordinate Finder** tool: 
-* **In the Settings Page: ** Navigate to **Settings > Under The Weather** and click the **Coordinate Finder** tab. Simply type in a location name, and the tool will look up the coordinates and provide you with the exact `<div>` code to copy and paste.
+* **In the Settings Page:** Navigate to **Settings > Under The Weather** and click the **Coordinate Finder** tab. Simply type in a location name, and the tool will look up the coordinates and provide you with the exact `<div>` code to copy and paste.
 * **In the Editor:** While using the **Under The Weather Forecast** block, click on the **Find Coordinates By Name** button. The coordinates for your chosen location will be filled in for you automatically.
 
 ### How do I use the weather block?
@@ -302,10 +302,10 @@ The "Under The Weather Forecast" block in the WordPress editor.
 
 ## Credits
 
-* **Weather Data:**  OpenWeather
-* **Weather Icon Font:**  Weather Icons by Erik Flowers
-* **Geocoding & Map Data:** Data © OpenStreetMap contributors
-* **Block Icons:**  Phosphor
+* **Weather Data:**  [OpenWeather](https://openweathermap.org/) 
+* **Weather Icon Font:**  [Weather Icons by Erik Flowers](https://github.com/erikflowers/weather-icons)
+* **Geocoding & Map Data:** [Nominatim.org](https://nominatim.org/) Data © OpenStreetMap contributors
+* **Block Icons:**  [Phosphor](https://github.com/phosphor-icons/homepage)
 
 ---
 
@@ -385,7 +385,6 @@ Here is the link to their privacy policy:
 
 ### 1.6
 * **ENHANCEMENT:** Added visual examples of the icon sets to the settings page to clarify the style options.
-
 
 ### 1.5
 * **SECURITY:** Updated all function, option, and transient prefixes to be more unique to prevent conflicts.
