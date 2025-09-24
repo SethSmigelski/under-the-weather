@@ -14,86 +14,107 @@ function validateWeatherData(data) {
            data.daily.length > 0;
 }
 
-// Convert a DMS (Degrees, Minutes, Seconds) coordinate string to Decimal Degrees.
-function convertDMSToDD(dmsString) {
-    // Regex to parse degrees, minutes, seconds, and hemisphere
-    const regex = /([0-9]{1,3})[°\s]+([0-9]{1,2})['\s]+([0-9]{1,2}(?:\.[0-9]+)?)["\s]+([NSEW])/i;
-    const parts = dmsString.match(regex);
-
-    if (!parts) {
-        return null; // Not a valid DMS string
-    }
-
-    const degrees = parseFloat(parts[1]);
-    const minutes = parseFloat(parts[2]);
-    const seconds = parseFloat(parts[3]);
-    const hemisphere = parts[4].toUpperCase();
-
-    if (isNaN(degrees) || isNaN(minutes) || isNaN(seconds)) {
+// Convert a DMS (Degrees, Minutes, Seconds) coordinate, or a DDM string to the desired Decimal Degrees (DD) format.
+function parseCoordinate(coordString) {
+    if (!coordString || typeof coordString !== 'string') {
         return null;
     }
 
-    let decimal = degrees + (minutes / 60) + (seconds / 3600);
-
-    // Southern and Western hemispheres are negative
-    if (hemisphere === 'S' || hemisphere === 'W') {
-        decimal = -decimal;
+    // 1. Clean the input
+    let str = coordString.trim();
+    if (str.endsWith(',')) {
+        str = str.slice(0, -1).trim();
     }
 
-    return parseFloat(decimal.toFixed(4)); // Return with 4 decimal places
+    // 2. Try to parse as DDM (Degrees Decimal Minutes)
+    const ddmRegex = /([0-9]{1,3})[°\s]+([0-9]+(?:\.[0-9]+)?)['\s]+([NSEW])/i;
+    let parts = str.match(ddmRegex);
+    if (parts) {
+        const degrees = parseFloat(parts[1]);
+        const minutes = parseFloat(parts[2]);
+        const hemisphere = parts[3].toUpperCase();
+        if (isNaN(degrees) || isNaN(minutes)) return null;
+
+        let decimal = degrees + (minutes / 60);
+        if (hemisphere === 'S' || hemisphere === 'W') decimal = -decimal;
+        return parseFloat(decimal.toFixed(4));
+    }
+
+    // 3. Try to parse as DMS (Degrees, Minutes, Seconds)
+    const dmsRegex = /([0-9]{1,3})[°\s]+([0-9]{1,2})['\s]+([0-9]{1,2}(?:\.[0-9]+)?)["\s]+([NSEW])/i;
+    parts = str.match(dmsRegex);
+    if (parts) {
+        const degrees = parseFloat(parts[1]);
+        const minutes = parseFloat(parts[2]);
+        const seconds = parseFloat(parts[3]);
+        const hemisphere = parts[4].toUpperCase();
+        if (isNaN(degrees) || isNaN(minutes) || isNaN(seconds)) return null;
+        
+        let decimal = degrees + (minutes / 60) + (seconds / 3600);
+        if (hemisphere === 'S' || hemisphere === 'W') decimal = -decimal;
+        return parseFloat(decimal.toFixed(4));
+    }
+
+    // 4. Try to parse as simple Decimal Degrees
+    const dd = parseFloat(str);
+    if (!isNaN(dd)) {
+        return dd;
+    }
+
+    // 5. If all formats fail
+    return null;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-
-  const widget = document.querySelector('.weather-widget');
-  if (!widget) {
-    return;
-  }
+	const widget = document.querySelector('.weather-widget');
+	if (!widget) {
+    	return;
+  	}
 	
-  const locationName = widget.dataset.locationName;
-  const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+	const locationName = widget.dataset.locationName;
+	const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
+	const controller = new AbortController();
+	const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-  // Get the lat/lon from the data attributes
-  let lat = widget.dataset.lat;
-  let lon = widget.dataset.lon;
+  	// Get the lat/lon from the data attributes
+  	let lat = widget.dataset.lat;
+  	let lon = widget.dataset.lon;
 	
-	// Attempt to convert them if they are in DMS format
-	const convertedLat = convertDMSToDD(lat);
-	const convertedLon = convertDMSToDD(lon);
+	// Attempt to parse/convert them
+	const parsedLat = parseCoordinate(lat);
+	const parsedLon = parseCoordinate(lon);
 	
-	if (convertedLat !== null) {
-	    lat = convertedLat;
+	if (parsedLat !== null) {
+	    lat = parsedLat;
 	}
-	if (convertedLon !== null) {
-	    lon = convertedLon;
+	if (parsedLon !== null) {
+	    lon = parsedLon;
+	}
+	
+	// Now use the clean 'lat' and 'lon' values for validation and your API call
+	if (!validateCoordinates(lat, lon)) {
+	    widget.innerHTML = 'Invalid location coordinates.';
+	    return;
 	}
 
-  const nonce = under_the_weather_settings?.nonce;
-	if (!nonce) {
-		widget.innerHTML = '<p>Configuration error. Please refresh the page.</p>';
-		return;
-	}
+  	if (!lat || !lon || !locationName) {
+    	widget.innerHTML = 'Location data is missing.';
+    	return;
+  	} else if (!validateCoordinates(lat, lon)) {
+   		widget.innerHTML = 'Invalid location coordinates.';
+    	return;
+  	} else {
+		widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
+  	} 
 
-  if (!lat || !lon || !locationName) {
-    widget.innerHTML = 'Location data is missing.';
-    return;
-  } else if (!validateCoordinates(lat, lon)) {
-    widget.innerHTML = 'Invalid location coordinates.';
-    return;
-  } else {
-	widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
-  } 
+  	const apiUrl = `/wp-json/under-the-weather/v1/forecast?lat=${lat}&lon=${lon}&location_name=${encodeURIComponent(locationName)}&unit=${unit}`;
 
-  const apiUrl = `/wp-json/under-the-weather/v1/forecast?lat=${lat}&lon=${lon}&location_name=${encodeURIComponent(locationName)}&unit=${unit}`;
-
-  fetch(apiUrl, {
-    signal: controller.signal,
-    headers: {
-        'X-WP-Nonce': under_the_weather_settings.nonce
-    }
-  })
+  	fetch(apiUrl, {
+    	signal: controller.signal,
+    	headers: {
+        	'X-WP-Nonce': under_the_weather_settings.nonce
+    	}
+  	})
     .then(response => {
 	  clearTimeout(timeoutId);
       if (!response.ok) {
