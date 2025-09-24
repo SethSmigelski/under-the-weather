@@ -19,25 +19,29 @@ export default function Edit({ attributes, setAttributes }) {
 
 	// Validate coordinate inputs
 	const validateLatitude = (value) => {
-	    if (!value || value.trim() === '') return; // Exit if empty
+	    if (!value || value.trim() === '') return true; // Exit if empty - consider valid
 	
 	    const num = parseFloat(value);
 	    const message = __('Latitude must be a number between -90 and 90.', 'under-the-weather');
 	
 	    if (isNaN(num) || num < -90 || num > 90) {
 	        createErrorNotice(message, { type: 'snackbar' });
+	        return false;
 	    }
+	    return true;
 	};
 	
 	const validateLongitude = (value) => {
-	    if (!value || value.trim() === '') return; // Exit if empty
+	    if (!value || value.trim() === '') return true; // Exit if empty - consider valid
 	    
 	    const num = parseFloat(value);
 	    const message = __('Longitude must be a number between -180 and 180.', 'under-the-weather');
 	    
 	    if (isNaN(num) || num < -180 || num > 180) {
 	        createErrorNotice(message, { type: 'snackbar' });
+	        return false;
 	    }
+	    return true;
 	};
 	
 	// Convert a DMS (Degrees, Minutes, Seconds) coordinate, or a DDM string to the desired Decimal Degrees (DD) format.
@@ -262,6 +266,44 @@ export default function Edit({ attributes, setAttributes }) {
         closeModal();
     };
 
+    const handleCoordinateBlur = (value, isLatitude = true) => {
+        if (!value.trim()) return; // Do nothing if the field is empty
+        
+        const parsedValue = parseCoordinate(value);
+        
+        if (parsedValue !== null) {
+            const formattedValue = String(parsedValue.toFixed(4));
+            
+            // Update the attribute
+            if (isLatitude) {
+                setAttributes({ latitude: formattedValue });
+            } else {
+                setAttributes({ longitude: formattedValue });
+            }
+            
+            // Show success notice if the original value was different (i.e., conversion happened)
+            if (value.trim() !== formattedValue) {
+                createSuccessNotice(
+                    __('Coordinates converted to decimal format.', 'under-the-weather'), 
+                    { type: 'snackbar' }
+                );
+            }
+            
+            // Validate the parsed value is within the correct range
+            if (isLatitude) {
+                validateLatitude(formattedValue);
+            } else {
+                validateLongitude(formattedValue);
+            }
+        } else {
+            // If parsing failed, it's an invalid format
+            createErrorNotice(
+                __('Invalid coordinate format.', 'under-the-weather'),
+                { type: 'snackbar' }
+            );
+        }
+    };
+
     return (
         <>
             <InspectorControls>
@@ -277,64 +319,14 @@ export default function Edit({ attributes, setAttributes }) {
 					    label={__('Latitude', 'under-the-weather')}
 					    value={latitude}
 						onChange={(val) => setAttributes({ latitude: val })}
-					    onBlur={(e) => {
-						    const value = e.target.value;
-						    if (!value.trim()) return; // Do nothing if the field is empty
-						
-						    const parsedValue = parseCoordinate(value);
-						
-						    if (parsedValue !== null) {
-						        // If parsing was successful, update the attribute
-						        setAttributes({ latitude: String(parsedValue.toFixed(4)) });
-						        // Check if the original value was different, and if so, show a success notice
-						        if (value.trim() !== String(parsedValue.toFixed(4))) {
-						            dispatch('core/notices').createSuccessNotice(
-						                __('Coordinates converted to decimal format.', 'under-the-weather'), 
-						                { type: 'snackbar' }
-						            );
-						        }
-						        // Then validate the numeric range of the parsed value
-						        validateLatitude(String(parsedValue));
-						    } else {
-						        // If parsing failed, it's an invalid format
-						        dispatch('core/notices').createErrorNotice(
-						            __('Invalid coordinate format.', 'under-the-weather'),
-						            { type: 'snackbar' }
-						        );
-						    }
-						}}
+					    onBlur={(e) => handleCoordinateBlur(e.target.value, true)}
 					    help={__('e.g., 34.1195 (between -90 and 90)', 'under-the-weather')}
 					/>
 					<TextControl
 					    label={__('Longitude', 'under-the-weather')}
 					    value={longitude}
 					    onChange={(val) => setAttributes({ longitude: val })}
-											    onBlur={(e) => {
-						    const value = e.target.value;
-						    if (!value.trim()) return; // Do nothing if the field is empty
-						
-						    const parsedValue = parseCoordinate(value);
-						
-						    if (parsedValue !== null) {
-						        // If parsing was successful, update the attribute
-						        setAttributes({ longitude: String(parsedValue.toFixed(4)) });
-						        // Check if the original value was different, and if so, show a success notice
-						        if (value.trim() !== String(parsedValue.toFixed(4))) {
-						            dispatch('core/notices').createSuccessNotice(
-						                __('Coordinates converted to decimal format.', 'under-the-weather'), 
-						                { type: 'snackbar' }
-						            );
-						        }
-						        // Then validate the numeric range of the parsed value
-						        validateLongitude(String(parsedValue));
-						    } else {
-						        // If parsing failed, it's an invalid format
-						        dispatch('core/notices').createErrorNotice(
-						            __('Invalid coordinate format.', 'under-the-weather'),
-						            { type: 'snackbar' }
-						        );
-						    }
-						}}
+					    onBlur={(e) => handleCoordinateBlur(e.target.value, false)}
 					    help={__('e.g., -118.3005 (between -180 and 180)', 'under-the-weather')}
 					/>
                     <Button variant="secondary" onClick={openModal}>
