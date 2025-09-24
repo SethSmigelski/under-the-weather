@@ -189,7 +189,7 @@ Both. By default, the weather widget will show a forecast in Fahrenheit. If you 
 = What if I don't know the latitude and longitude for a weather location? =
 
 The plugin offers two methods for looking up coordinates using its built-in **Coordinate Finder** tool: 
-* **In the Settings Page: ** Navigate to **Settings > Under The Weather** and click the **Coordinate Finder** tab. Simply type in a location name, and the tool will look up the coordinates and provide you with the exact `<div>` code to copy and paste.
+* **In the Settings Page:** Navigate to **Settings > Under The Weather** and click the **Coordinate Finder** tab. Simply type in a location name, and the tool will look up the coordinates and provide you with the exact `<div>` code to copy and paste.
 * **In the Editor:** While using the **Under The Weather Forecast** block, click on the **Find Coordinates By Name** button. The coordinates for your chosen location will be filled in for you automatically.
 
 = How do I use the weather block? =
