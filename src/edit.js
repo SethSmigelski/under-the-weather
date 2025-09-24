@@ -16,6 +16,7 @@ export default function Edit({ attributes, setAttributes }) {
 	const [requestCount, setRequestCount] = useState(0);
 	const { openGeneralSidebar } = useDispatch('core/edit-post');
 	const { createErrorNotice } = useDispatch('core/notices');
+	const { createSuccessNotice } = useDispatch('core/notices');
 
 	// Validate coordinate inputs
 	const validateLatitude = (value) => {
@@ -39,8 +40,36 @@ export default function Edit({ attributes, setAttributes }) {
 	        createErrorNotice(message, { type: 'snackbar' });
 	    }
 	};
+	
+	// Convert a DMS (Degrees, Minutes, Seconds) coordinate string to Decimal Degrees.
+	function convertDMSToDD(dmsString) {
+	    // Regex to parse degrees, minutes, seconds, and hemisphere
+	    const regex = /([0-9]{1,3})[°\s]+([0-9]{1,2})['\s]+([0-9]{1,2}(?:\.[0-9]+)?)["\s]+([NSEW])/i;
+	    const parts = dmsString.match(regex);
+	
+	    if (!parts) {
+	        return null; // Not a valid DMS string
+	    }
+	
+	    const degrees = parseFloat(parts[1]);
+	    const minutes = parseFloat(parts[2]);
+	    const seconds = parseFloat(parts[3]);
+	    const hemisphere = parts[4].toUpperCase();
+	
+	    if (isNaN(degrees) || isNaN(minutes) || isNaN(seconds)) {
+	        return null;
+	    }
 		
-	// Converts a string to title case. e.g., "los angeles" becomes "Los Angeles".
+	    let decimal = degrees + (minutes / 60) + (seconds / 3600);
+		
+	    // Southern and Western hemispheres are negative
+	    if (hemisphere === 'S' || hemisphere === 'W') {
+	        decimal = -decimal;
+	    }
+	    return parseFloat(decimal.toFixed(4)); // Return with 4 decimal places
+	}
+		
+	// Converts a string to title case. e.g., "los angeles" becomes "Los Angeles."
 	const titleCase = (str) => {
 	  if (!str) return '';
 	  return str
@@ -225,15 +254,45 @@ export default function Edit({ attributes, setAttributes }) {
 					<TextControl
 					    label={__('Latitude', 'under-the-weather')}
 					    value={latitude}
-					    onChange={(val) => setAttributes({ latitude: val })}
-					    onBlur={(e) => validateLatitude(e.target.value)}
+						onChange={(val) => setAttributes({ latitude: val })}
+					    onBlur={(e) => {
+					        const value = e.target.value;
+					        const converted = convertDMSToDD(value);
+					
+					        if (converted !== null) {
+					            // If conversion was successful
+					            setAttributes({ latitude: String(converted) });
+					            createSuccessNotice(
+					                __('Coordinates converted to decimal format.', 'under-the-weather'), 
+					                { type: 'snackbar' }
+					            );
+					        } else {
+					            // Fall back to existing numeric validation
+					            validateLatitude(value);
+					        }
+					    }}
 					    help={__('e.g., 34.1195 (between -90 and 90)', 'under-the-weather')}
 					/>
 					<TextControl
 					    label={__('Longitude', 'under-the-weather')}
 					    value={longitude}
 					    onChange={(val) => setAttributes({ longitude: val })}
-					    onBlur={(e) => validateLongitude(e.target.value)}
+						onBlur={(e) => {
+					        const value = e.target.value;
+					        const converted = convertDMSToDD(value);
+					
+					        if (converted !== null) {
+					            // If conversion was successful
+					            setAttributes({ longitude: String(converted) });
+					            createSuccessNotice(
+					                __('Coordinates converted to decimal format.', 'under-the-weather'), 
+					                { type: 'snackbar' }
+					            );
+					        } else {
+					            // Fall back to existing numeric validation
+					            validateLongitude(value);
+					        }
+					    }}
 					    help={__('e.g., -118.3005 (between -180 and 180)', 'under-the-weather')}
 					/>
                     <Button variant="secondary" onClick={openModal}>
