@@ -12,7 +12,40 @@ function validateWeatherData(data) {
            data.daily && 
            Array.isArray(data.daily) && 
            data.daily.length > 0;
-} 
+}
+
+/**
+ * Convert a DMS (Degrees, Minutes, Seconds) coordinate string to Decimal Degrees.
+ * @param {string} dmsString The coordinate string, e.g., "34°07'10.2\"N".
+ * @returns {number|null} The coordinate in decimal degrees, or null if invalid.
+ */
+function convertDMSToDD(dmsString) {
+    // Regex to parse degrees, minutes, seconds, and hemisphere
+    const regex = /([0-9]{1,3})[°\s]+([0-9]{1,2})['\s]+([0-9]{1,2}(?:\.[0-9]+)?)["\s]+([NSEW])/i;
+    const parts = dmsString.match(regex);
+
+    if (!parts) {
+        return null; // Not a valid DMS string
+    }
+
+    const degrees = parseFloat(parts[1]);
+    const minutes = parseFloat(parts[2]);
+    const seconds = parseFloat(parts[3]);
+    const hemisphere = parts[4].toUpperCase();
+
+    if (isNaN(degrees) || isNaN(minutes) || isNaN(seconds)) {
+        return null;
+    }
+
+    let decimal = degrees + (minutes / 60) + (seconds / 3600);
+
+    // Southern and Western hemispheres are negative
+    if (hemisphere === 'S' || hemisphere === 'W') {
+        decimal = -decimal;
+    }
+
+    return parseFloat(decimal.toFixed(4)); // Return with 4 decimal places
+}
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -21,12 +54,27 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  const lat = widget.dataset.lat;
-  const lon = widget.dataset.lon;
+  // const lat = widget.dataset.lat;
+  // const lon = widget.dataset.lon;
   const locationName = widget.dataset.locationName;
   const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+	// Get the lat/lon from the data attributes
+	let lat = widgetElement.dataset.lat;
+	let lon = widgetElement.dataset.lon;
+	
+	// Attempt to convert them if they are in DMS format
+	const convertedLat = convertDMSToDD(lat);
+	const convertedLon = convertDMSToDD(lon);
+	
+	if (convertedLat !== null) {
+	    lat = convertedLat;
+	}
+	if (convertedLon !== null) {
+	    lon = convertedLon;
+	}
 
   const nonce = under_the_weather_settings?.nonce;
 	if (!nonce) {
