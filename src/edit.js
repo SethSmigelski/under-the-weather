@@ -42,33 +42,56 @@ export default function Edit({ attributes, setAttributes }) {
 	    }
 	};
 	
-	// Convert a DMS (Degrees, Minutes, Seconds) coordinate string to Decimal Degrees.
-	function convertDMSToDD(dmsString) {
-	    // Regex to parse degrees, minutes, seconds, and hemisphere
-	    const regex = /([0-9]{1,3})[°\s]+([0-9]{1,2})['\s]+([0-9]{1,2}(?:\.[0-9]+)?)["\s]+([NSEW])/i;
-	    const parts = dmsString.match(regex);
-	
-	    if (!parts) {
-	        return null; // Not a valid DMS string
-	    }
-	
-	    const degrees = parseFloat(parts[1]);
-	    const minutes = parseFloat(parts[2]);
-	    const seconds = parseFloat(parts[3]);
-	    const hemisphere = parts[4].toUpperCase();
-	
-	    if (isNaN(degrees) || isNaN(minutes) || isNaN(seconds)) {
-	        return null;
-	    }
-		
-	    let decimal = degrees + (minutes / 60) + (seconds / 3600);
-		
-	    // Southern and Western hemispheres are negative
-	    if (hemisphere === 'S' || hemisphere === 'W') {
-	        decimal = -decimal;
-	    }
-	    return parseFloat(decimal.toFixed(4)); // Return with 4 decimal places
-	}
+	// Convert a DMS (Degrees, Minutes, Seconds) coordinate, or a DDM string to the desired Decimal Degrees (DD) format.
+	function parseCoordinate(coordString) {
+    if (!coordString || typeof coordString !== 'string') {
+        return null;
+    }
+
+    // 1. Clean the input
+    let str = coordString.trim();
+    if (str.endsWith(',')) {
+        str = str.slice(0, -1).trim();
+    }
+
+    // 2. Try to parse as DDM (Degrees Decimal Minutes)
+    const ddmRegex = /([0-9]{1,3})[°\s]+([0-9]+(?:\.[0-9]+)?)['\s]+([NSEW])/i;
+    let parts = str.match(ddmRegex);
+    if (parts) {
+        const degrees = parseFloat(parts[1]);
+        const minutes = parseFloat(parts[2]);
+        const hemisphere = parts[3].toUpperCase();
+        if (isNaN(degrees) || isNaN(minutes)) return null;
+
+        let decimal = degrees + (minutes / 60);
+        if (hemisphere === 'S' || hemisphere === 'W') decimal = -decimal;
+        return parseFloat(decimal.toFixed(4));
+    }
+
+    // 3. Try to parse as DMS (Degrees, Minutes, Seconds)
+    const dmsRegex = /([0-9]{1,3})[°\s]+([0-9]{1,2})['\s]+([0-9]{1,2}(?:\.[0-9]+)?)["\s]+([NSEW])/i;
+    parts = str.match(dmsRegex);
+    if (parts) {
+        const degrees = parseFloat(parts[1]);
+        const minutes = parseFloat(parts[2]);
+        const seconds = parseFloat(parts[3]);
+        const hemisphere = parts[4].toUpperCase();
+        if (isNaN(degrees) || isNaN(minutes) || isNaN(seconds)) return null;
+        
+        let decimal = degrees + (minutes / 60) + (seconds / 3600);
+        if (hemisphere === 'S' || hemisphere === 'W') decimal = -decimal;
+        return parseFloat(decimal.toFixed(4));
+    }
+
+    // 4. Try to parse as simple Decimal Degrees
+    const dd = parseFloat(str);
+    if (!isNaN(dd)) {
+        return dd;
+    }
+
+    // 5. If all formats fail
+    return null;
+}
 		
 	// Converts a string to title case. e.g., "los angeles" becomes "Los Angeles."
 	const titleCase = (str) => {
@@ -257,45 +280,63 @@ export default function Edit({ attributes, setAttributes }) {
 					    value={latitude}
 						onChange={(val) => setAttributes({ latitude: val })}
 					    onBlur={(e) => {
-					        const value = e.target.value.trim();
-    						if (!value) return;
-					        const converted = convertDMSToDD(value);
-					
-					        if (converted !== null) {
-					            // If conversion was successful
-					            setAttributes({ latitude: String(converted) });
-					            createSuccessNotice(
-					                __('Coordinates converted to decimal format.', 'under-the-weather'), 
-					                { type: 'snackbar' }
-					            );
-					        } else {
-					            // Fall back to existing numeric validation
-					            validateLatitude(value);
-					        }
-					    }}
+						    const value = e.target.value;
+						    if (!value.trim()) return; // Do nothing if the field is empty
+						
+						    const parsedValue = parseCoordinate(value);
+						
+						    if (parsedValue !== null) {
+						        // If parsing was successful, update the attribute
+						        setAttributes({ latitude: String(parsedValue.toFixed(4)) });
+						        // Check if the original value was different, and if so, show a success notice
+						        if (value.trim() !== String(parsedValue.toFixed(4))) {
+						            dispatch('core/notices').createSuccessNotice(
+						                __('Coordinates converted to decimal format.', 'under-the-weather'), 
+						                { type: 'snackbar' }
+						            );
+						        }
+						        // Then validate the numeric range of the parsed value
+						        validateLatitude(String(parsedValue));
+						    } else {
+						        // If parsing failed, it's an invalid format
+						        dispatch('core/notices').createErrorNotice(
+						            __('Invalid coordinate format.', 'under-the-weather'),
+						            { type: 'snackbar' }
+						        );
+						    }
+						}}
 					    help={__('e.g., 34.1195 (between -90 and 90)', 'under-the-weather')}
 					/>
 					<TextControl
 					    label={__('Longitude', 'under-the-weather')}
 					    value={longitude}
 					    onChange={(val) => setAttributes({ longitude: val })}
-						onBlur={(e) => {
-					        const value = e.target.value.trim();
-    						if (!value) return;
-					        const converted = convertDMSToDD(value);
-					
-					        if (converted !== null) {
-					            // If conversion was successful
-					            setAttributes({ longitude: String(converted) });
-					            createSuccessNotice(
-					                __('Coordinates converted to decimal format.', 'under-the-weather'), 
-					                { type: 'snackbar' }
-					            );
-					        } else {
-					            // Fall back to existing numeric validation
-					            validateLongitude(value);
-					        }
-					    }}
+											    onBlur={(e) => {
+						    const value = e.target.value;
+						    if (!value.trim()) return; // Do nothing if the field is empty
+						
+						    const parsedValue = parseCoordinate(value);
+						
+						    if (parsedValue !== null) {
+						        // If parsing was successful, update the attribute
+						        setAttributes({ longitude: String(parsedValue.toFixed(4)) });
+						        // Check if the original value was different, and if so, show a success notice
+						        if (value.trim() !== String(parsedValue.toFixed(4))) {
+						            dispatch('core/notices').createSuccessNotice(
+						                __('Coordinates converted to decimal format.', 'under-the-weather'), 
+						                { type: 'snackbar' }
+						            );
+						        }
+						        // Then validate the numeric range of the parsed value
+						        validateLongitude(String(parsedValue));
+						    } else {
+						        // If parsing failed, it's an invalid format
+						        dispatch('core/notices').createErrorNotice(
+						            __('Invalid coordinate format.', 'under-the-weather'),
+						            { type: 'snackbar' }
+						        );
+						    }
+						}}
 					    help={__('e.g., -118.3005 (between -180 and 180)', 'under-the-weather')}
 					/>
                     <Button variant="secondary" onClick={openModal}>
