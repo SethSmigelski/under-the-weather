@@ -14,10 +14,8 @@ export default function Edit({ attributes, setAttributes }) {
     const [isLoading, setIsLoading] = useState(false);
 	const [lastRequestTime, setLastRequestTime] = useState(0);
 	const [requestCount, setRequestCount] = useState(0);
-	const { dispatch } = useDispatch();
 	const { openGeneralSidebar } = useDispatch('core/edit-post');
-	const { createErrorNotice } = useDispatch('core/notices');
-	const { createSuccessNotice } = useDispatch('core/notices');
+	const { createErrorNotice, createSuccessNotice } = useDispatch('core/notices');
 
 	// Validate coordinate inputs
 	const validateLatitude = (value) => {
