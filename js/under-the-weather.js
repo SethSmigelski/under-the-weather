@@ -92,20 +92,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	
 	// Now use the clean 'lat' and 'lon' values for validation and your API call
+	if (!lat || !lon || !locationName) {
+	    widget.innerHTML = 'Location data is missing.';
+	    return;
+	}
+	
 	if (!validateCoordinates(lat, lon)) {
 	    widget.innerHTML = 'Invalid location coordinates.';
 	    return;
 	}
 
-  	if (!lat || !lon || !locationName) {
-    	widget.innerHTML = 'Location data is missing.';
-    	return;
-  	} else if (!validateCoordinates(lat, lon)) {
-   		widget.innerHTML = 'Invalid location coordinates.';
-    	return;
-  	} else {
-		widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
-  	} 
+	widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
 
   	const apiUrl = `/wp-json/under-the-weather/v1/forecast?lat=${lat}&lon=${lon}&location_name=${encodeURIComponent(locationName)}&unit=${unit}`;
 
