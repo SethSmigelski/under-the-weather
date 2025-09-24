@@ -14,7 +14,7 @@ export default function Edit({ attributes, setAttributes }) {
     const [isLoading, setIsLoading] = useState(false);
 	const [lastRequestTime, setLastRequestTime] = useState(0);
 	const [requestCount, setRequestCount] = useState(0);
-	const { dispatch } = useDispatch();
+// const { dispatch } = useDispatch();
 	const { openGeneralSidebar } = useDispatch('core/edit-post');
 	const { createErrorNotice } = useDispatch('core/notices');
 	const { createSuccessNotice } = useDispatch('core/notices');
@@ -257,7 +257,8 @@ export default function Edit({ attributes, setAttributes }) {
 					    value={latitude}
 						onChange={(val) => setAttributes({ latitude: val })}
 					    onBlur={(e) => {
-					        const value = e.target.value;
+					        const value = e.target.value.trim();
+    						if (!value) return;
 					        const converted = convertDMSToDD(value);
 					
 					        if (converted !== null) {
@@ -279,7 +280,8 @@ export default function Edit({ attributes, setAttributes }) {
 					    value={longitude}
 					    onChange={(val) => setAttributes({ longitude: val })}
 						onBlur={(e) => {
-					        const value = e.target.value;
+					        const value = e.target.value.trim();
+    						if (!value) return;
 					        const converted = convertDMSToDD(value);
 					
 					        if (converted !== null) {
