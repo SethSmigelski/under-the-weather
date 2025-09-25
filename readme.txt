@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, block
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.0
+Stable tag: 2.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -110,7 +110,7 @@ Adjust the number of days shown in the extended forecast row, from 2 to 6 days.
 Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display. 
 
 **Display Timestamp:**
-Shows how long ago the weather data was updated from the source. This option helps readers see how recently the weather widget obtained its information. 
+Indicates the time elapsed since the weather data was last updated from the source. This option helps readers see how recently the weather widget obtained its information. 
 
 **Display Unit Symbol:**
 Adds the unit symbol (F or C) next to the main temperature. This option allows you to select whether or not the widget should include the temperature unit symbol in the primary temperature display.
@@ -155,6 +155,14 @@ Don't know the latitude and longitude for your desired location? No problem. The
 5. Use the **"Copy Code"** button to copy the ready-to-use widget HTML and paste it into a post, page, or widget.
 
 The tool automatically saves a history of your last 5 searches, which persists between sessions. You can easily copy code from previous searches without having to look them up again.
+
+== Performance Report ==
+
+The Under The Weather plugin includes a powerful Performance Report tab in the settings page (**Settings > Under The Weather > Performance Report**) to give you clear insight into the plugin's efficiency and API usage. The main feature is a 7-day bar chart that provides a visual comparison of **cached hits versus new calls to the OpenWeather API**. 
+
+The performance report demonstrates how the caching system is working to reduce external requests and keep your site fast. Use this report to fine-tune your **Cache Expiration Time** and observe the impact on your API call rate. 
+
+The report also includes a status indicator that shows whether the optional **Rate Limiting** feature is currently active. If rate limiting is enabled and requests are being blocked, the raw data table at the bottom of the report will log these events. This can help you identify unusual traffic patterns or potential misuse of your API key.
 
 == Frequently Asked Questions ==
 
@@ -201,6 +209,16 @@ In the WordPress block editor, simply search for "Under The Weather Forecast" wh
 Absolutely! The traditional method of adding `<div class="weather-widget">` with data attributes still works perfectly. The new block is simply an additional, more user-friendly option for those using the WordPress block editor. 
 
 The `<div>` method is particularly useful for theme developers and sites that dynamically populate widget attributes from post meta or custom fields.
+
+= What coordinate format should I use? =
+
+The recommended and most reliable format for coordinates is **Decimal Degrees (DD)**, for example: `34.1195`, `-118.3005`.
+
+However, the **Under The Weather Forecast block** is designed to be user-friendly. If you enter coordinates in other common formats like **DMS** (e.g., `34°07'10.2"N`) or **DDM** (e.g., `34° 7.17' N`), the block will automatically convert them to the correct decimal format for you.
+
+For the manual `<div>` method, it is strongly recommended to use Decimal Degrees. While the front-end script has a fallback to parse other formats, some characters (like the `"` symbol in DMS) can break the HTML structure and lead to incorrect coordinates. The block editor's converter is the most reliable way to handle alternate formats.
+
+If you're unsure what coordinates to use, the **Coordinate Finder** tool is the best way to retrieve accurate coordinates in the correct format.
 
 = What does the "Enable Rate Limiting" setting do? =
 
@@ -269,6 +287,10 @@ Here is the link to their privacy policy:
     * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
 
 == Changelog ==
+
+= 2.1 =
+* NEW: The block editor can now parse and automatically convert coordinates from common formats like DMS (Degrees, Minutes, Seconds) and DDM (Degrees, Decimal Minutes) into the required decimal format.
+* IMPROVEMENT: The manual `<div>` widget is now more resilient, with a fallback that can correctly parse multiple coordinate formats.
 
 = 2.0 =
 * NEW: Introduced the "Under The Weather Forecast" custom block for seamless integration with the WordPress block editor.
