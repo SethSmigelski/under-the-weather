@@ -315,15 +315,15 @@ Yes. You can modify the appearance of the Weather Icons Fonts by making customiz
 
 ![The weather widget displaying current conditions with the Weather Icons](https://ps.w.org/under-the-weather/assets/screenshot-1.png)
 
-The weather widget displaying current conditions with the Weather Icons.
+_The weather widget displaying current conditions with the Weather Icons._
 
 ![The weather widget displaying "Today's Forecast" with the Weather Icons font set](https://ps.w.org/under-the-weather/assets/screenshot-2.png)
 
-The weather widget displaying "Today's Forecast" with the Weather Icons font set.
+_The weather widget displaying "Today's Forecast" with the Weather Icons font set._
 
 ![The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled](https://ps.w.org/under-the-weather/assets/screenshot-3.png)
 
-The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled.
+_The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled._
 
 ---
 
