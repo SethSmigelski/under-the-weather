@@ -74,7 +74,8 @@ The Under The Weather plugin offers two ways to add a weather forecast: using th
 5. Choose your preferred units (Imperial/Fahrenheit or Metric/Celsius)
 6. Publish or update your post - the weather will display automatically!
 
-![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
+|![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)|
+-
 
 The "Under The Weather Forecast" block in the WordPress editor.
 
