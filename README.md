@@ -59,6 +59,12 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 ---
 
+![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
+
+The "Under The Weather Forecast" block in the WordPress editor.
+
+---
+
 ## Usage
 
 The Under The Weather plugin offers two ways to add a weather forecast: using the block editor or manually placing a `<div>`.
@@ -73,11 +79,6 @@ The Under The Weather plugin offers two ways to add a weather forecast: using th
    - The built-in coordinate finder that searches by location name and fills in the coordinates for you
 5. Choose your preferred units (Imperial/Fahrenheit or Metric/Celsius)
 6. Publish or update your post - the weather will display automatically!
-
-|![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)|
--
-
-The "Under The Weather Forecast" block in the WordPress editor.
 
 ### Manual Placement (Classic Editor & Themes)
 To display the weather widget on a post, page, or in a template file, add a simple `<div>` element with the class `weather-widget` and the required data attributes.
@@ -162,6 +163,8 @@ if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
 
 For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
+---
+
 ![The plugin's comprehensive settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
 
 The plugin's comprehensive settings page.
@@ -192,6 +195,8 @@ Don't know the latitude and longitude for your desired location? No problem. The
 
 The tool automatically saves a history of your last 5 searches, which persists between sessions. You can easily copy code from previous searches without having to look them up again.
 
+---
+
 ![The Coordinate Finder tool, which generates widget code from a location name.](https://ps.w.org/under-the-weather/assets/screenshot-6.png)
 
 The Coordinate Finder tool, which generates widget code from a location name.
@@ -205,6 +210,8 @@ The Under The Weather plugin includes a powerful Performance Report tab in the s
 The performance report demonstrates how the caching system is working to reduce external requests and keep your site fast. Use this report to fine-tune your **Cache Expiration Time** and observe the impact on your API call rate. 
 
 The report also includes a status indicator that shows whether the optional **Rate Limiting** feature is currently active. If rate limiting is enabled and requests are being blocked, the raw data table at the bottom of the report will log these events. This can help you identify unusual traffic patterns or potential misuse of your API key.
+
+---
 
 ![The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API](https://ps.w.org/under-the-weather/assets/screenshot-4.png)
 
