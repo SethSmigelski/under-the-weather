@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, block
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 2.0
+* **Stable tag:** 2.1
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -74,6 +74,9 @@ The Under The Weather plugin offers two ways to add a weather forecast: using th
 5. Choose your preferred units (Imperial/Fahrenheit or Metric/Celsius)
 6. Publish or update your post - the weather will display automatically!
 
+![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
+
+The "Under The Weather Forecast" block in the WordPress editor.
 
 ### Manual Placement (Classic Editor & Themes)
 To display the weather widget on a post, page, or in a template file, add a simple `<div>` element with the class `weather-widget` and the required data attributes.
@@ -134,7 +137,7 @@ Adjust the number of days shown in the extended forecast row, from 2 to 6 days.
 Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display. 
 
 **Display Timestamp:**
-Shows how long ago the weather data was updated from the source. This option helps readers see how recently the weather widget obtained its information. 
+Indicates the time elapsed since the weather data was last updated from the source. This option helps readers see how recently the weather widget obtained its information. 
 
 **Display Unit Symbol:**
 Adds the unit symbol (F or C) next to the main temperature. This option allows you to select whether or not the widget should include the temperature unit symbol in the primary temperature display.
@@ -157,6 +160,10 @@ if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
 ```
 
 For most users, simply leaving these boxes checked is the best way to use the weather widget.
+
+![The plugin's comprehensive settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
+
+The plugin's comprehensive settings page.
 
 ---
 
@@ -183,6 +190,24 @@ Don't know the latitude and longitude for your desired location? No problem. The
 5. Use the **"Copy Code"** button to copy the ready-to-use widget HTML and paste it into a post, page, or widget.
 
 The tool automatically saves a history of your last 5 searches, which persists between sessions. You can easily copy code from previous searches without having to look them up again.
+
+![The Coordinate Finder tool, which generates widget code from a location name.](https://ps.w.org/under-the-weather/assets/screenshot-6.png)
+
+The Coordinate Finder tool, which generates widget code from a location name.
+
+---
+
+## Performance Report
+
+The Under The Weather plugin includes a powerful Performance Report tab in the settings page (**Settings > Under The Weather > Performance Report**) to give you clear insight into the plugin's efficiency and API usage. The main feature is a 7-day bar chart that provides a visual comparison of **cached hits versus new calls to the OpenWeather API**. 
+
+The performance report demonstrates how the caching system is working to reduce external requests and keep your site fast. Use this report to fine-tune your **Cache Expiration Time** and observe the impact on your API call rate. 
+
+The report also includes a status indicator that shows whether the optional **Rate Limiting** feature is currently active. If rate limiting is enabled and requests are being blocked, the raw data table at the bottom of the report will log these events. This can help you identify unusual traffic patterns or potential misuse of your API key.
+
+![The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API](https://ps.w.org/under-the-weather/assets/screenshot-4.png)
+
+The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API.
 
 ---
 
@@ -230,6 +255,16 @@ In the WordPress block editor, simply search for "Under The Weather Forecast" wh
 Absolutely! The traditional method of adding `<div class="weather-widget">` with data attributes still works perfectly. The new block is simply an additional, more user-friendly option for those using the WordPress block editor. 
 
 The `<div>` method is particularly useful for theme developers and sites that dynamically populate widget attributes from post meta or custom fields.
+
+### What coordinate format should I use?
+
+The recommended and most reliable format for coordinates is **Decimal Degrees (DD)**, for example: `34.1195`, `-118.3005`.
+
+However, the **Under The Weather Forecast block** is designed to be user-friendly. If you enter coordinates in other common formats like **DMS** (e.g., `34°07'10.2"N`) or **DDM** (e.g., `34° 7.17' N`), the block will automatically convert them to the correct decimal format for you.
+
+For the manual `<div>` method, it is strongly recommended to use Decimal Degrees. While the front-end script has a fallback to parse other formats, some characters (like the `"` symbol in DMS) can break the HTML structure and lead to incorrect coordinates. The block editor's converter is the most reliable way to handle alternate formats.
+
+If you're unsure what coordinates to use, the **Coordinate Finder** tool is the best way to retrieve accurate coordinates in the correct format.
 
 ### What does the "Enable Rate Limiting" setting do?
 
@@ -282,22 +317,6 @@ The weather widget displaying "Today's Forecast" with the Weather Icons font set
 
 The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled.
 
-![The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API](https://ps.w.org/under-the-weather/assets/screenshot-4.png)
-
-The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API.
-
-![The plugin's comprehensive settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
-
-The plugin's comprehensive settings page.
-
-![The Coordinate Finder tool, which generates widget code from a location name.](https://ps.w.org/under-the-weather/assets/screenshot-6.png)
-
-The Coordinate Finder tool, which generates widget code from a location name.
-
-![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
-
-The "Under The Weather Forecast" block in the WordPress editor.
-
 ---
 
 ## Credits
@@ -329,13 +348,17 @@ Here is the link to their privacy policy:
 
 ## Changelog
 
+### 2.1
+* **NEW:** The block editor can now parse and automatically convert coordinates from common formats like DMS (Degrees, Minutes, Seconds) and DDM (Degrees, Decimal Minutes) into the required decimal format.
+* **IMPROVEMENT:** The manual `<div>` widget is now more resilient, with a fallback that can correctly parse multiple coordinate formats.
+
 ### 2.0
-* NEW: Introduced the "Under The Weather Forecast" custom block for seamless integration with the WordPress block editor.
-* NEW: Included a built-in Coordinate Finder in the "Under The Weather Forecast" custom block for location search capabilities without leaving the editor
-* NEW: Included custom SVG icons (Phosphor icon set) to enhance the block's visual appearance in the editor.
-* IMPROVEMENT: Streamlined workflow - no need to manually code HTML divs when using the block editor.
-* IMPROVEMENT: Block previews the location name and temperature unit directly in the editor.
-* IMPROVEMENT: Added input validation, rate limiting, request timeout, and response validation for location searches from the Custom block, accompanied by user-friendly error messages.
+* **NEW:** Introduced the "Under The Weather Forecast" custom block for seamless integration with the WordPress block editor.
+* **NEW:** Included a built-in Coordinate Finder in the "Under The Weather Forecast" custom block for location search capabilities without leaving the editor
+* **NEW:** Included custom SVG icons (Phosphor icon set) to enhance the block's visual appearance in the editor.
+* **IMPROVEMENT:** Streamlined workflow - no need to manually code HTML divs when using the block editor.
+* **IMPROVEMENT:** Block previews the location name and temperature unit directly in the editor.
+* **IMPROVEMENT:** Added input validation, rate limiting, request timeout, and response validation for location searches from the Custom block, accompanied by user-friendly error messages.
 
 ### 1.8
 * **NEW:** Added a "Coordinate Finder" tool on the settings page to look up location coordinates and generate widget code.
