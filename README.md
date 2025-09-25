@@ -61,7 +61,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 ![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
 
-The "Under The Weather Forecast" block in the WordPress editor.
+_The "Under The Weather Forecast" block in the WordPress editor._
 
 ---
 
@@ -167,7 +167,7 @@ For most users, simply leaving these boxes checked is the best way to use the we
 
 ![The plugin's comprehensive settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
 
-The plugin's comprehensive settings page.
+_The plugin's comprehensive settings page._
 
 ---
 
@@ -199,7 +199,7 @@ The tool automatically saves a history of your last 5 searches, which persists b
 
 ![The Coordinate Finder tool, which generates widget code from a location name.](https://ps.w.org/under-the-weather/assets/screenshot-6.png)
 
-The Coordinate Finder tool, which generates widget code from a location name.
+_The Coordinate Finder tool, which generates widget code from a location name._
 
 ---
 
@@ -215,7 +215,7 @@ The report also includes a status indicator that shows whether the optional **Ra
 
 ![The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API](https://ps.w.org/under-the-weather/assets/screenshot-4.png)
 
-The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API.
+_The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API._
 
 ---
 
