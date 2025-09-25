@@ -15,6 +15,10 @@ function validateWeatherData(data) {
 }
 
 // Convert a DMS (Degrees, Minutes, Seconds) coordinate, or a DDM string to the desired Decimal Degrees (DD) format.
+// This frontend parsing serves as a helpful handler to catch malformed coordinates when possible.
+// Decimal Degrees coordinates should be used at all time (e.g., 34.1195, -118.3005).
+// The quotation marks included in DMS coordinates will break the HTML structure of the weather widget. 
+// DMS coordinates (e.g., 34°07'10.2"N 118°18'01.8"W) should therefore be avoided.
 function parseCoordinate(coordString) {
     if (!coordString || typeof coordString !== 'string') {
         return null;
@@ -80,10 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
   	let lat = widget.dataset.lat;
   	let lon = widget.dataset.lon;
 	
-	// Attempt to parse/convert them
+	// Attempt to parse/convert them (this handles DD, DDM, and DMS formats)
 	const parsedLat = parseCoordinate(lat);
 	const parsedLon = parseCoordinate(lon);
 	
+	// Use parsed values if conversion was successful, otherwise keep original
 	if (parsedLat !== null) {
 	    lat = parsedLat;
 	}
@@ -91,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	    lon = parsedLon;
 	}
 	
-	// Now use the clean 'lat' and 'lon' values for validation and your API call
+	// Now use the clean 'lat' and 'lon' values for validation and API call
 	if (!lat || !lon || !locationName) {
 	    widget.innerHTML = 'Location data is missing.';
 	    return;
@@ -148,7 +153,7 @@ function displayWeather(data, widget) {
         if (style_set === 'weather_icons_font') {
             return `<i class="wi ${weather.icon_class}"></i>`;
         } else {
-    // Pass the base URL of the plugin tothe script using wp_localize_script in the main PHP file.
+    // Pass the base URL of the plugin to the script using wp_localize_script in the main PHP file.
 return `<img src="${under_the_weather_plugin_url.url}images/default-weather-images-${weather.icon}.png" alt="${weather.description}">`;
         }
     }
