@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.1' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.1.0' );
 
 add_action('init', 'under_the_weather_register_widget_block');
 function under_the_weather_register_widget_block() {
