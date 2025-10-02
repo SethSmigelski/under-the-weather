@@ -1,9 +1,110 @@
 // js/admin-geocoder.js
 document.addEventListener('DOMContentLoaded', function() {
+	
+    
+    // ===================================================================
+    // EXPIRATION SLIDER - Runs on all admin pages
+    // ===================================================================
+	
+	// --- Logic to prepare the top save button for styling ---
+	const topSaveBtn = document.getElementById('utw-expiration-save-btn');
+	if (topSaveBtn) {
+		// Find the parent table cell (td) and table row (tr)
+		const parentTd = topSaveBtn.closest('td');
+		const parentTr = topSaveBtn.closest('tr');
+	
+		if (parentTd && parentTr) {
+			// 1. Add an ID to the table row for easy CSS targeting
+			parentTr.id = 'utw-expiration-save-btn-wrap';
+	
+			// 2. Find and remove the empty label cell (th)
+			const thLabel = parentTr.querySelector('th');
+			if (thLabel) {
+				thLabel.remove();
+			}
+			
+			// 3. Add the colspan="2" attribute to the button's cell
+			parentTd.setAttribute('colspan', '2');
+		}
+	}
+	
+	
+    const expirationSlider = document.getElementById('utw-expiration-slider');
+    const expirationValueDisplay = document.getElementById('utw-expiration-value');
+    const unsavedChangesMessage = document.getElementById('utw-unsaved-changes');
+    const expirationSaveBtn = document.getElementById('utw-expiration-save-btn');
+	const minCacheNotice = document.getElementById('utw-min-cache-notice'); 
+
+    if (expirationSlider && expirationValueDisplay) {
+		const originalValue = expirationSlider.getAttribute('data-original-value');
+		
+		// Update display value in real-time as slider moves
+		expirationSlider.addEventListener('input', function() {
+			
+			// Show the special notice if the user drags the slider to 0
+			if (parseFloat(this.value) === 0) {
+				minCacheNotice.style.display = 'block';
+			} else {
+				minCacheNotice.style.display = 'none';
+			}
+			
+			// Enforce minimum of 0.5
+			let value = parseFloat(this.value);
+			if (value < 0.5) {
+				value = 0.5;
+				this.value = 0.5;
+			}
+			
+			expirationValueDisplay.textContent = value;
+			
+			// Show/hide unsaved changes message based on whether value changed
+			if (unsavedChangesMessage) {
+				if (String(value) !== originalValue) {
+					unsavedChangesMessage.style.display = 'inline';
+				} else {
+					unsavedChangesMessage.style.display = 'none';
+				}
+			}
+		});
+		
+		// Additional validation on change (when user releases the slider)
+		expirationSlider.addEventListener('change', function() {
+			let value = parseFloat(this.value);
+			if (value < 0.5) {
+				this.value = 0.5;
+				expirationValueDisplay.textContent = '0.5';
+			}
+		});
+		
+		// Hide unsaved changes message when the upper save button is clicked
+		if (expirationSaveBtn) {
+			expirationSaveBtn.addEventListener('click', function() {
+				if (unsavedChangesMessage) {
+					unsavedChangesMessage.style.display = 'none';
+				}
+			});
+		}
+		
+		// Also hide message if the main (bottom) form submit button is clicked
+		const mainSubmitBtn = document.querySelector('input[type="submit"][name="submit"]');
+		if (mainSubmitBtn && mainSubmitBtn.id !== 'utw-expiration-save-btn') {
+			mainSubmitBtn.addEventListener('click', function() {
+				if (unsavedChangesMessage) {
+					unsavedChangesMessage.style.display = 'none';
+				}
+			});
+		}
+	}
+
+    // ===================================================================
+    // GEOCODER TOOL - Only runs when the tool exists on the page
+    // ===================================================================	
+	
     const geocoderTool = document.getElementById('utw-geocoder-tool');
     if (!geocoderTool) {
-        return; 
+        return; // Exit only AFTER checking for the expiration slider
     }
+    
     const locationInput = document.getElementById('utw-location-input');
     const findButton = document.getElementById('utw-find-coords');
     const resultWrapper = document.getElementById('utw-result-wrapper');
@@ -11,13 +112,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let lastRequestTime = 0;
 
     // --- HISTORY FUNCTIONS ---
-    let searchHistory = []; // Local cache of the history
+    let searchHistory = [];
     const MAX_HISTORY = 5;
 	
 	// Add newlines and indentation back to saved widgets to display nicely
     function formatWidgetHtml(html) {
 		return html
-			//.replace('<div class="weather-widget"', '<div class="weather-widget"\n    ')
 			.replace(' data-lat=', '\n     data-lat=')
 			.replace(' data-lon=', '\n     data-lon=')  
 			.replace(' data-location-name=', '\n     data-location-name=')
@@ -50,16 +150,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function saveToHistoryAndServer(newItem) {
-			
-        // Add to local history first
         searchHistory.unshift(newItem);
         searchHistory = searchHistory.slice(0, MAX_HISTORY);
         
-        // Update the UI immediately with local data
-		console.log('UTW: Updated history:', searchHistory);
+        console.log('UTW: Updated history:', searchHistory);
         renderHistory();
         
-        // Save to server
         fetch(ajaxurl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -134,7 +230,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         const lon = parseFloat(result.lon).toFixed(4);
                         const locationName = result.display_name;
 
-                        // Generate the HTML div for the user
 						const widgetHtml = `<div class="weather-widget" data-lat="${lat}" data-lon="${lon}" data-location-name="${locationQuery}"></div>`;
 
                         resultWrapper.innerHTML = `
@@ -144,10 +239,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <button type="button" id="utw-copy-button" class="button button-primary">Copy Code</button>
                         `;
                         
-                        // Add to history and save to server
                         saveToHistoryAndServer({ locationName: locationQuery, widgetHtml });
 
-                        // Add click listener to the new copy button
                         document.getElementById('utw-copy-button').addEventListener('click', function() {
                             copyToClipboard(formatWidgetHtml(widgetHtml), this);
                         });
@@ -164,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (historyList) {
-        // Use event delegation for copy buttons in the history list
         historyList.addEventListener('click', function(event) {
             if (event.target.classList.contains('copy-history-btn')) {
                 const textToCopy = event.target.getAttribute('data-clipboard-text');
@@ -172,11 +264,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Load history from server on page load
         loadHistoryFromServer();
     }
     
-    // Copy searches to clipboard
     function copyToClipboard(text, button) {
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(text).then(() => {
@@ -218,7 +308,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.removeChild(textArea);
     }
 
-    // Helper function to escape HTML for display in a <pre> tag
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
