@@ -1,12 +1,13 @@
-/* Weather Widget Styling */
+/* --- Weather Widget Styling --- */
 .weather-widget {
 	min-height: 285px;
-	/*this setting can be removed. However, etting a minimum height helps to reduce browser repaints */
+	/*this setting can be removed. However, setting a minimum height helps to reduce browser repaints */
 }
 
 .weather-location-name {
 	border-bottom: 2px solid #eee;
-	font-size: 18px;
+	font-size: 1.375em;
+	font-weight: bold;
 	margin-bottom: 15px;
 	padding-bottom: 7px;
 	text-align: center;
@@ -53,7 +54,7 @@
 
 .forecast-day-name {
 	color: #444;
-	font-size: 14px;
+	font-size: 0.65em;
 	margin-bottom: 8px;
 }
 
@@ -63,21 +64,21 @@
 	width: 40px;
 }
 
-.forecast-temps {
-	color: #fff;
-	font-size: 6px;
+.forecast-temps .slash {
+	color: transparent;
+	font-size: 0.375em;
 	/*Change the color and size to see the / between high and low */
 }
 
 .forecast-temps .high {
 	color: #000;
-	font-size: 17px;
+	font-size: 1.06em; /* Converted from 17px */
 	font-weight: 700;
 }
 
 .forecast-temps .low {
-	color: #666;
-	font-size: 14px;
+	color: #555;
+	font-size: 0.875em; /* Converted from 14px */
 }
 
 .today-forecast-temps {
@@ -88,38 +89,38 @@
 }
 
 .today-forecast-label {
-	font-size: 18px;
+	font-size: 1.125em; /* Converted from 18px */
 	margin: 6px 0 11px;
 }
 
-.today-forecast-temps .temps-wrapper {
-	color: #fff;
-	font-size: 9px;
+.today-forecast-temps .temps-wrapper .slash{
+	color: transparent;
+	font-size: 0.55em;
 	/*Change the color and size to see the / between high and low */
 }
 
 .today-forecast-temps .high {
 	color: #000;
-	font-size: 36px;
+	font-size: 2.25em; /* Converted from 36px */
 	font-weight: 700;
 }
 
 .today-forecast-temps .low {
-	color: #666;
-	font-size: 26px;
+	color: #555;
+	font-size: 1.625em; /* Converted from 26px */
 	font-weight: 400;
 }
 
 .today-forecast-temps .temp-unit {
-	color: #777;
-	font-size: 15px;
+	color: #666;
+	font-size: 0.94em; /* Converted from 15px */
 	font-weight: 400;
 	position: relative;
 	top: -8px;
 }
 
 .weather-widget .wi {
-	color: #666;
+	color: #555;
 	font-size: 45px;
 	line-height: 1;
 	margin-bottom: 5px;
@@ -130,7 +131,6 @@
 }
 
 .weather-extra-details {
-	border-top: 1px solid #eee;
 	border-bottom: 1px solid #eee;
 	color: #555;
 	display: flex;
@@ -154,6 +154,96 @@
 .last-updated {
 	color: #999;
 	font-size: .8em;
-	margin-top: 15px;
+	margin-top: 10px;
 	text-align: center;
+	border-top: 1px solid #eee;
+	padding-top: 5px;
+}
+
+/* --- Weather Alert Styling --- */
+
+.weather-alert {
+    display: flex;
+    align-items: center; /* Vertically aligns the icon with the text block */
+    background-color: #f0f8ff; 
+    border: 1px solid #add8e6;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Left column for the icon */
+.weather-alert-icon-left {
+    margin-right: 12px; 
+}
+
+/* Right column for the text messages */
+.weather-alert-message {
+    flex-grow: 1; /* Allows the message area to take up remaining space */
+}
+
+.weather-alert-event {
+    font-weight: bold;
+    margin-bottom: 4px;
+} 
+
+.weather-alert-sender {
+    font-size: 0.9em;
+    opacity: 0.8;
+} 
+
+/* Styles for the PNG icon */
+.weather-alert-icon-left .weather-alert-icon {
+    width: 32px;  /* Slightly larger for better visibility */
+    height: 32px;
+    vertical-align: middle;
+}
+
+/* Styles for the Font Icon */
+.weather-alert-icon-left .wi {
+    font-size: 2em; /* Make the icon a bit bigger */
+    line-height: 1;
+}
+
+/* --- Sunrise & Sunset Styling --- */
+
+.sunrise-sunset-container {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    padding: 10px 5px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.sunrise-time, .sunset-time {
+    flex-basis: 50%;
+}
+
+.sunrise-sunset-label {
+    font-size: 0.8em;
+	margin: 0 0 0 10px;
+	display: inline;
+}
+
+.sunrise-sunset-value {
+    font-weight: bold;
+    font-size: 1.25em;
+}
+
+/* Icon sizing */
+.sunrise-sunset-container .wi {
+    font-size: 30px; /* Smaller icon size */
+    line-height: 1;
+    color: #f28c1f; /* A nice sun color. Delete this to match forecast icons */
+	display: inline;
+}
+
+.sunrise-sunset-container .sunrise-sunset-icon {
+    width: 25px; /* Visually Match the forecast day icon size */
+    height: 25px;
+    filter: drop-shadow(1px 2px 2px #888);
+	display: inline;
 }
