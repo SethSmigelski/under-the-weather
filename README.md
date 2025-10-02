@@ -123,8 +123,7 @@ You can also display the weather by using the `[under_the_weather]` shortcode. T
 * `unit`: (Optional) The unit system. Accepts `metric` or `imperial`. Defaults to `imperial`.
 
 **Example:**
-```[under_the_weather lat="48.8566" lon="2.3522" location_name="Paris, France" unit="metric"]
-```
+`[under_the_weather lat="48.8566" lon="2.3522" location_name="Paris, France" unit="metric"]`
 
 ---
 
