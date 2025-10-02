@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.1
+ * Version:           2.2
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,11 +14,18 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.1.0' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.2.0' );
 
+// Add the Under The Weather Forecast block.
 add_action('init', 'under_the_weather_register_widget_block');
 function under_the_weather_register_widget_block() {
     register_block_type( __DIR__ . '/build' );
+}
+
+// Add shortcode support.
+add_action( 'init', 'under_the_weather_register_shortcode' );
+function under_the_weather_register_shortcode() {
+    add_shortcode( 'under_the_weather', 'under_the_weather_shortcode_callback' );
 }
 
 // =============================================================================
@@ -50,7 +57,10 @@ function under_the_weather_settings_init() {
     // Section for basic API and cache duration settings
     add_settings_section('under_the_weather_settings_section', __('API & Cache Settings', 'under-the-weather'), 'under_the_weather_settings_section_callback', $page_slug);
     add_settings_field('under_the_weather_api_key', __('OpenWeather API Key', 'under-the-weather'), 'under_the_weather_api_key_field_html', $page_slug, 'under_the_weather_settings_section');
-    add_settings_field('under_the_weather_expiration', __('Cache Expiration Time', 'under-the-weather'), 'under_the_weather_expiration_field_html', $page_slug, 'under_the_weather_settings_section');
+    add_settings_field('under_the_weather_expiration', __('Cache Expiration Time (Hours)', 'under-the-weather'), 'under_the_weather_expiration_field_html', $page_slug, 'under_the_weather_settings_section');
+
+    // Extra save button field (with empty label)
+    add_settings_field('under_the_weather_section_save', '', 'under_the_weather_save_button_callback', $page_slug, 'under_the_weather_settings_section');	
 
     // Section for controlling widget display and style
     add_settings_section('under_the_weather_display_section', __('Widget Display Settings', 'under-the-weather'), 'under_the_weather_display_section_callback', $page_slug);
@@ -58,9 +68,11 @@ function under_the_weather_settings_init() {
     add_settings_field('under_the_weather_style_set', __('Icon & Style Set', 'under-the-weather'), 'under_the_weather_style_set_field_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_display_mode', __('Primary Display', 'under-the-weather'), 'under_the_weather_display_mode_field_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_forecast_days', __('Number of Forecast Days', 'under-the-weather'), 'under_the_weather_forecast_days_field_html', $page_slug, 'under_the_weather_display_section');
+    add_settings_field('under_the_weather_show_unit', __('Unit Symbol', 'under-the-weather'), 'under_the_weather_show_unit_field_html', $page_slug, 'under_the_weather_display_section');	
     add_settings_field('under_the_weather_show_details', __('Extra Details', 'under-the-weather'), 'under_the_weather_show_details_field_html', $page_slug, 'under_the_weather_display_section');
-    add_settings_field('under_the_weather_show_unit', __('Display Unit Symbol', 'under-the-weather'), 'under_the_weather_show_unit_field_html', $page_slug, 'under_the_weather_display_section');
-    add_settings_field('under_the_weather_show_timestamp', __('Display Timestamp', 'under-the-weather'), 'under_the_weather_show_timestamp_field_html', $page_slug, 'under_the_weather_display_section');
+add_settings_field('under_the_weather_sunrise_sunset', __('Sunrise & Sunset', 'under-the-weather'), 'under_the_weather_sunrise_sunset_field_html', $page_slug, 'under_the_weather_display_section');
+	add_settings_field('under_the_weather_show_alerts', __('Weather Alerts', 'under-the-weather'), 'under_the_weather_show_alerts_field_html', $page_slug, 'under_the_weather_display_section');
+    add_settings_field('under_the_weather_show_timestamp', __('Timestamps', 'under-the-weather'), 'under_the_weather_show_timestamp_field_html', $page_slug, 'under_the_weather_display_section');
 
     // Section for "Advanced Settings"
     add_settings_section('under_the_weather_advanced_section', __('Advanced Settings', 'under-the-weather'), null, $page_slug);
@@ -91,23 +103,44 @@ function under_the_weather_settings_init() {
 /**
  * Sanitize and validate all settings before saving to the database.
  */
+ 
+// Sanitize the API key 
 function under_the_weather_sanitize_settings($input) {
     $new_input = [];
+	
+    // Sanitize the API key 
     if (isset($input['api_key'])) {
         $api_key = sanitize_text_field($input['api_key']);
-        if (empty($api_key) || under_the_weather_validate_api_key($api_key)) {
+        if (empty($api_key)) {
+            $new_input['api_key'] = ''; // Allow clearing
+        } elseif (under_the_weather_validate_api_key($api_key)) {
             $new_input['api_key'] = $api_key;
         } else {
             add_settings_error('under_the_weather_settings', 'invalid_api_key', 
                 __('Invalid API key format. Please check your OpenWeather API key.', 'under-the-weather'));
+            // Keep the old value if new one is invalid
+            $old_options = get_option('under_the_weather_settings');
+            $new_input['api_key'] = isset($old_options['api_key']) ? $old_options['api_key'] : '';
         }
     }
-    if (isset($input['expiration']) && in_array($input['expiration'], ['1','2','3','6'])) { $new_input['expiration'] = $input['expiration']; }
-    if (isset($input['style_set']) && in_array($input['style_set'], ['default_images', 'weather_icons_font'])) { $new_input['style_set'] = $input['style_set']; }
-    if (isset($input['display_mode']) && in_array($input['display_mode'], ['current', 'today_forecast'])) { $new_input['display_mode'] = $input['display_mode']; }
-    if (isset($input['forecast_days']) && in_array($input['forecast_days'], ['2','3','4','5','6'])) { $new_input['forecast_days'] = $input['forecast_days']; }
+	
+	// Sanitize the expiration time from the range slider
+	if (isset($input['expiration']) && is_numeric($input['expiration'])) {
+		$expiration = floatval($input['expiration']);
+    // Ensure the value is within the allowed range (0.5 to 8)
+		if ($expiration >= 0.5 && $expiration <= 8) {
+			$new_input['expiration'] = $expiration;
+		} else {
+			// If out of range, enforce minimum of 0.5
+			$new_input['expiration'] = max(0.5, min(8, $expiration));
+			add_settings_error('under_the_weather_settings', 'expiration_adjusted', 
+				__('Cache expiration time adjusted to minimum of 0.5 hours (30 minutes).', 'under-the-weather'), 'updated');
+		}
+	} else {
+		$new_input['expiration'] = 4; // Default to 4 if not numeric
+	}
     
-	// sanitization for Rate Limit options
+	// Sanitize the Rate Limit options
     $new_input['enable_rate_limit'] = isset($input['enable_rate_limit']) ? '1' : '0';
     if (isset($input['rate_limit_count']) && is_numeric($input['rate_limit_count'])) {
 		$count = absint($input['rate_limit_count']);
@@ -116,8 +149,21 @@ function under_the_weather_sanitize_settings($input) {
 		$new_input['rate_limit_count'] = 100; // Ensure default exists
 	}
 	
+	// Sanitize the  Sunrise and Sunset preference with 12 hour time format and 24 hour time format
+	if (isset($input['sunrise_sunset']) && in_array($input['sunrise_sunset'], ['off', '12', '24'])) {
+        $new_input['sunrise_sunset'] = $input['sunrise_sunset'];
+    } else {
+        $new_input['sunrise_sunset'] = 'off';
+    }
+	
+	// Sanitize the major display options
+	if (isset($input['style_set']) && in_array($input['style_set'], ['default_images', 'weather_icons_font'])) { $new_input['style_set'] = $input['style_set']; }
+    if (isset($input['display_mode']) && in_array($input['display_mode'], ['current', 'today_forecast'])) { $new_input['display_mode'] = $input['display_mode']; }
+    if (isset($input['forecast_days']) && in_array($input['forecast_days'], ['2','3','4','5','6'])) { $new_input['forecast_days'] = $input['forecast_days']; }
+	
     $new_input['show_details'] = isset($input['show_details']) ? '1' : '0';
     $new_input['show_unit'] = isset($input['show_unit']) ? '1' : '0';
+	$new_input['show_alerts'] = isset($input['show_alerts']) ? '1' : '0';
     $new_input['show_timestamp'] = isset($input['show_timestamp']) ? '1' : '0';
     $new_input['enable_cache'] = isset($input['enable_cache']) ? '1' : '0';
     $new_input['enqueue_style'] = isset($input['enqueue_style']) ? '1' : '0';
@@ -147,7 +193,7 @@ function under_the_weather_style_set_visual_html() {
             <img src="<?php echo esc_url($plugin_assets_url . 'default-style-example.png'); ?>" alt="Default Images Style Example" class="under-the-weather-visual-reference-default-image">
             <p><em><?php esc_html_e('Default Images', 'under-the-weather'); ?></em></p>
         </div>
-        <div style="text-align: center;">
+        <div class="under-the-weather-visual-reference-item">
             <img src="<?php echo esc_url($plugin_assets_url . 'font-style-example.svg'); ?>" alt="Weather Icons Font Style Example">
             <p><em><?php esc_html_e('Weather Icons Font', 'under-the-weather'); ?></em></p>
         </div>
@@ -158,8 +204,61 @@ function under_the_weather_style_set_visual_html() {
 function under_the_weather_api_key_field_html() { 
 	$options = get_option('under_the_weather_settings'); $value = isset($options['api_key']) ? $options['api_key'] : ''; echo '<input type="text" name="under_the_weather_settings[api_key]" value="' . esc_attr($value) . '" class="regular-text" placeholder="' . esc_attr__('Enter your API key', 'under-the-weather') . '">';
 	}
-function under_the_weather_expiration_field_html() { 
-	$options = get_option('under_the_weather_settings'); $value = isset($options['expiration']) ? $options['expiration'] : '2'; echo '<select name="under_the_weather_settings[expiration]"><option value="1" '.selected($value, '1', false).'>' . esc_html__('1 Hour', 'under-the-weather') . '</option><option value="2" '.selected($value, '2', false).'>' . esc_html__('2 Hours', 'under-the-weather') . '</option><option value="3" '.selected($value, '3', false).'>' . esc_html__('3 Hours', 'under-the-weather') . '</option><option value="6" '.selected($value, '6', false).'>' . esc_html__('6 Hours', 'under-the-weather') . '</option></select>'; 
+
+// Use a slider to set the cache expiration time. Default: 4 hours.	
+function under_the_weather_expiration_field_html() {
+    $options = get_option('under_the_weather_settings');
+    $value = isset($options['expiration']) ? $options['expiration'] : '4'; 
+    ?>
+    <div class="utw-slider-container">
+        <div class="utw-slider-wrapper">
+            <input 
+                type="range" 
+                id="utw-expiration-slider" 
+                name="under_the_weather_settings[expiration]" 
+                value="<?php echo esc_attr($value); ?>" 
+                min="0" 
+                max="8" 
+                step="0.5"
+                list="expiration-markers"
+                data-original-value="<?php echo esc_attr($value); ?>"
+            >
+            <datalist id="expiration-markers">
+                <option value="0" label="0"></option>
+                <option value="1"></option> <option value="2" label="2"></option>
+                <option value="3"></option> <option value="4" label="4"></option>
+                <option value="5"></option> <option value="6" label="6"></option>
+                <option value="7"></option> <option value="8" label="8"></option>
+            </datalist>
+        </div>
+    </div>    
+    <div class="utw-expiration-display">
+            <span class="utw-slider-value">
+            	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="#48484A" d="M128 44a96 96 0 1 0 96 96a96.11 96.11 0 0 0-96-96m0 168a72 72 0 1 1 72-72a72.08 72.08 0 0 1-72 72m36.49-112.49a12 12 0 0 1 0 17l-28 28a12 12 0 0 1-17-17l28-28a12 12 0 0 1 17 0M92 16a12 12 0 0 1 12-12h48a12 12 0 0 1 0 24h-48a12 12 0 0 1-12-12"/></svg> Cached weather will expire after <strong id="utw-expiration-value"><?php echo esc_html($value); ?></strong> hours.
+            </span>
+    </div>
+    <p id="utw-min-cache-notice" class="description">
+        <?php esc_html_e('Minimum cache time is 30 minutes. To disable caching, use the advanced settings below.', 'under-the-weather'); ?>
+    </p>
+    <?php
+}
+// Add an extra save settigns button, just below the expiration slider.
+function under_the_weather_save_button_callback() {
+    ?>
+    <div class="utw-section-save-wrapper">
+        <?php submit_button(
+            __('Save Settings', 'under-the-weather'), 
+            'primary', 
+            'submit', 
+            false,
+            ['id' => 'utw-expiration-save-btn']
+        ); ?>
+    </div>
+    <div id="utw-unsaved-changes" class="utw-unsaved-message">
+            <?php esc_html_e('You have unsaved changes', 'under-the-weather'); ?>
+        
+    </div>
+    <?php
 }
 function under_the_weather_style_set_field_html() {
 	$options = get_option('under_the_weather_settings'); $value = isset($options['style_set']) ? $options['style_set'] : 'default_images'; echo '<select name="under_the_weather_settings[style_set]"><option value="default_images" '.selected($value, 'default_images', false).'>' . esc_html__('Default Images', 'under-the-weather') . '</option><option value="weather_icons_font" '.selected($value, 'weather_icons_font', false).'>' . esc_html__('Weather Icons Font', 'under-the-weather') . '</option></select>'; 
@@ -174,7 +273,24 @@ function under_the_weather_show_details_field_html() {
 	$options = get_option('under_the_weather_settings'); $value = isset($options['show_details']) ? $options['show_details'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_details]' value='1' " . checked($value, '1', false) . "> " . esc_html__("Display 'Feels Like' and wind.", 'under-the-weather'); 
 }
 function under_the_weather_show_unit_field_html() { 
-	$options = get_option('under_the_weather_settings'); $value = isset($options['show_unit']) ? $options['show_unit'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_unit]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Show the temperature unit symbol (F or C) in the primary display.', 'under-the-weather'); 
+	$options = get_option('under_the_weather_settings'); $value = isset($options['show_unit']) ? $options['show_unit'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_unit]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Show the temperature unit symbol (F or C) in the primary display.', 'under-the-weather');
+}
+function under_the_weather_show_alerts_field_html() {
+    $options = get_option('under_the_weather_settings');
+    // Default to '1' (checked) to make the new feature visible
+    $value = isset($options['show_alerts']) ? $options['show_alerts'] : '1'; 
+    echo "<input type='checkbox' name='under_the_weather_settings[show_alerts]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Show active weather alerts from reporting authorities.', 'under-the-weather');
+}
+function under_the_weather_sunrise_sunset_field_html() {
+    $options = get_option('under_the_weather_settings');
+    $value = isset($options['sunrise_sunset']) ? $options['sunrise_sunset'] : 'off'; // Default to 'off'
+    ?>
+    <fieldset>
+        <label><input type="radio" name="under_the_weather_settings[sunrise_sunset]" value="off" <?php checked($value, 'off'); ?>> <?php esc_html_e('Off', 'under-the-weather'); ?></label><br>
+        <label><input type="radio" name="under_the_weather_settings[sunrise_sunset]" value="12" <?php checked($value, '12'); ?>> <?php esc_html_e('Show in 12-hour format (e.g., 6:30 PM)', 'under-the-weather'); ?></label><br>
+        <label><input type="radio" name="under_the_weather_settings[sunrise_sunset]" value="24" <?php checked($value, '24'); ?>> <?php esc_html_e('Show in 24-hour format (e.g., 18:30)', 'under-the-weather'); ?></label>
+    </fieldset>
+    <?php
 }
 function under_the_weather_show_timestamp_field_html() {
 	$options = get_option('under_the_weather_settings'); $value = isset($options['show_timestamp']) ? $options['show_timestamp'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_timestamp]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Show last updated time.', 'under-the-weather'); 
@@ -210,7 +326,7 @@ function under_the_weather_geocoding_field_html() {
         <button type="button" id="utw-find-coords" class="button button-secondary">
             <?php esc_html_e('Find Coordinates', 'under-the-weather'); ?>
         </button>
-        <div id="utw-result-wrapper" style="margin-top: 15px;">
+        <div id="utw-result-wrapper">
             </div>
     </div>
     <?php
@@ -360,14 +476,26 @@ function under_the_weather_clear_rate_limit_transients_safely() {
 add_action('wp_enqueue_scripts', 'under_the_weather_enqueue_assets');
 function under_the_weather_enqueue_assets() { 
     $options = get_option('under_the_weather_settings'); 
-    if (empty($options)) return; 
+    if (empty($options)) return;
+	
+	// Register the main style so WordPress knows about it.
+    wp_register_style('under-the-weather-styles', plugins_url('css/under-the-weather.min.css', __FILE__), [], UNDER_THE_WEATHER_VERSION);
 
+    // Register dependent icon styles.
+    if (isset($options['style_set']) && $options['style_set'] === 'weather_icons_font') {
+        wp_register_style('under-the-weather-icons', plugins_url('css/weather-icons.min.css', __FILE__), [], '2.0');
+        if (!empty($options['show_details'])) {
+            wp_register_style('under-the-weather-wind-icons', plugins_url('css/weather-icons-wind.min.css', __FILE__), [], '2.0');
+        }
+    } 
+
+	// Conditionally ENQUEUE based on the global setting.
     if (!empty($options['enqueue_style'])) { 
-        wp_enqueue_style('under-the-weather-styles', plugins_url('css/under-the-weather.min.css', __FILE__), [], UNDER_THE_WEATHER_VERSION); 
+         wp_enqueue_style('under-the-weather-styles'); 
         if (isset($options['style_set']) && $options['style_set'] === 'weather_icons_font') { 
-            wp_enqueue_style('under-the-weather-icons', plugins_url('css/weather-icons.min.css', __FILE__), [], '2.0'); 
+            wp_enqueue_style('under-the-weather-icons'); 
             if (!empty($options['show_details'])) { 
-                wp_enqueue_style('under-the-weather-wind-icons', plugins_url('css/weather-icons-wind.min.css', __FILE__), [], '2.0'); 
+                wp_enqueue_style('under-the-weather-wind-icons');  
             } 
         } 
     } 
@@ -466,6 +594,8 @@ function under_the_weather_load_scripts_manually() {
         'display_mode'   => isset($options['display_mode']) ? $options['display_mode'] : 'current',
         'forecast_days'  => isset($options['forecast_days']) ? intval($options['forecast_days']) : 5,
         'show_details'   => !empty($options['show_details']),
+		'show_alerts'    => !empty($options['show_alerts']),
+		'sunrise_sunset_format' => isset($options['sunrise_sunset']) ? $options['sunrise_sunset'] : 'off',
         'show_timestamp' => !empty($options['show_timestamp']),
         'show_unit'      => !empty($options['show_unit']),
         'nonce'          => wp_create_nonce('wp_rest'),
@@ -476,7 +606,6 @@ function under_the_weather_load_scripts_manually() {
     $plugin_url_data = ['url' => esc_url_raw(plugins_url('/', __FILE__))];
     wp_localize_script('under-the-weather-script', 'under_the_weather_plugin_url', $plugin_url_data);
 }
-
 
 // =============================================================================
 // SECTION 3: REST API ENDPOINT & HELPERS
@@ -786,13 +915,14 @@ function under_the_weather_get_forecast_data($request) {
     $lon = $request['lon']; 
     $api_url = "https://api.openweathermap.org/data/3.0/onecall?lat={$lat}&lon={$lon}&appid={$api_key}&units={$unit}"; 
     
-	//Check API Response
+	// Check API Response
 	$response_body = under_the_weather_safe_api_call($api_url);
 	if ($response_body === false) {
 		return new WP_REST_Response(__('Could not fetch new weather data from OpenWeather.', 'under-the-weather'), 502);
 	}
 	
-	$weather_data = json_decode($response_body); 
+	$weather_data = json_decode($response_body);
+	
     under_the_weather_update_usage_stats('api'); 
     
     if (json_last_error() !== JSON_ERROR_NONE) return new WP_REST_Response(__('Error decoding weather data.', 'under-the-weather'), 500); 
@@ -810,13 +940,100 @@ function under_the_weather_get_forecast_data($request) {
         foreach ($weather_data->daily as $day) { 
             $weather_data->daily[array_search($day, $weather_data->daily)]->weather[0]->icon_class = under_the_weather_get_icon_class($day->weather[0]->icon); 
         } 
-    } 
-    
-    if ($caching_enabled) {
-        set_transient($transient_key, $weather_data, $expiration_hours * HOUR_IN_SECONDS); 
     }
+	
+	// Establish midnight cache expiration logic, so the previous day's weather is not shown from the cache
+	// Incorporate midnight cache expiration with timed cache expiration preference
+	// Add a 10-minute buffer to avoid caching the previous day's forecast at midnight due to service clock differences.
+	// This is like treating 12:10 a.m. as midnight as a precaution
+
+	if ($caching_enabled) {
+		// Enforce minimum cache time of 30 minutes
+		$expiration_hours = isset($options['expiration']) ? floatval($options['expiration']) : 4;
+		$expiration_hours = max(0.5, $expiration_hours); 
+		
+		$midnight_expiration_seconds = 0;
+		
+		if (isset($weather_data->timezone) && is_string($weather_data->timezone)) {
+			try {
+				$timezone_obj = new DateTimeZone($weather_data->timezone);
+				$now = new DateTime('now', $timezone_obj);
+				$midnight = new DateTime('tomorrow midnight', $timezone_obj);
+				$seconds_until_midnight = $midnight->getTimestamp() - $now->getTimestamp();
+				$midnight_expiration_seconds = $seconds_until_midnight + (10 * 60);
+			} catch (Exception $e) {
+				under_the_weather_log('Invalid timezone from API: ' . $weather_data->timezone);
+				$midnight_expiration_seconds = 0;
+			}
+		}
+		
+		// Calculate fixed duration
+		$fixed_duration_seconds = $expiration_hours * HOUR_IN_SECONDS;
+		
+		// Use the shorter of: fixed duration or midnight expiration
+		if ($midnight_expiration_seconds > 0) {
+			$final_expiration_seconds = min($fixed_duration_seconds, $midnight_expiration_seconds);
+		} else {
+			$final_expiration_seconds = $fixed_duration_seconds;
+		}
+		
+		// Final safety check: ensure at least 30 minutes
+		$final_expiration_seconds = max(1800, $final_expiration_seconds);
+		
+		set_transient($transient_key, $weather_data, $final_expiration_seconds);
+	}
+
     
     return new WP_REST_Response($weather_data, 200); 
+}
+
+/**
+ *
+ * Callback function for the [under_the_weather] shortcode.
+ * @param array $atts Shortcode attributes.
+ * @return string HTML output for the weather widget.
+ *
+ */
+function under_the_weather_shortcode_callback( $atts ) {
+    // 1. Define attributes and set default values.
+    $atts = shortcode_atts(
+        array(
+            'lat'              => '',
+            'lon'              => '',
+            'location_name'    => '',
+            'unit'             => 'imperial', // Default to imperial
+        ),
+        $atts,
+        'under_the_weather'
+    );
+
+    // 2. Validate that essential attributes are present.
+    if ( empty( $atts['lat'] ) || empty( $atts['lon'] ) || empty( $atts['location_name'] ) ) {
+        // Return an error message or an empty string if essential data is missing.
+        return '';
+    }
+
+    // 3. Enqueue the necessary scripts and styles.
+    // This ensures they are only loaded on pages where the shortcode is used.
+	wp_enqueue_style( 'under-the-weather-styles' );
+	// We also need to enqueue the icon styles if they are selected in the settings.
+	$options = get_option('under_the_weather_settings');
+	if (isset($options['style_set']) && $options['style_set'] === 'weather_icons_font') {
+		wp_enqueue_style('under-the-weather-icons');
+		if (!empty($options['show_details'])) {
+			wp_enqueue_style('under-the-weather-wind-icons');
+		}
+	}
+	under_the_weather_load_scripts_manually();
+
+    // 4. Build and return the HTML div.
+    return sprintf(
+        '<div class="weather-widget" data-lat="%s" data-lon="%s" data-location-name="%s" data-unit="%s"></div>',
+        esc_attr( $atts['lat'] ),
+        esc_attr( $atts['lon'] ),
+        esc_attr( $atts['location_name'] ),
+        esc_attr( $atts['unit'] )
+    );
 }
 
 // =============================================================================
