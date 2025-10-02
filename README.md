@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, block
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 2.1
+* **Stable tag:** 2.2
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -30,10 +30,11 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Easy to Use:** Add weather widgets using the WordPress block editor or by placing a simple `<div>` with data attributes anywhere on your site.
 * **Server-Side Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for all users.
 * **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
-* **Highly Customizable:** Use the detailed settings page to control everything from cache duration to the number of forecast days.
-* **Flexible Display:** Show either the current live weather or the high/low forecast for the current day.
+* **Customizable Display:** Use the main display to show either the current live weather or the high/low forecast for the current day, and set the number of days to include in the forecast ahead.
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
+* **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
+* **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options. 
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
 * **Block Editor Coordinate Finder:** Search for locations by name and automatically fill in coordinates without ever leaving the block editor.
@@ -111,6 +112,20 @@ To show the weather for a location in Celsius, you would add `data-unit="metric"
 
 The plugin's JavaScript will automatically find this element and populate it with the forecast.
 
+### Using the Shortcode (Classic Editor & Widgets)
+
+You can also display the weather by using the `[under_the_weather]` shortcode. This is ideal for the Classic Editor, text widgets, or other page builders.
+
+**Available attributes:**
+* `lat`: (Required) The latitude for the forecast.
+* `lon`: (Required) The longitude for the forecast.
+* `location_name`: (Required) The name to display for the location.
+* `unit`: (Optional) The unit system. Accepts `metric` or `imperial`. Defaults to `imperial`.
+
+**Example:**
+```[under_the_weather lat="48.8566" lon="2.3522" location_name="Paris, France" unit="metric"]
+```
+
 ---
 
 ## Configuration
@@ -120,9 +135,12 @@ Before you begin, go to https://home.openweathermap.org/ and sign up for an API 
 **API & Cache**
 
 **Cache Expiration Time:** 
-This setting controls how long the weather data is stored on your server before fetching a new forecast.
+Use the slider to set the maximum time weather data is stored before fetching a new forecast, from 30 minutes to 8 hours. 
+
+The plugin also features a **smart caching** system that automatically ensures the cache expires after midnight in the location's local timezone. This prevents showing a stale forecast from the previous day, regardless of your slider setting.
+
 For displaying live conditions (using the **Primary Display** or **Extra Details** options), a shorter cache time of 1 or 2 hours is recommended.
-For displaying only the daily high/low, a longer cache time of 3 or 6 hours is effective at reducing API calls.
+For displaying only the daily high/low, a longer cache time of 3 or 8 hours is effective at reducing API calls.
 
 **Widget Display & Style**
 
@@ -136,7 +154,12 @@ Select whether the main display of the widget shows the **Current** live tempera
 Adjust the number of days shown in the extended forecast row, from 2 to 6 days.
 
 **Extra Details:**
-Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display. 
+Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
+
+**Sunrise & Sunset:** This setting allows you to display the local sunrise and sunset times for the location, which is useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
+
+**Weather Alerts:** When enabled, the widget will display any active severe weather alerts (e.g., thunderstorm warnings, flood advisories) issued by official authorities for the specified location.  This provides critical, at-a-glance information for your visitors.
+
 
 **Display Timestamp:**
 Indicates the time elapsed since the weather data was last updated from the source. This option helps readers see how recently the weather widget obtained its information. 
@@ -234,6 +257,14 @@ Seeing how the plugin's cache system reduces the number of API calls demonstrate
 
 No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
 
+### Will my website ever show yesterday's weather If I set a long cache time?
+
+Cinderella's magic disappears at midnight, and weather caches expire at midnight too. Visitors should never see a cache of the previous day's forecast. 
+
+For example, if you set the cache expiration time to 8 hours and a weather cache is created at 10 p.m. on a Friday (using the weather location's time), that cache will expire at midnight, and someone visiting the site the next day at 5 a.m. will not see the previous day's cache even though fewer than 8 hours have passed.
+
+The plugin uses whichever expiration time is **shorter** to provide the most effective caching.  You control the maximum cache duration with the "Cache Expiration Time" slider. However, to ensure your visitors never see yesterday's weather, the plugin also calculates the time until midnight in the widget's local timezone. If the time until midnight is shorter than your slider setting, the cache will expire at midnight.
+
 ### The weather isn't updating. Why?
 
 The plugin caches the weather data on your server to improve performance and reduce API calls. The data will only be fetched again after the "Cache Expiration Time" you set on the settings page has passed. If you need to force an immediate update, go to **Settings > Under The Weather** and click the "Clear All Weather Caches" button.
@@ -260,9 +291,13 @@ In the WordPress block editor, simply search for "Under The Weather Forecast" wh
 
 ### Can I still use the manual div method if I prefer it?
 
-Absolutely! The traditional method of adding `<div class="weather-widget">` with data attributes still works perfectly. The new block is simply an additional, more user-friendly option for those using the WordPress block editor. 
+Absolutely! While the **block** is the recommended, user-friendly method for the modern WordPress editor, the plugin fully supports traditional methods for maximum flexibility.
 
-The `<div>` method is particularly useful for theme developers and sites that dynamically populate widget attributes from post meta or custom fields.
+You can use the `[under_the_weather]` shortcode to easily place the widget in the Classic Editor, text widgets, or with various page builders. 
+
+Additionally, the manual `<div>` method still works perfectly. It is particularly useful for theme developers who need to integrate the widget directly into template files or dynamically populate its data from custom fields.
+
+The traditional method of adding `<div class="weather-widget">` with data attributes still works perfectly and is particularly useful for theme developers and sites that dynamically populate widget attributes from post meta or custom fields.
 
 ### What coordinate format should I use?
 
@@ -273,6 +308,10 @@ However, the **Under The Weather Forecast block** is designed to be user-friendl
 For the manual `<div>` method, it is strongly recommended to use Decimal Degrees. While the front-end script has a fallback to parse other formats, some characters (like the `"` symbol in DMS) can break the HTML structure and lead to incorrect coordinates. The block editor's converter is the most reliable way to handle alternate formats.
 
 If you're unsure what coordinates to use, the **Coordinate Finder** tool is the best way to retrieve accurate coordinates in the correct format.
+
+### Where do the weather alerts come from?
+
+The alerts are provided directly by the OpenWeather API, which sources them from official meteorological agencies in each country. This ensures the information is timely and authoritative.
 
 ### What does the "Enable Rate Limiting" setting do?
 
@@ -325,6 +364,14 @@ _The weather widget displaying "Today's Forecast" with the Weather Icons font se
 
 _The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled._
 
+![The weather widget with Weather Alerts shown](https://ps.w.org/under-the-weather/assets/screenshot-8.png)
+
+_The weather widget with Weather Alerts shown._
+
+![The weather widget with Sunrise and Sunset times shown](https://ps.w.org/under-the-weather/assets/screenshot-9.png)
+
+_The weather widget with Sunrise and Sunset times shown._
+
 ---
 
 ## Credits
@@ -356,6 +403,16 @@ Here is the link to their privacy policy:
 
 ## Changelog
 
+### 2.2
+* **NEW:** Introduced a `[under_the_weather]` shortcode to allow for easy placement of the weather widget in the Classic Editor, text widgets, and other page builders.
+* **NEW:** Added a display option to show the day's sunrise time and sunset time, helpful in  scheduling outdoor activities.
+* **NEW:** Added an option to display severe weather alerts from official authorities directly within the widget. This feature can be enabled on the plugin's settings page.
+* **IMPROVEMENT:** Incorporated clear warning icons for severe weather alerts.
+* **IMPROVEMENT:** The plugin can now handle multiple weather widgets on a single page
+* **IMPROVEMENT:** The front-end widget now loads its data asynchronously (AJAX). This improves perceived page load performance and allows multiple widgets on the same page to load their data independently.
+* **IMPROVEMENT:** The settings page now features a Cache Expiration Time slider that allows greater flexibility and provides users with a visual way to select how long cached weather should be saved.
+* **NEW:** Midnight expiration is now built into the Cache Expiration logic, so you never have to worry about displaying a cached copy of yesterday's forecast.
+  
 ### 2.1
 * **NEW:** The block editor can now parse and automatically convert coordinates from common formats like DMS (Degrees, Minutes, Seconds) and DDM (Degrees, Decimal Minutes) into the required decimal format.
 * **IMPROVEMENT:** The manual `<div>` widget is now more resilient, with a fallback that can correctly parse multiple coordinate formats.
@@ -456,3 +513,6 @@ This version includes significant code quality and security updates. The templat
 
 ### 2.0
 This version includes a "Under The Weather Forecast" block for the WordPress block editor.
+
+### 2.2
+This version introduces a new `[under_the_weather]` shortcode for easy widget placement and adds options to display severe weather alerts and daily sunrise/sunset times.
