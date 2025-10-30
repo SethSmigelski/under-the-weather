@@ -322,13 +322,15 @@ The rate limit is turned off by default to ensure maximum performance for all us
 
 Yes. By default, when "Load Plugin JavaScript" is selected, it will add scripts to every page of your website. If you only plan to display the weather widget on select pages, you could choose to only load the Under The Weather Scripts on those pages by encoding the JavaScript yourself. 
 
-When Load Plugin JavaScript is unchecked, you can use this template tag o add the Under The Weather Scripts to your theme's footer.php file. 
+When Load Plugin JavaScript is unchecked, you can use this template tag to add the Under The Weather Scripts to your theme's footer.php file. 
 
+```php
 <?php  
 if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
  under_the_weather_load_scripts_manually(); 
 } 
 ?>
+```
 
 For example, if you only intend to display the weather widget on events pages, you could add this targeted script to your theme's footer.php file:
 
