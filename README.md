@@ -48,7 +48,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 ### From the WordPress Plugin Directory File
 1.  Log in to your WordPress Admin Dashboard.
 2.  Navigate to **Plugins > Add Plugin** in the left-hand menu.
-3.  Search for the plugin: Under The Weather.
+3.  Search for the plugin: **Under The Weather**.
 4.  Install the plugin: Once you locate the [correct plugin](https://wordpress.org/plugins/under-the-weather/), click the **"Install Now"** button next to it.
 5.  Activate the plugin: After the installation is complete, click the **"Activate Plugin"** button that appears.
 
