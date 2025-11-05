@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, block
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 2.2
+* **Stable tag:** 2.3
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -26,7 +26,7 @@ With performance in mind, Under The Weather uses a server-side caching system (W
 This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins.
 
 ### Key Features:
-* **Stylish Weather Widgets:** Choose between default OpenWeather images or the crisp Weather Icons font set.
+* **Stylish Weather Widgets:** Choose between default OpenWeather images, crisp Weather Icons font set, and two Animated SVG icon sets (Fill and Outline).
 * **Easy to Use:** Add weather widgets using the WordPress block editor or by placing a simple `<div>` with data attributes anywhere on your site.
 * **Server-Side Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for all users.
 * **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
@@ -34,7 +34,8 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
-* **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options. 
+* **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options.
+* * **Color Picker:**  Customize the color of the "Weather Icons Font" set directly from the settings page.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
 * **Block Editor Coordinate Finder:** Search for locations by name and automatically fill in coordinates without ever leaving the block editor.
@@ -144,7 +145,14 @@ For displaying only the daily high/low, a longer cache time of 3 or 8 hours is e
 **Widget Display & Style**
 
 **Icon & Style Set:** 
-Choose between the default PNG images provided by OpenWeather or the sharp, modern "Weather Icons" font set by Erik Flowers. Selecting the icon font will load an additional small CSS file.
+Pick the style that suits you best. Choose between four weather icon options:  
+* Recognizable **Default images** (PNGs) provided by OpenWeather.
+* Sharp, modern **Weather Icons fonts** created by Erik Flowers.
+* Two **Animated SVG** icon sets (Fill and Outline) by Bas Milius.
+Note: Selecting the icon font will load an additional small CSS file.
+
+**Icon Font Color:**
+Use the color picker to customize the color of the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
 
 **Primary Display:** 
 Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
@@ -158,7 +166,6 @@ Selecting this option will **display 'Feels Like' and wind** (direction and spee
 **Sunrise & Sunset:** This setting allows you to display the local sunrise and sunset times for the location, which is useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
 
 **Weather Alerts:** When enabled, the widget will display any active severe weather alerts (e.g., thunderstorm warnings, flood advisories) issued by official authorities for the specified location.  This provides critical, at-a-glance information for your visitors.
-
 
 **Display Timestamp:**
 Indicates the time elapsed since the weather data was last updated from the source. This option helps readers see how recently the weather widget obtained its information. 
@@ -379,6 +386,7 @@ _The weather widget with Sunrise and Sunset times shown._
 
 * **Weather Data:**  [OpenWeather](https://openweathermap.org/) 
 * **Weather Icon Font:**  [Weather Icons by Erik Flowers](https://github.com/erikflowers/weather-icons)
+* **Animated Weather Icons:** [Meteocons by Bas Milius](https://github.com/basmilius/weather-icons)
 * **Geocoding & Map Data:** [Nominatim.org](https://nominatim.org/) Data © OpenStreetMap contributors
 * **Block Icons:**  [Phosphor](https://github.com/phosphor-icons/homepage)
 
@@ -404,6 +412,13 @@ Here is the link to their privacy policy:
 
 ## Changelog
 
+### 2.3
+* **NEW:** Added two new animated SVG icon sets ("Animated SVG (Fill)" and "Animated SVG (Outline)") from the Meteocons library.
+* **NEW:** Added a color picker to the settings page, allowing users to easily customize the color of the "Weather Icons Font" set.
+* **IMPROVEMENT:** The "Icon & Style Set" setting now offers four distinct visual styles to choose from.
+* **IMPROVEMENT:** The plugin now dynamically adds inline CSS for the icon font color, which only loads when the font set is active and a custom color is saved.
+* **DEV:** Added Bas Milius (Meteocons) to the Credits section.
+  
 ### 2.2
 * **NEW:** Introduced a `[under_the_weather]` shortcode to allow for easy placement of the weather widget in the Classic Editor, text widgets, and other page builders.
 * **NEW:** Added a display option to show the day's sunrise time and sunset time, helpful in  scheduling outdoor activities.
@@ -494,10 +509,10 @@ Here is the link to their privacy policy:
 * **IMPROVEMENT:** Improved the appearance of the Performance Report.
 
 ### 1.1
-* **IMPROVEMENT:** Introduced a Performance Report tab to the Under The Weather Settings Page so that users can monitor the plugin's usage and observe the effectiveness of the cache system.
+* **NEW:** Introduced a Performance Report tab to the Under The Weather Settings Page so that users can monitor the plugin's usage and observe the effectiveness of the cache system.
 
 ### 1.0
-* Initial version intended for public release.
+* **NEW:** Initial version intended for public release.
 
 ---
 
