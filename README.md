@@ -35,7 +35,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
 * **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options.
-* * **Color Picker:**  Customize the color of the "Weather Icons Font" set directly from the settings page.
+* **Color Picker:**  Customize the color of the "Weather Icons Font" set directly from the settings page.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
 * **Block Editor Coordinate Finder:** Search for locations by name and automatically fill in coordinates without ever leaving the block editor.
