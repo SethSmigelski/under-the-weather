@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, block
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.2
+Stable tag: 2.3
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -23,7 +23,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 **Key Features:**
 
-* **Stylish Weather Widgets:** Choose between default OpenWeather images or the crisp Weather Icons font set.
+* **Stylish Weather Widgets:** Choose between default OpenWeather images, crisp Weather Icons font set, and two Animated SVG icon sets (Fill and Outline).
 * **Easy to Use:** Add weather widgets using the WordPress block editor or by placing a simple `<div>` with data attributes anywhere on your site.
 * **Server-Side Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for all users.
 * **Smart Caching:** In addition to a configurable cache duration, the plugin automatically resets the forecast after midnight in the location's timezone, ensuring your visitors always see the current day's weather.
@@ -32,7 +32,8 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
-* **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options. 
+* **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options.
+* **Color Picker:**  Customize the color of the "Weather Icons Font" set directly from the settings page.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
 * **Block Editor Coordinate Finder:** Search for locations by name and automatically fill in coordinates without ever leaving the block editor.
@@ -120,7 +121,14 @@ For displaying only the daily high/low, a longer cache time of 3 or 8 hours is e
 **Widget Display & Style**
 
 **Icon & Style Set:** 
-Choose between the default PNG images provided by OpenWeather or the sharp, modern "Weather Icons" font set by Erik Flowers. Selecting the icon font will load an additional small CSS file.
+Pick the style that suits you best. Choose between four weather icon options:  
+* Recognizable **Default images** (PNGs) provided by OpenWeather.
+* Sharp, modern **Weather Icons fonts** created by Erik Flowers.
+* Two **Animated SVG** icon sets (Fill and Outline) by Bas Milius.
+Note: Selecting the icon font will load an additional small CSS file.
+
+**Icon Font Color:**
+Use the color picker to customize the color of the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
 
 **Primary Display:** 
 Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
@@ -317,6 +325,7 @@ Yes. You can modify the appearance of the Weather Icons Fonts by making customiz
 
 * **Weather Data:**  OpenWeather
 * **Weather Icon Font:**  Weather Icons by Erik Flowers
+* **Animated Weather Icons:** Meteocons by Bas Milius
 * **Geocoding & Map Data:** Data © OpenStreetMap contributors
 * **Block Icons:**  Phosphor
 
@@ -337,6 +346,13 @@ Here is the link to their privacy policy:
 * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
 
 == Changelog ==
+
+= 2.3 =
+* NEW: Added two new animated SVG icon sets ("Animated SVG (Fill)" and "Animated SVG (Outline)") from the Meteocons library.
+* NEW: Added a color picker to the settings page, allowing users to easily customize the color of the "Weather Icons Font" set.
+* IMPROVEMENT: The "Icon & Style Set" setting now offers four distinct visual styles to choose from.
+* IMPROVEMENT: The plugin now dynamically adds inline CSS for the icon font color, which only loads when the font set is active and a custom color is saved.
+* DEV: Added Bas Milius (Meteocons) to the Credits section.
 
 = 2.2 =
 * NEW: Introduced a `[under_the_weather]` shortcode to allow for easy placement of the weather widget in the Classic Editor, text widgets, and other page builders.
@@ -425,13 +441,13 @@ Here is the link to their privacy policy:
 * DEV: Added full internationalization support.
 
 = 1.2 =
-* Improved the appearance of the Performance Report.
+* IMPROVEMENT: Improved the appearance of the Performance Report.
 
 = 1.1 =
-* Introduced a Performance Report tab to the Under The Weather Settings Page so that users can monitor the plugin's usage and observe the effectiveness of the cache system.
+* NEW: Introduced a Performance Report tab to the Under The Weather Settings Page so that users can monitor the plugin's usage and observe the effectiveness of the cache system.
 
 = 1.0 =
-* Initial version intended for public release.
+* NEW: Initial version intended for public release.
 
 == Upgrade Notice ==
 
