@@ -19,49 +19,49 @@ document.addEventListener('DOMContentLoaded', function() {
  * @param {HTMLElement} widget The widget's div element.
  */
 function loadWeatherData(widget) {
-	const locationName = widget.dataset.locationName;
-	// Get the lat/lon from the data attributes
-  	let lat = widget.dataset.lat;
-  	let lon = widget.dataset.lon;
+    const locationName = widget.dataset.locationName;
+    // Get the lat/lon from the data attributes
+    let lat = widget.dataset.lat;
+    let lon = widget.dataset.lon;
 
-	// Attempt to parse/convert them (this handles DD, DDM, and DMS formats)
-	const parsedLat = parseCoordinate(lat);
-	const parsedLon = parseCoordinate(lon);
-	
-	// Use parsed values if conversion was successful, otherwise keep original
-	if (parsedLat !== null) {
-	    lat = parsedLat;
-	}
-	if (parsedLon !== null) {
-	    lon = parsedLon;
-	}
-	
-	// Now use the clean 'lat' and 'lon' values for validation and API call
-	if (!lat || !lon || !locationName) {
-	    widget.innerHTML = 'Location data is missing.';
-	    return;
-	}
-	
-	if (!validateCoordinates(lat, lon)) {
-	    widget.innerHTML = 'Invalid location coordinates.';
-	    return;
-	}
+    // Attempt to parse/convert them (this handles DD, DDM, and DMS formats)
+    const parsedLat = parseCoordinate(lat);
+    const parsedLon = parseCoordinate(lon);
+    
+    // Use parsed values if conversion was successful, otherwise keep original
+    if (parsedLat !== null) {
+        lat = parsedLat;
+    }
+    if (parsedLon !== null) {
+        lon = parsedLon;
+    }
+    
+    // Now use the clean 'lat' and 'lon' values for validation and API call
+    if (!lat || !lon || !locationName) {
+        widget.innerHTML = 'Location data is missing.';
+        return;
+    }
+    
+    if (!validateCoordinates(lat, lon)) {
+        widget.innerHTML = 'Invalid location coordinates.';
+        return;
+    }
 
-	widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
-	
-	const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
-	const controller = new AbortController();
-	const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-  	const apiUrl = `/wp-json/under-the-weather/v1/forecast?lat=${lat}&lon=${lon}&location_name=${encodeURIComponent(locationName)}&unit=${unit}`;
+    widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
+    
+    const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const apiUrl = `/wp-json/under-the-weather/v1/forecast?lat=${lat}&lon=${lon}&location_name=${encodeURIComponent(locationName)}&unit=${unit}`;
 
-  	fetch(apiUrl, {
-    	signal: controller.signal,
-    	headers: {
-        	'X-WP-Nonce': under_the_weather_settings.nonce
-    	}
-  	})
+    fetch(apiUrl, {
+        signal: controller.signal,
+        headers: {
+            'X-WP-Nonce': under_the_weather_settings.nonce
+        }
+    })
     .then(response => {
-	  clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
       if (!response.ok) {
         response.text().then(text => {
             console.error('Error fetching weather data:', text);
@@ -72,14 +72,14 @@ function loadWeatherData(widget) {
       return response.json();
     })
     .then(data => {
-	    if (!validateWeatherData(data)) {
-			throw new Error('The weather data structure is invalid');
-		}
+        if (!validateWeatherData(data)) {
+            throw new Error('The weather data structure is invalid');
+        }
       displayWeather(data, widget);
     })
     .catch(error => {
       console.error('Network Error:', error);
-	  widget.innerHTML = `<p>Unable to load weather data. Please try again later.</p>`;
+      widget.innerHTML = `<p>Unable to load weather data. Please try again later.</p>`;
     });
 }
 
@@ -190,9 +190,50 @@ function getAlertIconClass(eventText) {
     if (text.includes('smog') || text.includes('air quality')) return 'wi-smog';
     if (text.includes('dust')) return 'wi-dust';
     if (text.includes('sandstorm') || text.includes('sand')) return 'wi-sandstorm';
-	
+    
     // A good fallback for any other severe weather
     return 'wi-storm-warning'; 
+}
+
+/**
+ * Selects an animated SVG alert icon filename based on the alert event text.
+ * @param {string} eventText The text of the weather alert (e.g., "Tornado Warning").
+ * @returns {string} The corresponding SVG filename (without extension).
+ */
+function getAlertSVGFilename(eventText) {
+    const text = eventText.toLowerCase();
+
+    // Catastrophic Events
+    if (text.includes('tornado')) return 'tornado';
+    if (text.includes('hurricane')) return 'hurricane';
+    if (text.includes('tsunami')) return 'code-red';
+    if (text.includes('earthquake')) return 'code-red';
+
+    // Storms & Precipitation
+    if (text.includes('thunderstorm') || text.includes('lightning')) return 'thunderstorms-extreme';
+    if (text.includes('gale')) return 'flag-gale-warning';
+    if (text.includes('hail')) return 'hail';
+    if (text.includes('rain') || text.includes('showers') || text.includes('drizzle')) return 'extreme-rain';
+    if (text.includes('flood')) return 'tide-high';
+
+    // Winter Weather
+    if (text.includes('winter') || text.includes('snow') || text.includes('blizzard')) return 'extreme-snow';
+    if (text.includes('ice') || text.includes('frost') || text.includes('freeze') || text.includes('cold') || text.includes('chill')) return 'snowflake';
+    
+    // Temperature & Wind
+    if (text.includes('heat') || text.includes('hot')) return 'sun-hot';
+    if (text.includes('wind')) return 'wind-alert';
+    
+    // Atmospheric & Air Quality
+    if (text.includes('fog')) return 'extreme-fog';
+    if (text.includes('fire')) return 'code-red';
+    if (text.includes('smoke')) return 'extreme-smoke';
+    if (text.includes('smog') || text.includes('air quality')) return 'smoke-particles';
+    if (text.includes('dust')) return 'dust';
+    if (text.includes('sandstorm') || text.includes('sand')) return 'dust-wind';
+    
+    // A good fallback for any other severe weather
+    return 'code-orange'; 
 }
 
 function displayWeather(data, widget) {
@@ -201,17 +242,25 @@ function displayWeather(data, widget) {
     
     const tempSymbol = '°';
     const unitLetter = data.units === 'metric' ? 'C' : 'F';
+    // --- THIS IS THE FIX ---
     const windUnit = data.units === 'metric' ? 'kph' : 'mph';
+    // --- END FIX ---
     const displayUnitString = show_unit ? `<span class="temp-unit">${unitLetter}</span>` : '';
 
+    // START: Add logic for svg_fill and svg_outline
     function getIconHtml(weather) {
-        if (style_set === 'weather_icons_font') {
+        if (style_set === 'svg_fill' || style_set === 'svg_outline') {
+            const style = style_set === 'svg_fill' ? 'fill' : 'outline';
+            const svgUrl = `${under_the_weather_plugin_url.url}svg/${style}/${weather.svg_icon_name}.svg`;
+            return `<img class="weather-icon-svg" src="${svgUrl}" alt="${weather.description}">`;
+        } else if (style_set === 'weather_icons_font') {
             return `<i class="wi ${weather.icon_class}"></i>`;
         } else {
-    // Pass the base URL of the plugin to the script using wp_localize_script in the main PHP file.
-return `<img src="${under_the_weather_plugin_url.url}images/default-weather-images-${weather.icon}.png" alt="${weather.description}">`;
+            // Pass the base URL of the plugin to the script using wp_localize_script in the main PHP file.
+            return `<img src="${under_the_weather_plugin_url.url}images/default-weather-images-${weather.icon}.png" alt="${weather.description}">`;
         }
     }
+    // END: SVG Logic added
     
     function getWindDirection(degrees) {
         const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
@@ -227,24 +276,22 @@ return `<img src="${under_the_weather_plugin_url.url}images/default-weather-imag
         const now = new Date().getTime() / 1000;
         const seconds = Math.floor(now - timestamp);
         if (seconds < 60) return "just now";
-        let interval = seconds / 31536000;
-        if (interval > 1) return Math.floor(interval) + " years ago";
-        interval = seconds / 2592000;
-        if (interval > 1) return Math.floor(interval) + " months ago";
-        interval = seconds / 86400;
-        if (interval > 1) return Math.floor(interval) + " days ago";
-        interval = seconds / 3600;
-        if (interval > 1) return Math.floor(interval) + " hours ago";
-        interval = seconds / 60;
-        if (interval > 1) return Math.floor(interval) + " minutes ago";
-        return "a minute ago";
+        let interval = seconds / 60;
+        if (interval < 60) return Math.floor(interval) + " minutes ago";
+        interval = interval / 60;
+        if (interval < 24) return Math.floor(interval) + " hours ago";
+        interval = interval / 24;
+        if (interval < 30) return Math.floor(interval) + " days ago";
+        interval = interval / 30;
+        if (interval < 12) return Math.floor(interval) + " months ago";
+        interval = interval / 12;
+        return Math.floor(interval) + " years ago";
     }
-	
-	// START: New Sunrise/Sunset Logic
+    
+    // Sunrise/Sunset Logic
     let sunriseSunsetHtml = '';
     // Check if the setting is enabled and the data exists
     if (sunrise_sunset_format !== 'off' && data.current.sunrise && data.current.sunset) {
-        
         // Define formatting options based on the setting
         const timeOptions = {
             timeZone: data.timezone,
@@ -256,11 +303,18 @@ return `<img src="${under_the_weather_plugin_url.url}images/default-weather-imag
         // Convert timestamps to readable times
         const sunriseTime = new Date(data.current.sunrise * 1000).toLocaleTimeString('en-US', timeOptions);
         const sunsetTime = new Date(data.current.sunset * 1000).toLocaleTimeString('en-US', timeOptions);
-
+        
         // Get icons based on the style set
-        let sunriseIcon = '';
-        let sunsetIcon = '';
-        if (style_set === 'weather_icons_font') {
+        let sunriseIcon = '', sunsetIcon = '';
+        // START: Logic for SVG sunrise/sunset icons
+        if (style_set === 'svg_fill' || style_set === 'svg_outline') {
+            const style = style_set === 'svg_fill' ? 'fill' : 'outline';
+            const sunriseImgUrl = `${under_the_weather_plugin_url.url}svg/${style}/sunrise.svg`;
+            const sunsetImgUrl = `${under_the_weather_plugin_url.url}svg/${style}/sunset.svg`;
+            sunriseIcon = `<img src="${sunriseImgUrl}" class="sunrise-sunset-icon-svg" alt="Sunrise Time">`;
+            sunsetIcon = `<img src="${sunsetImgUrl}" class="sunrise-sunset-icon-svg" alt="Sunset Time">`;
+        } else if (style_set === 'weather_icons_font') {
+        // END: SAVG logic added
             sunriseIcon = '<i class="wi wi-sunrise"></i>';
             sunsetIcon = '<i class="wi wi-sunset"></i>';
         } else {
@@ -271,22 +325,28 @@ return `<img src="${under_the_weather_plugin_url.url}images/default-weather-imag
             sunsetIcon = `<img src="${sunsetImgUrl}" class="sunrise-sunset-icon" alt="Sunset Time">`;
         }
         
+        // This HTML structure is designed to work with the CSS I provided, 
+        // which uses flexbox to align the icon and the text.
         sunriseSunsetHtml = `
             <div class="sunrise-sunset-container">
                 <div class="sunrise-time">
                     ${sunriseIcon}
-                    <div class="sunrise-sunset-label">Sunrise</div>
-                    <div class="sunrise-sunset-value">${sunriseTime}</div>
+                    <div class="sunrise-sunset-text-wrapper">
+                        <div class="sunrise-sunset-label">Sunrise</div>
+                        <div class="sunrise-sunset-value">${sunriseTime}</div>
+                    </div>
                 </div>
                 <div class="sunset-time">
                     ${sunsetIcon}
-                    <div class="sunrise-sunset-label">Sunset</div>
-                    <div class="sunrise-sunset-value">${sunsetTime}</div>
+                     <div class="sunrise-sunset-text-wrapper">
+                        <div class="sunrise-sunset-label">Sunset</div>
+                        <div class="sunrise-sunset-value">${sunsetTime}</div>
+                    </div>
                 </div>
             </div>
         `;
     }
-    // END: New Sunrise/Sunset Logic
+    // END: Sunrise/Sunset Logic
 
     let primaryDisplayHtml = '';
     if (display_mode === 'today_forecast') {
@@ -328,44 +388,57 @@ return `<img src="${under_the_weather_plugin_url.url}images/default-weather-imag
         const feelsLike = Math.round(data.current.feels_like);
         const windSpeed = Math.round(data.current.wind_speed);
         const windDirection = getWindDirection(data.current.wind_deg);
-        const windIconClass = getWindIconClass(data.current.wind_deg);
-
+        // START: MODIFIED - Wind icon logic for SVGs
+        let windIconHtml = '';
+        if (style_set === 'svg_fill' || style_set === 'svg_outline') {
+            const style = style_set === 'svg_fill' ? 'fill' : 'outline';
+            const windSvgUrl = `${under_the_weather_plugin_url.url}svg/${style}/wind.svg`;
+            windIconHtml = `<img class="wind-icon-svg" src="${windSvgUrl}" alt="Wind Icon">`;
+        } else {
+            windIconHtml = `<i class="${getWindIconClass(data.current.wind_deg)}"></i>`;
+        }
+        // END: MODFIED
+        
+        // --- THIS IS THE PREVIOUS FIX ---
         extraDetailsHtml = `
             <div class="weather-extra-details">
                 <span>Feels like: ${feelsLike}${tempSymbol}${displayUnitString}</span>
                 <span class="wind-details">
-                    <i class="${windIconClass}"></i> ${windDirection} ${windSpeed} ${windUnit}
+                    ${windIconHtml} ${windDirection} ${windSpeed} ${windUnit}
                 </span>
             </div>
         `;
+        // --- END PREVIOUS FIX ---
     }
-	
-	let alertHtml = '';
+    
+    let alertHtml = '';
     if (show_alerts && data.alerts && data.alerts.length > 0) {
         data.alerts.forEach(alert => {
-			
-			// Handle custom alert icons
-			let iconHtml = '';// This will hold the icon's HTML
-			if (style_set === 'weather_icons_font') {
-				// Use the dynamic font icon logic
-				const iconClass = getAlertIconClass(alert.event);
-				iconHtml = `<i class="wi ${iconClass}"></i>`;
-			} else {
-				// Use the new PNG fallback icon
-				const imageUrl = `${under_the_weather_plugin_url.url}images/seths--weather-images-warning.png`;
-				iconHtml = `<img src="${imageUrl}" class="weather-alert-icon" alt="Weather Alert">`;
-			}
-			
+            let iconHtml = '';
+            // START: MODIFIED - Use getAlertSVGFilename for SVG icons
+            if (style_set === 'svg_fill' || style_set === 'svg_outline') {
+                const style = style_set === 'svg_fill' ? 'fill' : 'outline';
+                const filename = getAlertSVGFilename(alert.event);
+                const imageUrl = `${under_the_weather_plugin_url.url}svg/${style}/${filename}.svg`;
+                iconHtml = `<img src="${imageUrl}" class="weather-alert-icon-svg" alt="Weather Alert">`;
+            } else if (style_set === 'weather_icons_font') {
+            // END: MODIFIED
+                iconHtml = `<i class="wi ${getAlertIconClass(alert.event)}"></i>`;
+            } else {
+                const imageUrl = `${under_the_weather_plugin_url.url}images/seths--weather-images-warning.png`;
+                iconHtml = `<img src="${imageUrl}" class="weather-alert-icon" alt="Weather Alert">`;
+            }
+            
             alertHtml += `
-				<div class="weather-alert">
-					<div class="weather-alert-icon-left">
-						${iconHtml}
-					</div>
-					<div class="weather-alert-message">
-						<div class="weather-alert-event">${alert.event}</div>
-						<div class="weather-alert-sender">Issued by: ${alert.sender_name}</div>
-					</div>
-				</div>
+                <div class="weather-alert">
+                    <div class="weather-alert-icon-left">
+                        ${iconHtml}
+                    </div>
+                    <div class="weather-alert-message">
+                        <div class="weather-alert-event">${alert.event}</div>
+                        <div class="weather-alert-sender">Issued by: ${alert.sender_name}</div>
+                    </div>
+                </div>
             `;
         });
     }
@@ -398,9 +471,9 @@ return `<img src="${under_the_weather_plugin_url.url}images/default-weather-imag
     const finalHtml = `
         <div class="weather-location-name">${locationName}</div>
         ${alertHtml}
-		${primaryDisplayHtml}
+        ${primaryDisplayHtml}
         ${extraDetailsHtml}
-		${sunriseSunsetHtml}
+        ${sunriseSunsetHtml}
         <div class="forecast-container">
             ${forecastHtml}
         </div>
