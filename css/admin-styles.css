@@ -6,13 +6,13 @@
 /* Admin settings visual reference */
 .under-the-weather-visual-reference-container {
 	display: flex;
-    gap: 50px;
+    gap: 35px;
     align-items: flex-start;
 	background: #fff;
     border: 1px solid #999;
     border-radius: 5px;
-	padding: 10px 24px 15px 37px;
-    width: 288px;
+	padding: 10px 25px 15px 25px;
+    width: 310px;
 }
 
 .under-the-weather-visual-reference-item {
@@ -20,7 +20,7 @@
 }
 
 .under-the-weather-visual-reference-item img {
-     max-width: 100px;
+     width: 80px;
 }
 .under-the-weather-visual-reference-default-image{
 	filter:drop-shadow(1px 2px 3px #555);
