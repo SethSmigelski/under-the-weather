@@ -1,7 +1,14 @@
+/* --- New to version 2.3: Styling classes for animated SVG weather icons --- */
+/* .weather-icon-svg: For the main weather condition and forecast day icons */
+/* .sunrise-sunset-icon-svg: For the sunrise and sunset icons */
+/* .weather-alert-icon-svg: For the icons used in weather alerts */
+/* .wind-icon-svg: For the wind icon in the "extra details" section */
+
 /* --- Weather Widget Styling --- */
 .weather-widget {
 	min-height: 285px;
-	/* This setting can be removed. However, setting a minimum height helps to reduce browser repaints */
+	/* This setting is optional */ 
+	/* However, setting a minimum height helps to reduce browser repaints */
 	/* When sunrise sunset is shown, consider using, min-height: 375px; */
 }
 
@@ -42,6 +49,14 @@
 	width: 50px;
 }
 
+/* --- NEW SVG STYLES --- */
+.current-conditions .weather-icon-svg {
+    filter: none; /* No Drop Shadow on animated SVGs */
+    width: 75px;
+    height: 75px;
+}
+/* --- END NEW SVG STYLES --- */
+
 .forecast-container {
 	display: flex;
 	justify-content: space-between;
@@ -65,6 +80,14 @@
 	width: 40px;
 }
 
+/* --- NEW SVG STYLES --- */
+.forecast-day .weather-icon-svg {
+    filter: none;
+    width: 50px;
+    height: 50px;
+}
+/* --- END NEW SVG STYLES --- */
+
 .forecast-temps .slash {
 	color: transparent;
 	font-size: 0.375em;
@@ -73,13 +96,13 @@
 
 .forecast-temps .high {
 	color: #000;
-	font-size: 1.06em; 
+	font-size: 1.06em;
 	font-weight: 700;
 }
 
 .forecast-temps .low {
 	color: #555;
-	font-size: 0.875em; 
+	font-size: 0.875em;
 }
 
 .today-forecast-temps {
@@ -90,7 +113,7 @@
 }
 
 .today-forecast-label {
-	font-size: 1.375em; 
+	font-size: 1.375em;
 	margin: 6px 0 11px;
 }
 
@@ -152,6 +175,16 @@
 	margin-right: 5px;
 }
 
+/* --- NEW SVG STYLES --- */
+.wind-details .wind-icon-svg {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    border:1.5px solid #e2e8f0;
+    border-radius: 50%;
+}
+/* --- END NEW SVG STYLES --- */
+
 .last-updated {
 	color: #999;
 	font-size: .8em;
@@ -166,7 +199,7 @@
 .weather-alert {
     display: flex;
     align-items: center; /* Vertically aligns the icon with the text block */
-    background-color: #f0f8ff; 
+    background-color: #f0f8ff;
     border: 1px solid #add8e6;
     border-radius: 4px;
     padding: 10px 12px;
@@ -174,12 +207,10 @@
     color: #333;
 }
 
-/* Left column for the icon */
 .weather-alert-icon-left {
-    margin-right: 12px; 
+    margin-right: 12px;
 }
 
-/* Right column for the text messages */
 .weather-alert-message {
     flex-grow: 1; /* Allows the message area to take up remaining space */
 }
@@ -187,25 +218,32 @@
 .weather-alert-event {
     font-weight: bold;
     margin-bottom: 4px;
-} 
+}
 
 .weather-alert-sender {
     font-size: 0.9em;
     opacity: 0.8;
-} 
+}
 
-/* Styles for the PNG icon */
 .weather-alert-icon-left .weather-alert-icon {
-    width: 32px;  /* Slightly larger for better visibility */
+    width: 32px;
     height: 32px;
     vertical-align: middle;
 }
 
-/* Styles for the Font Icon */
 .weather-alert-icon-left .wi {
-    font-size: 2em; /* Make the icon a bit bigger */
+    font-size: 2em;
     line-height: 1;
 }
+
+/* --- NEW SVG STYLES --- */
+.weather-alert-icon-left .weather-alert-icon-svg {
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+}
+/* --- END NEW SVG STYLES --- */
+
 
 /* --- Sunrise & Sunset Styling --- */
 
@@ -234,17 +272,33 @@
     font-size: 1.375em;
 }
 
-/* Icon sizing */
 .sunrise-sunset-container .wi {
-    font-size: 30px; /* Smaller icon size */
+    font-size: 30px;
     line-height: 1;
-    color: #f28c1f; /* A nice sun color. Delete this to match forecast icons */
+    color: #f28c1f;
 	display: inline;
 }
 
 .sunrise-sunset-container .sunrise-sunset-icon {
-    width: 25px; /* Visually Match the forecast day icon size */
+    width: 25px;
     height: 25px;
     filter: drop-shadow(1px 2px 2px #888);
 	display: inline;
 }
+
+/* --- NEW SVG STYLES --- */
+.sunrise-sunset-container .sunrise-sunset-icon-svg {
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+/* Adjust layout for SVG icons */
+.sunrise-time, .sunset-time {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* --- END NEW SVG STYLES --- */
