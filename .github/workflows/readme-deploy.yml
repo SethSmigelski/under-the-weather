@@ -24,4 +24,4 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SLUG: under-the-weather
           ASSETS_DIR: assets/
-          SKIP_TAG: "true"
+          VERSION: "trunk"
