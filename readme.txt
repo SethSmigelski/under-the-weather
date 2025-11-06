@@ -70,24 +70,20 @@ To display the weather widget on a post, page, or in a template file, add a simp
 
 **Examples:**
 
-```html
-<div class="weather-widget" 
-     data-lat="34.1186" 
-     data-lon="-118.3004" 
-     data-location-name="Los Angeles, California">
-</div>
-```
+    <div class="weather-widget" 
+       data-lat="34.1186" 
+       data-lon="-118.3004" 
+       data-location-name="Los Angeles, California">
+    </div>
 
 To show the weather for a location in Celsius, you would add `data-unit="metric"`:
 
-```html
-<div class="weather-widget" 
-     data-lat="48.8566" 
-     data-lon="2.3522" 
-     data-location-name="Paris, France"
-     data-unit="metric">
-</div>
-```
+    <div class="weather-widget" 
+       data-lat="48.8566" 
+       data-lon="2.3522" 
+       data-location-name="Paris, France"
+       data-unit="metric">
+    </div>
 
 The plugin's JavaScript will automatically find this element and populate it with the forecast.
 
@@ -158,13 +154,11 @@ Adds the unit symbol (F or C) next to the main temperature. This option allows y
 
 If you uncheck **Load Plugin JavaScript**, you can load the Under The Weather scripts manually on select pages by adding the following template tag to your theme files (e.g., footer.php):
 
-```php
-<?php
-if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
-   under_the_weather_load_scripts_manually(); 
-} 
-?>
-```
+    <?php
+       if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
+          under_the_weather_load_scripts_manually(); 
+       } 
+    ?>
 
 For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
@@ -284,24 +278,21 @@ Yes. By default, when "Load Plugin JavaScript" is selected, it will add scripts 
 
 When Load Plugin JavaScript is unchecked, you can use this template tag o add the Under The Weather Scripts to your theme's footer.php file. 
 
-```php
-<?php  
-if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
- under_the_weather_load_scripts_manually(); 
-} 
-?>
-```
+    <?php  
+       if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
+        under_the_weather_load_scripts_manually(); 
+       } 
+    ?>
 
 For example, if you only intend to display the weather widget on events pages, you could add this targeted script to your theme's footer.php file:
 
-```php
-<?php
-// Only load the weather script on single pages of the 'event' post type.
-if ( is_singular('event') && function_exists('under_the_weather_load_scripts_manually') ) {
-    under_the_weather_load_scripts_manually(); 
-} 
-?>
-```
+
+    <?php
+       // Only load the weather script on single pages of the 'event' post type.
+       if ( is_singular('event') && function_exists('under_the_weather_load_scripts_manually') ) {
+           under_the_weather_load_scripts_manually(); 
+       } 
+    ?>
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
