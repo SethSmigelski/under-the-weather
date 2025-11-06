@@ -24,4 +24,7 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SLUG: under-the-weather
           ASSETS_DIR: assets/
-          VERSION: "trunk"
+          # Set this to your LATEST EXISTING SVN TAG.
+          # The action will see "2.3" already exists and will
+          # skip the tag step, only updating /trunk and /assets.
+          VERSION: "2.3"
