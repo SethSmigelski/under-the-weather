@@ -1,0 +1,26 @@
+name: Update Readme & Assets
+on:
+  workflow_dispatch: # This adds a manual "Run workflow" button
+
+jobs:
+  deploy:
+    name: Deploy Readme/Assets to WP.org
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      
+      # We include the build step to be safe.
+      # This ensures your /trunk is synced with the compiled files,
+      # even if only text files were changed.
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - name: WordPress Plugin Deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SLUG: under-the-weather
+          ASSETS_DIR: assets/
