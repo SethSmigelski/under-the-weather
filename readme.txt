@@ -311,15 +311,17 @@ Yes. You can modify the appearance of the Weather Icons Fonts by making customiz
 
 == Screenshots ==
 
-1. The weather widget displaying current conditions with the Weather Icons.
-2. The weather widget displaying "Today's Forecast" with the Weather Icons font set.
-3. The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled.
-4. The Under The Weather Performance Report depicting seven days of information on cached hits vs calls to the OpenWeather API.
-5. The plugin's comprehensive settings page.
-6. The Coordinate Finder tool, which generates widget code from a location name.
-7. The "Under The Weather Forecast" block in the WordPress editor.
-8. The weather widget with Weather Alerts shown
-9. The weather widget with Sunrise and Sunset times shown
+1. The weather widget, displaying current conditions with the Weather Icons.
+2. The weather widget, displaying "Today's Forecast" with the Weather Icons font set.
+3. The weather widget, displaying current conditions with default icons (in Celsius) and extra details enabled.
+4. The Under The Weather Performance Report, depicting seven days of information on cached hits vs calls to the OpenWeather API.
+5. The API & Cache options on the plugin's settings page.
+6. The Widget Display options on the plugin's settings page.
+7. The Advanced Settings options on the plugin's settings page.
+8. The Coordinate Finder tool, which generates widget code from a location name.
+9. The "Under The Weather Forecast" block in the WordPress editor.
+10. The weather widget with Weather Alerts shown
+11. The weather widget with Sunrise and Sunset times shown
 
 == Credits ==
 
