@@ -61,7 +61,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 ---
 
-![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
+![WordPress Under The Weather Forecast block.](https://ps.w.org/under-the-weather/assets/screenshot-9.png)
 
 _The "Under The Weather Forecast" block in the WordPress editor._
 
@@ -142,6 +142,10 @@ The plugin also features a **smart caching** system that automatically ensures t
 For displaying live conditions (using the **Primary Display** or **Extra Details** options), a shorter cache time of 1 or 2 hours is recommended.
 For displaying only the daily high/low, a longer cache time of 3 or 8 hours is effective at reducing API calls.
 
+![The API & Cache options on the plugin's settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
+
+_The API & Cache options on the plugin's settings page._
+
 **Widget Display & Style**
 
 **Icon & Style Set:** 
@@ -173,6 +177,10 @@ Indicates the time elapsed since the weather data was last updated from the sour
 **Display Unit Symbol:**
 Adds the unit symbol (F or C) next to the main temperature. This option allows you to select whether or not the widget should include the temperature unit symbol in the primary temperature display.
 
+![The Widget Display options on the plugin's settings page](https://ps.w.org/under-the-weather/assets/screenshot-6.png)
+
+_The Widget Display options on the plugin's settings page._
+
 **Advanced Settings**
 **Enable Cache:**  You can uncheck this box, if you would like to use this plugin without the benefit of the caching function. 
 
@@ -194,9 +202,9 @@ For most users, simply leaving these boxes checked is the best way to use the we
 
 ---
 
-![The plugin's comprehensive settings page](https://ps.w.org/under-the-weather/assets/screenshot-5.png)
+![The Advanced Settings options on the plugin's settings page](https://ps.w.org/under-the-weather/assets/screenshot-7.png)
 
-_The plugin's comprehensive settings page._
+_The Advanced Settings options on the plugin's settings page._
 
 ---
 
@@ -226,7 +234,7 @@ The tool automatically saves a history of your last 5 searches, which persists b
 
 ---
 
-![The Coordinate Finder tool, which generates widget code from a location name.](https://ps.w.org/under-the-weather/assets/screenshot-6.png)
+![The Coordinate Finder tool, which generates widget code from a location name.](https://ps.w.org/under-the-weather/assets/screenshot-8.png)
 
 _The Coordinate Finder tool, which generates widget code from a location name._
 
@@ -372,11 +380,11 @@ _The weather widget displaying "Today's Forecast" with the Weather Icons font se
 
 _The weather widget displaying current conditions with default icons (in Celsius) and extra details enabled._
 
-![The weather widget with Weather Alerts shown](https://ps.w.org/under-the-weather/assets/screenshot-8.png)
+![The weather widget with Weather Alerts shown](https://ps.w.org/under-the-weather/assets/screenshot-10.png)
 
 _The weather widget with Weather Alerts shown._
 
-![The weather widget with Sunrise and Sunset times shown](https://ps.w.org/under-the-weather/assets/screenshot-9.png)
+![The weather widget with Sunrise and Sunset times shown](https://ps.w.org/under-the-weather/assets/screenshot-11.png)
 
 _The weather widget with Sunrise and Sunset times shown._
 
