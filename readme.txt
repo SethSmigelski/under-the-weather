@@ -354,7 +354,7 @@ Here is the link to their privacy policy:
 == Changelog ==
 
 = 2.4 =
-* FIX (readme): Improved to display code blocks and shortcode correctly when the file is viewed in the WordPress Plugin directory. 
+* FIX (readme): Improved code blocks and shortcode to display correctly when the file is viewed in the WordPress Plugin directory. 
 
 = 2.3 =
 * NEW: Added two new animated SVG icon sets ("Animated SVG (Fill)" and "Animated SVG (Outline)") from the Meteocons library.
