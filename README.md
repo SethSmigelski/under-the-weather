@@ -133,7 +133,7 @@ You can also display the weather by using the `[under_the_weather]` shortcode. T
 
 ## Configuration
 
-Before you begin, go to https://home.openweathermap.org/ and sign up for an API key and register for the One Call API 3.0 subscription. Paste your API key into the Under the Weather Settings Page.
+Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) and sign up for an API key and register for the One Call API 3.0 subscription. Paste your API key into the Under the Weather Settings Page.
 
 **API & Cache**
 
