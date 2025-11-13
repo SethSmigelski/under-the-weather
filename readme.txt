@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, block
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.3
+Stable tag: 2.4
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -70,20 +70,24 @@ To display the weather widget on a post, page, or in a template file, add a simp
 
 **Examples:**
 
+    `
     <div class="weather-widget" 
        data-lat="34.1186" 
        data-lon="-118.3004" 
        data-location-name="Los Angeles, California">
     </div>
+    `
 
 To show the weather for a location in Celsius, you would add `data-unit="metric"`:
 
+    `
     <div class="weather-widget" 
        data-lat="48.8566" 
        data-lon="2.3522" 
        data-location-name="Paris, France"
        data-unit="metric">
     </div>
+    `
 
 The plugin's JavaScript will automatically find this element and populate it with the forecast.
 
@@ -92,17 +96,21 @@ The plugin's JavaScript will automatically find this element and populate it wit
 You can also display the weather by using the `[under_the_weather]` shortcode. This is ideal for the Classic Editor, text widgets, or other page builders.
 
 **Available attributes:**
+
 * `lat`: (Required) The latitude for the forecast.
 * `lon`: (Required) The longitude for the forecast.
 * `location_name`: (Required) The name to display for the location.
 * `unit`: (Optional) The unit system. Accepts `metric` or `imperial`. Defaults to `imperial`.
 
 **Example:**
-[under_the_weather lat="48.8566" lon="2.3522" location_name="Paris, France" unit="metric"]
+
+    `
+    [under_the_weather lat="48.8566" lon="2.3522" location_name="Paris, France" unit="metric"]
+    `
 
 == Configuration ==
 
-Before you begin, go to https://home.openweathermap.org/ and sign up for an API key and register for the One Call API 3.0 subscription. Paste your API key into the Under the Weather Settings Page.
+Before you begin, go to [https://home.openweathermap.org/](openweathermap.org)  and sign up for an API key and register for the One Call API 3.0 subscription. Paste your API key into the Under the Weather Settings Page.
 
 **API & Cache**
 
@@ -154,11 +162,13 @@ Adds the unit symbol (F or C) next to the main temperature. This option allows y
 
 If you uncheck **Load Plugin JavaScript**, you can load the Under The Weather scripts manually on select pages by adding the following template tag to your theme files (e.g., footer.php):
 
+    `
     <?php
        if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
           under_the_weather_load_scripts_manually(); 
        } 
     ?>
+    `
 
 For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
@@ -278,21 +288,24 @@ Yes. By default, when "Load Plugin JavaScript" is selected, it will add scripts 
 
 When Load Plugin JavaScript is unchecked, you can use this template tag o add the Under The Weather Scripts to your theme's footer.php file. 
 
+    `
     <?php  
        if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
         under_the_weather_load_scripts_manually(); 
        } 
     ?>
+    `
 
 For example, if you only intend to display the weather widget on events pages, you could add this targeted script to your theme's footer.php file:
 
-
+    `
     <?php
        // Only load the weather script on single pages of the 'event' post type.
        if ( is_singular('event') && function_exists('under_the_weather_load_scripts_manually') ) {
            under_the_weather_load_scripts_manually(); 
        } 
     ?>
+    `
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
@@ -339,6 +352,9 @@ Here is the link to their privacy policy:
 * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
 
 == Changelog ==
+
+= 2.4 =
+* FIX (readme): Improved to display code blocks and shortcode correctly when the file is viewed in the WordPress Plugin directory. 
 
 = 2.3 =
 * NEW: Added two new animated SVG icon sets ("Animated SVG (Fill)" and "Animated SVG (Outline)") from the Meteocons library.
