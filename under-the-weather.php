@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.3
+ * Version:           2.4
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.3.0' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.4.0' );
 
 // Add the Under The Weather Forecast block.
 add_action('init', 'under_the_weather_register_widget_block');
