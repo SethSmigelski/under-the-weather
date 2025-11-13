@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, block
 * **Requires at least:** 5.0
 * **Tested up to:** 6.8
-* **Stable tag:** 2.3
+* **Stable tag:** 2.4
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -118,13 +118,16 @@ The plugin's JavaScript will automatically find this element and populate it wit
 You can also display the weather by using the `[under_the_weather]` shortcode. This is ideal for the Classic Editor, text widgets, or other page builders.
 
 **Available attributes:**
+
 * `lat`: (Required) The latitude for the forecast.
 * `lon`: (Required) The longitude for the forecast.
 * `location_name`: (Required) The name to display for the location.
 * `unit`: (Optional) The unit system. Accepts `metric` or `imperial`. Defaults to `imperial`.
 
 **Example:**
-`[under_the_weather lat="48.8566" lon="2.3522" location_name="Paris, France" unit="metric"]`
+```
+[under_the_weather lat="48.8566" lon="2.3522" location_name="Paris, France" unit="metric"]
+```
 
 ---
 
@@ -419,6 +422,9 @@ Here is the link to their privacy policy:
 ---
 
 ## Changelog
+
+### 2.4
+* **FIX** (readme): Improved code blocks and shortcode to display correctly when the file is viewed in the WordPress Plugin directory. 
 
 ### 2.3
 * **NEW:** Added two new animated SVG icon sets ("Animated SVG (Fill)" and "Animated SVG (Outline)") from the Meteocons library.
