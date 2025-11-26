@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, block
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.4
+Stable tag: 2.4.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -348,6 +348,10 @@ Here is the link to their privacy policy:
 * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
 
 == Changelog ==
+
+= 2.4.1 =
+* FIX (readme): Include missing SVG folders for animated icons. 
+
 
 = 2.4 =
 * FIX (readme): Improved code blocks and shortcode to display correctly when the file is viewed in the WordPress Plugin directory. 
