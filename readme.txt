@@ -352,7 +352,6 @@ Here is the link to their privacy policy:
 = 2.4.1 =
 * FIX (readme): Include missing SVG folders for animated icons. 
 
-
 = 2.4 =
 * FIX (readme): Improved code blocks and shortcode to display correctly when the file is viewed in the WordPress Plugin directory. 
 
