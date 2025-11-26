@@ -1,0 +1,109 @@
+== Changelog ==
+
+= 2.4.1 =
+* FIX (readme): Include missing SVG folders for animated icons. 
+
+= 2.4 =
+* FIX (readme): Improved code blocks and shortcode to display correctly when the file is viewed in the WordPress Plugin directory. 
+
+= 2.3 =
+* NEW: Added two new animated SVG icon sets ("Animated SVG (Fill)" and "Animated SVG (Outline)") from the Meteocons library.
+* NEW: Added a color picker to the settings page, allowing users to easily customize the color of the "Weather Icons Font" set.
+* IMPROVEMENT: The "Icon & Style Set" setting now offers four distinct visual styles to choose from.
+* IMPROVEMENT: The plugin now dynamically adds inline CSS for the icon font color, which only loads when the font set is active and a custom color is saved.
+* DEV: Added Bas Milius (Meteocons) to the Credits section.
+
+= 2.2 =
+* NEW: Introduced a `[under_the_weather]` shortcode to allow for easy placement of the weather widget in the Classic Editor, text widgets, and other page builders.
+* NEW: Added a display option to show the day's sunrise time and sunset time, helpful in  scheduling outdoor activities.
+* NEW: Added an option to display severe weather alerts from official authorities directly within the widget. This feature can be enabled on the plugin's settings page.
+* IMPROVEMENT: Incorporated clear warning icons for severe weather alerts.
+* IMPROVEMENT: The plugin can now handle multiple weather widgets on a single page
+* IMPROVEMENT: The front-end widget now loads its data asynchronously (AJAX). This improves perceived page load performance and allows multiple widgets on the same page to load their data independently.
+* IMPROVEMENT: The settings page now features a Cache Expiration Time slider that allows greater flexibility and provides users with a visual way to select how long cached weather should be saved.
+* NEW: Midnight expiration is now built into the Cache Expiration logic, so you never have to worry about displaying a cached copy of yesterday's forecast.
+
+= 2.1 =
+* NEW: The block editor can now parse and automatically convert coordinates from common formats like DMS (Degrees, Minutes, Seconds) and DDM (Degrees, Decimal Minutes) into the required decimal format.
+* IMPROVEMENT: The manual `<div>` widget is now more resilient, with a fallback that can correctly parse multiple coordinate formats.
+
+= 2.0 =
+* NEW: Introduced the "Under The Weather Forecast" custom block for seamless integration with the WordPress block editor.
+* NEW: Included a built-in Coordinate Finder in the "Under The Weather Forecast" custom block for location search capabilities without leaving the editor
+* NEW: Included custom SVG icons (Phosphor icon set) to enhance the block's visual appearance in the editor.
+* IMPROVEMENT: Streamlined workflow - no need to manually code HTML divs when using the block editor.
+* IMPROVEMENT: Block previews the location name and temperature unit directly in the editor.
+* IMPROVEMENT: Added input validation, rate limiting, request timeout, and response validation for location searches from the Custom block, accompanied by user-friendly error messages.
+
+= 1.8 =
+* NEW: Added a "Coordinate Finder" tool on the settings page to look up location coordinates and generate widget code.
+* IMPROVEMENT: The Coordinate Finder includes a persistent history of your last 5 searches that saves between sessions using WordPress user meta.
+* IMPROVEMENT: The plugin settings page is now organized into three tabs: Settings, Coordinate Finder, and Performance Report.
+* IMPROVEMENT: Enhanced input validation and sanitization for the geocoding tool with proper JSON handling.
+
+= 1.7.8 =
+* SECURITY: Improved sanitization and validation for rate-limiting feature.
+
+= 1.7.7 =
+* SECURITY: Added nonce verification to JavaScript REST API requests to prevent CSRF attacks on weather data endpoints.
+* IMPROVEMENT: Added front-end validation for coordinates to prevent unnecessary API calls with invalid data.
+* IMPROVEMENT: Added front-end validation to ensure weather data is complete before display, providing protection against unexpected or bad API responses.
+* IMPROVEMENT: Added a "Loading..." message to improve user experience while the widget fetches weather data. This message appears after data checks have passed and before the weather is shown.
+* IMPROVEMENT: Implemented a 10-second timeout for API requests to prevent the widget from hanging indefinitely.
+
+= 1.7.6 =
+* SECURITY: Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data.
+
+= 1.7.5 =
+* IMPROVEMENT: Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging.
+* IMPROVEMENT: Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback.
+* IMPROVEMENT: Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities.
+* IMPROVEMENT: Added custom User-Agent identification for OpenWeather API requests following best practices.
+
+= 1.7.4 =
+* IMPROVEMENT: The Performance Report now displays rate-limiting status, including a "Blocked Requests" column in the data table and a status box to show if the feature is active.  This will log the occurrence of any blocked requests.
+* IMPROVEMENT: Refined styling for the Performance Report.
+
+= 1.7.3 =
+* NEW: Added an optional, user-configurable rate-limiting feature to the REST API endpoint to protect against API quota exhaustion and resource abuse.
+* IMPROVEMENT: The "Requests per Hour" for the rate limit can be configured on the settings page.
+
+= 1.7.2 =
+* SECURITY: Enhanced input validation for REST API parameters - added coordinate range validation (-90 to 90 for latitude, -180 to 180 for longitude) and location name screening to prevent XSS and injection attacks.
+* IMPROVEMENT: Separated validation and sanitization logic in REST API for better error handling.
+
+= 1.7.1 =
+* FIX: Completed nonce verification to prevent CSRF attacks on tab switching.
+* IMPROVEMENT: Added format validation to verify that the OpenWeather API key is a 32-character alphanumeric string.
+* IMPROVEMENT: Escape URL in JavaScript Localization.
+
+= 1.7 =
+* SECURITY: Added nonce verification to the admin settings tabs to protect against CSRF attacks.
+* DEV: Implemented PHPCS ignore comments for the necessary direct database queries, resolving plugin checker warnings.
+
+= 1.6 =
+* ENHANCEMENT: Added visual examples of the icon sets to the settings page to clarify the style options.
+
+= 1.5 =
+* SECURITY: Updated all function, option, and transient prefixes to be more unique to prevent conflicts.
+* ENHANCEMENT: Bundled weather icon images directly with the plugin to remove remote dependencies, per WordPress.org guidelines.
+* ENHANCEMENT: Added full disclosure of external API usage in the readme.txt file.
+* DEV: Updated code to be fully compliant with the WordPress Plugin Review Team's feedback.
+
+= 1.4 =
+* IMPROVEMENT: Better organization of the settings Menu.
+*  NEW: Added an Enable Cache option, which can be disabled to use this plugin without the benefit of caching. 
+
+= 1.3 =
+* IMPROVEMENT: Refactored JavaScript handling for better security and to follow WordPress best practices. 
+* NEW: Added a template tag (`under_the_weather_load_scripts_manually`) to allow for manual/conditional loading of the plugin's JavaScript for performance optimization. 
+* DEV: Added full internationalization support.
+
+= 1.2 =
+* IMPROVEMENT: Improved the appearance of the Performance Report.
+
+= 1.1 =
+* NEW: Introduced a Performance Report tab to the Under The Weather Settings Page so that users can monitor the plugin's usage and observe the effectiveness of the cache system.
+
+= 1.0 =
+* NEW: Initial version intended for public release.
