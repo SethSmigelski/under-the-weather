@@ -499,7 +499,24 @@ function under_the_weather_enqueue_assets() {
         if (!empty($options['show_details'])) {
             wp_register_style('under-the-weather-wind-icons', plugins_url('css/weather-icons-wind.min.css', __FILE__), [], '2.0');
         }
-    } 
+    }
+
+	/**
+	* Preload Weather Icons Font to avoid "Critical Request Chain" page load issues
+	*/
+	add_action( 'wp_head', 'under_the_weather_preload_font_assets', 5 );
+	function under_the_weather_preload_font_assets() {
+	    $options = get_option('under_the_weather_settings');
+	    
+	    // Only preload if the user is actually using the 'weather_icons_font' style
+	    if ( isset($options['style_set']) && $options['style_set'] === 'weather_icons_font' ) {
+	        // Based on your CSS (../font/), this path assumes /font/ is in the plugin root
+	        $font_url = plugins_url( 'font/weathericons-regular-webfont.woff2', __FILE__ );
+	        ?>
+	        <link rel="preload" href="<?php echo esc_url( $font_url ); ?>" as="font" type="font/woff2" crossorigin="anonymous">
+	        <?php
+	    }
+	}
 
 	// Conditionally ENQUEUE based on the global setting.
     if (!empty($options['enqueue_style'])) { 
