@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 2.5 =
+* NEW: Added an "Async CSS Loading" option to the Advanced Settings to eliminate "Render Blocking Resources" and improve PageSpeed Insights scores.
+* IMPROVEMENT: Implemented native "Defer" strategy for plugin JavaScript (requires WP 6.3+), ensuring scripts do not block page rendering.
+* IMPROVEMENT: Added smart preloading for the "Weather Icons" font file to prevent "Critical Request Chain" penalties and improve load times.
+* IMPROVEMENT: The "Async CSS" and "JS Defer" strategies are now enabled by default for new installations to ensure maximum performance out of the box.
+
 = 2.4.1 =
 * FIX: Added missing SVG folders for animated icons. 
 
