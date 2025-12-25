@@ -6,8 +6,8 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Contributors:** sethsm
 * **Tags:** weather, openweather, forecast, cache, block
 * **Requires at least:** 5.0
-* **Tested up to:** 6.8
-* **Stable tag:** 2.4.1
+* **Tested up to:** 6.9
+* **Stable tag:** 2.5
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -36,6 +36,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
 * **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options.
 * **Color Picker:**  Customize the color of the "Weather Icons Font" set directly from the settings page.
+* **Performance Optimized:** Built for speed with native script deferral, smart font preloading, and optional async CSS loading to score high on PageSpeed Insights.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
 * **Block Editor Coordinate Finder:** Search for locations by name and automatically fill in coordinates without ever leaving the block editor.
@@ -336,6 +337,12 @@ This is a security feature that limits the number of times a single visitor (ide
 
 The rate limit is turned off by default to ensure maximum performance for all users.  If you notice an unexpected increase in weather requests in the performance report, go ahead and turn on rate limiting to see if something is afoot.
 
+### What does the "Async CSS Loading" setting do? 
+
+This setting (found in **Advanced Settings**) optimizes how the plugin's stylesheets are loaded to improve your website's speed scores (like Google PageSpeed Insights).
+By loading the CSS asynchronously, the plugin prevents "Render Blocking," meaning the browser doesn't stop painting your page to wait for the weather styles to download.
+**Note:** On some sites, this may cause a brief "flash" where the widget appears unstyled for a fraction of a second before popping into place. If you find this visually distracting, you can uncheck "Async CSS Loading" to revert to the standard loading method.
+
 ### Can I load the JavaScripts myself?
 
 Yes. By default, when "Load Plugin JavaScript" is selected, it will add scripts to every page of your website. If you only plan to display the weather widget on select pages, you could choose to only load the Under The Weather Scripts on those pages by encoding the JavaScript yourself. 
@@ -422,6 +429,12 @@ Here is the link to their privacy policy:
 ---
 
 ## Changelog
+
+### 2.5
+* **NEW:** Added an "Async CSS Loading" option to the Advanced Settings to eliminate "Render Blocking Resources" and improve PageSpeed Insights scores.
+* **IMPROVEMENT:** Implemented native "Defer" strategy for plugin JavaScript (requires WP 6.3+), ensuring scripts do not block page rendering.
+* **IMPROVEMENT:** Added smart preloading for the "Weather Icons" font file to prevent "Critical Request Chain" penalties and improve load times.
+* **IMPROVEMENT:** The "Async CSS" and "JS Defer" strategies are now enabled by default for new installations to ensure maximum performance out of the box.
 
 ### 2.4.1
 * **FIX**: Added missing SVG folders for animated icons. 
