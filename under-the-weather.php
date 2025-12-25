@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.4
+ * Version:           2.5
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -84,7 +84,9 @@ function under_the_weather_settings_init() {
 	
     add_settings_field('under_the_weather_enqueue_style', __('Load Plugin CSS', 'under-the-weather'), 'under_the_weather_enqueue_style_field_html', $page_slug, 'under_the_weather_advanced_section');
     add_settings_field('under_the_weather_enqueue_script', __('Load Plugin JavaScript', 'under-the-weather'), 'under_the_weather_enqueue_script_field_html', $page_slug, 'under_the_weather_advanced_section');
-	
+	// NEW: Register Async CSS Field
+    add_settings_field('under_the_weather_async_css', __('Async CSS Loading', 'under-the-weather'), 'under_the_weather_async_css_field_html', $page_slug, 'under_the_weather_advanced_section');
+
 	$finder_page_slug = 'under-the-weather-finder';
 	// Section for Coordinate Finder Tool
     add_settings_section(
@@ -186,6 +188,9 @@ function under_the_weather_sanitize_settings($input) {
     $new_input['enable_cache'] = isset($input['enable_cache']) ? '1' : '0';
     $new_input['enqueue_style'] = isset($input['enqueue_style']) ? '1' : '0';
     $new_input['enqueue_script'] = isset($input['enqueue_script']) ? '1' : '0';
+    // NEW: Sanitize Async CSS setting
+    $new_input['async_css'] = isset($input['async_css']) ? '1' : '0';
+
     return $new_input;
 }
 
@@ -364,6 +369,17 @@ function under_the_weather_enqueue_style_field_html() {
 }
 function under_the_weather_enqueue_script_field_html() {
 	$options = get_option('under_the_weather_settings'); $value = isset($options['enqueue_script']) ? $options['enqueue_script'] : '1'; echo "<input type='checkbox' name='under_the_weather_settings[enqueue_script]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Load plugin JavaScript.', 'under-the-weather');
+}
+// NEW: Output the Async CSS Checkbox
+function under_the_weather_async_css_field_html() {
+    $options = get_option('under_the_weather_settings');
+    // Default to '1' (On) if the setting hasn't been saved yet
+    $value = isset($options['async_css']) ? $options['async_css'] : '1'; 
+    ?>
+    <input type='checkbox' name='under_the_weather_settings[async_css]' value='1' <?php checked($value, '1'); ?>>
+    <?php esc_html_e('Load CSS asynchronously to fix "Render Blocking" issues.', 'under-the-weather'); ?>
+    <p class="description"><?php esc_html_e('Recommended for most sites. Uncheck this if the widget is at the very top of your page and you see a "flash" of unstyled content.', 'under-the-weather'); ?></p>
+    <?php
 }
 function under_the_weather_geocoding_section_callback() {
 	echo '<p>' . esc_html__('Enter a location to find its coordinates and generate a ready-to-use widget div. This tool uses OpenStreetMap\'s geocoding service to look up coordinates.', 'under-the-weather') . '</p>';
@@ -656,6 +672,38 @@ function under_the_weather_load_scripts_manually() {
 	// Pass the plugin's base URL to the script for loading local images.
     $plugin_url_data = ['url' => esc_url_raw(plugins_url('/', __FILE__))];
     wp_localize_script('under-the-weather-script', 'under_the_weather_plugin_url', $plugin_url_data);
+}
+/**
+ * Defer Plugin CSS to avoid Render Blocking.
+ * Only runs if 'Async CSS' is enabled in settings (Default: Yes).
+ */
+add_filter( 'style_loader_tag', 'under_the_weather_defer_css', 10, 4 );
+function under_the_weather_defer_css( $html, $handle, $href, $media ) {
+    $options = get_option('under_the_weather_settings');
+    
+    // Check if Async is enabled (Default to '1' if not set)
+    $async_enabled = isset($options['async_css']) ? $options['async_css'] : '1';
+
+    // If disabled by user, do nothing.
+    if ( $async_enabled !== '1' ) {
+        return $html;
+    }
+
+    // List of handles registered by this plugin
+    $plugin_handles = array(
+        'under-the-weather-styles',
+        'under-the-weather-icons',
+        'under-the-weather-wind-icons'
+    );
+
+    if ( in_array( $handle, $plugin_handles ) ) {
+        // Swap media='all' to media='print' to unblock rendering
+        $new_tag = str_replace( "media='all'", "media='print' onload=\"this.media='all'\"", $html );
+        $new_tag .= '<noscript>' . $html . '</noscript>';
+        return $new_tag;
+    }
+
+    return $html;
 }
 
 // =============================================================================
