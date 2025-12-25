@@ -485,40 +485,41 @@ function under_the_weather_clear_rate_limit_transients_safely() {
 // SECTION 2: ENQUEUE ASSETS & SELECTIVE LOADING
 // =============================================================================
 
+/**
+ * Preload Weather Icons Font to avoid "Critical Request Chain" page load issues
+ * MOVED OUTSIDE enqueue_assets for better reliability.
+ */
+add_action( 'wp_head', 'under_the_weather_preload_font_assets', 5 );
+function under_the_weather_preload_font_assets() {
+    $options = get_option('under_the_weather_settings');
+    
+    // Check 1: Is the user using the font style?
+    // Check 2: Is the "Load Plugin CSS" checkbox actually checked?
+    if ( isset($options['style_set']) && $options['style_set'] === 'weather_icons_font' && !empty($options['enqueue_style']) ) {
+        $font_url = plugins_url( 'font/weathericons-regular-webfont.woff2', __FILE__ );
+        ?>
+        <link rel="preload" href="<?php echo esc_url( $font_url ); ?>" as="font" type="font/woff2" crossorigin="anonymous">
+        <?php
+    }
+}
+
 add_action('wp_enqueue_scripts', 'under_the_weather_enqueue_assets');
 function under_the_weather_enqueue_assets() { 
     $options = get_option('under_the_weather_settings'); 
     if (empty($options)) return;
-	
-	// Register the main style so WordPress knows about it.
+    
+    // Register the main style so WordPress knows about it.
     wp_register_style('under-the-weather-styles', plugins_url('css/under-the-weather.min.css', __FILE__), [], UNDER_THE_WEATHER_VERSION);
 
-	// Register dependent icon styles.
+    // Register dependent icon styles.
     if (isset($options['style_set']) && $options['style_set'] === 'weather_icons_font') {
         wp_register_style('under-the-weather-icons', plugins_url('css/weather-icons.min.css', __FILE__), [], '2.0');
         if (!empty($options['show_details'])) {
             wp_register_style('under-the-weather-wind-icons', plugins_url('css/weather-icons-wind.min.css', __FILE__), [], '2.0');
         }
-    }
+    } 
 
-	/**
-	* Preload Weather Icons Font to avoid "Critical Request Chain" page load issues
-	*/
-	add_action( 'wp_head', 'under_the_weather_preload_font_assets', 5 );
-	function under_the_weather_preload_font_assets() {
-	    $options = get_option('under_the_weather_settings');
-	    
-	    // Only preload if the user is actually using the 'weather_icons_font' style
-	    if ( isset($options['style_set']) && $options['style_set'] === 'weather_icons_font' ) {
-	        // Based on your CSS (../font/), this path assumes /font/ is in the plugin root
-	        $font_url = plugins_url( 'font/weathericons-regular-webfont.woff2', __FILE__ );
-	        ?>
-	        <link rel="preload" href="<?php echo esc_url( $font_url ); ?>" as="font" type="font/woff2" crossorigin="anonymous">
-	        <?php
-	    }
-	}
-
-	// Conditionally ENQUEUE based on the global setting.
+    // Conditionally ENQUEUE based on the global setting.
     if (!empty($options['enqueue_style'])) { 
          wp_enqueue_style('under-the-weather-styles'); 
         if (isset($options['style_set']) && $options['style_set'] === 'weather_icons_font') { 
@@ -630,7 +631,16 @@ function under_the_weather_enqueue_admin_assets($hook) {
  */
 function under_the_weather_load_scripts_manually() {
     $options = get_option('under_the_weather_settings');
-    wp_enqueue_script('under-the-weather-script', plugins_url('js/under-the-weather.min.js', __FILE__), [], UNDER_THE_WEATHER_VERSION, true);
+    wp_enqueue_script(
+        'under-the-weather-script', 
+        plugins_url('js/under-the-weather.min.js', __FILE__), 
+        [], 
+        UNDER_THE_WEATHER_VERSION, 
+        array(
+            'in_footer' => true,    // Still load in footer
+            'strategy'  => 'defer', // Adds the defer attribute
+        )
+    );
     $settings_for_js = [
         'style_set'      => isset($options['style_set']) ? $options['style_set'] : 'default_images',
         'display_mode'   => isset($options['display_mode']) ? $options['display_mode'] : 'current',
