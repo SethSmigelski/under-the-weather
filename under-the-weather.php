@@ -81,10 +81,10 @@ function under_the_weather_settings_init() {
     add_settings_field('under_the_weather_enable_cache', __('Enable Cache', 'under-the-weather'), 'under_the_weather_enable_cache_field_html', $page_slug, 'under_the_weather_advanced_section');
     add_settings_field('under_the_weather_enable_rate_limit', __('Enable Rate Limiting', 'under-the-weather'), 'under_the_weather_enable_rate_limit_field_html', $page_slug, 'under_the_weather_advanced_section');
     add_settings_field('under_the_weather_rate_limit_count', __('Requests per Hour', 'under-the-weather'), 'under_the_weather_rate_limit_count_field_html', $page_slug, 'under_the_weather_advanced_section');
-	
-    add_settings_field('under_the_weather_enqueue_style', __('Load Plugin CSS', 'under-the-weather'), 'under_the_weather_enqueue_style_field_html', $page_slug, 'under_the_weather_advanced_section');
+
+	// Advanced Script and style settings, including register Async CSS Field
     add_settings_field('under_the_weather_enqueue_script', __('Load Plugin JavaScript', 'under-the-weather'), 'under_the_weather_enqueue_script_field_html', $page_slug, 'under_the_weather_advanced_section');
-	// NEW: Register Async CSS Field
+    add_settings_field('under_the_weather_enqueue_style', __('Load Plugin CSS', 'under-the-weather'), 'under_the_weather_enqueue_style_field_html', $page_slug, 'under_the_weather_advanced_section');
     add_settings_field('under_the_weather_async_css', __('Async CSS Loading', 'under-the-weather'), 'under_the_weather_async_css_field_html', $page_slug, 'under_the_weather_advanced_section');
 
 	$finder_page_slug = 'under-the-weather-finder';
