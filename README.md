@@ -27,8 +27,6 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 ![The weather widget with Sunrise and Sunset times shown](https://ps.w.org/under-the-weather/assets/screenshot-11.png)
 
-_The weather widget with Sunrise and Sunset times shown._
-
 ### Key Features:
 * **Stylish Weather Widgets:** Choose between default OpenWeather images, crisp Weather Icons font set, and two Animated SVG icon sets (Fill and Outline).
 * **Easy to Use:** Add weather widgets using the WordPress block editor or by placing a simple `<div>` with data attributes anywhere on your site.
