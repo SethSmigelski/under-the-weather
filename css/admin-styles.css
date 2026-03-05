@@ -41,7 +41,7 @@
     align-items: flex-end;
     height: 250px;
 	border: 1px solid #c3c4c7;
-	padding: 10px 0;
+	padding: 35px 0 10px;
 	gap: 10px;
 	background: #f9f9f9;
 }
