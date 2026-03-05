@@ -207,6 +207,14 @@ The report also includes a status indicator that shows whether the optional **Ra
 
 This plugin works with the **OpenWeather One Call API 3.0**. You can get a free API key by signing up on the OpenWeather website. Make sure you have subscribed to the One Call API on your account's API page.
 
+= Why do I see "Could not retrieve forecast. Server error?" =
+
+This most commonly occurs when there is an issue with your OpenWeather API subscription. Please check the following:
+1. **API Plan:** Ensure you have subscribed to the "One Call API 3.0" specifically. Other free plans (like "Current Weather") are not compatible with this plugin.
+2. **Payment Info:** OpenWeather requires a valid credit card on file for the One Call 3.0 plan. Although the first 1,000 calls per day are free, the API will return an error if no payment method is registered.
+3. **Activation Time:** New API keys can take up to 2 hours to become fully active.
+4. **Performance Report:** Go to Settings > Under The Weather > Performance Report to view the "Raw Data" section for the specific error code (e.g., 401 or 402) returned by the server.
+
 = How can I monitor how many OpenWeather API calls the plugin is making? =
 
 Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
@@ -217,7 +225,7 @@ Seeing how the plugin's cache system reduces the number of API calls demonstrate
 
 No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
 
-= Will my website ever show yesterday's weather If I set a long cache time? =
+= Will my website ever show yesterday's weather if I set a long cache time? =
 
 Cinderella's magic disappears at midnight and weather caches expire at midnight too. Visitors should never see a cache of the previous day's forecast. 
 
