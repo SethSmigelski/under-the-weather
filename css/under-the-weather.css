@@ -317,16 +317,16 @@
     background-color: transparent;
     color: #ffffff;
 }
-
+.utw-dark-mode .weather-location-name{
+    border: 1px solid #333; /* Dark gray separators */
+}
 .utw-dark-mode .sunrise-sunset-container,
 .utw-dark-mode .weather-extra-details,
-.utw-dark-mode .weather-location-name,
 .utw-dark-mode .current-weather,
 .utw-dark-mode .forecast-day,
 .utw-dark-mode .last-updated {
     border-color: #333; /* Dark gray separators */
 }
-
 .utw-dark-mode .sunrise-sunset-value, 
 .utw-dark-mode .high {
     color: #ffffff;
