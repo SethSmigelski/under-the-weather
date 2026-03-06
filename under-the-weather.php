@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.5
+ * Version:           2.6.0
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.5.0' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.6.0' );
 
 // Add the Under The Weather Forecast block.
 add_action('init', 'under_the_weather_register_widget_block');
@@ -66,8 +66,12 @@ function under_the_weather_settings_init() {
     add_settings_section('under_the_weather_display_section', __('Widget Display Settings', 'under-the-weather'), 'under_the_weather_display_section_callback', $page_slug);
 	add_settings_field('under_the_weather_style_set_visual', __('Visual Reference', 'under-the-weather'), 'under_the_weather_style_set_visual_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_style_set', __('Icon & Style Set', 'under-the-weather'), 'under_the_weather_style_set_field_html', $page_slug, 'under_the_weather_display_section');
-    //  NEW FIELD for Font Icons Color Picker
+    
     add_settings_field('under_the_weather_icon_font_color', __('Icon Font Color', 'under-the-weather'), 'under_the_weather_icon_font_color_field_html', $page_slug, 'under_the_weather_display_section');
+
+    //new selection for light or dark theme
+    add_settings_field('under_the_weather_theme_mode', __('Widget Mode', 'under-the-weather'), 'under_the_weather_theme_mode_field_html', $page_slug, 'under_the_weather_display_section');
+
     add_settings_field('under_the_weather_display_mode', __('Primary Display', 'under-the-weather'), 'under_the_weather_display_mode_field_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_forecast_days', __('Number of Forecast Days', 'under-the-weather'), 'under_the_weather_forecast_days_field_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_show_unit', __('Unit Symbol', 'under-the-weather'), 'under_the_weather_show_unit_field_html', $page_slug, 'under_the_weather_display_section');	
@@ -179,7 +183,8 @@ function under_the_weather_sanitize_settings($input) {
 	
     // Sanitize the major display options
     if (isset($input['display_mode']) && in_array($input['display_mode'], ['current', 'today_forecast'])) { $new_input['display_mode'] = $input['display_mode']; }
-    if (isset($input['forecast_days']) && in_array($input['forecast_days'], ['2','3','4','5','6'])) { $new_input['forecast_days'] = $input['forecast_days']; }
+    if (isset($input['forecast_days']) && in_array($input['forecast_days'], ['0','2','3','4','5','6'])) { $new_input['forecast_days'] = $input['forecast_days']; }
+    if (isset($input['theme_mode']) && in_array($input['theme_mode'], ['light', 'dark'])) { $new_input['theme_mode'] = $input['theme_mode']; }
 	
     $new_input['show_details'] = isset($input['show_details']) ? '1' : '0';
     $new_input['show_unit'] = isset($input['show_unit']) ? '1' : '0';
@@ -318,11 +323,26 @@ function under_the_weather_icon_font_color_field_html() {
     <?php
 }
 
+// Added Animated SVG options to the dropdown
+function under_the_weather_theme_mode_field_html() {
+    $options = get_option('under_the_weather_settings');
+    $value = isset($options['theme_mode']) ? $options['theme_mode'] : 'light';
+    ?>
+    <select name="under_the_weather_settings[theme_mode]">
+        <option value="light" <?php selected($value, 'light'); ?>><?php esc_html_e('Light Mode', 'under-the-weather'); ?></option>
+        <option value="dark" <?php selected($value, 'dark'); ?>><?php esc_html_e('Dark Mode', 'under-the-weather'); ?></option>
+    </select>
+    <p class="description">
+        <?php esc_html_e("To display weather widgets on black or dark backgrounds, switch from 'Light Mode' to 'Dark Mode.'", 'under-the-weather'); ?>
+    </p>
+    <?php
+}
+
 function under_the_weather_display_mode_field_html() { 
 	$options = get_option('under_the_weather_settings'); $value = isset($options['display_mode']) ? $options['display_mode'] : 'current'; echo '<label><input type="radio" name="under_the_weather_settings[display_mode]" value="current" '.checked($value, 'current', false).'> ' . esc_html__('Current', 'under-the-weather') . '</label><br><label><input type="radio" name="under_the_weather_settings[display_mode]" value="today_forecast" '.checked($value, 'today_forecast', false).'> ' . esc_html__("Today's Forecast", 'under-the-weather') . '</label>'; 
 }
 function under_the_weather_forecast_days_field_html() {
-	$options = get_option('under_the_weather_settings'); $value = isset($options['forecast_days']) ? $options['forecast_days'] : '5'; echo '<select name="under_the_weather_settings[forecast_days]"><option value="2" '.selected($value, '2', false).'>' . esc_html__('2 Days', 'under-the-weather') . '</option><option value="3" '.selected($value, '3', false).'>' . esc_html__('3 Days', 'under-the-weather') . '</option><option value="4" '.selected($value, '4', false).'>' . esc_html__('4 Days', 'under-the-weather') . '</option><option value="5" '.selected($value, '5', false).'>' . esc_html__('5 Days', 'under-the-weather') . '</option><option value="6" '.selected($value, '6', false).'>' . esc_html__('6 Days', 'under-the-weather') . '</option></select>'; 
+	$options = get_option('under_the_weather_settings'); $value = isset($options['forecast_days']) ? $options['forecast_days'] : '5'; echo '<select name="under_the_weather_settings[forecast_days]"><option value="0" '.selected($value, '2', false).'>' . esc_html__('0 Days', 'under-the-weather') . '</option><option value="2" '.selected($value, '2', false).'>' . esc_html__('2 Days', 'under-the-weather') . '</option><option value="3" '.selected($value, '3', false).'>' . esc_html__('3 Days', 'under-the-weather') . '</option><option value="4" '.selected($value, '4', false).'>' . esc_html__('4 Days', 'under-the-weather') . '</option><option value="5" '.selected($value, '5', false).'>' . esc_html__('5 Days', 'under-the-weather') . '</option><option value="6" '.selected($value, '6', false).'>' . esc_html__('6 Days', 'under-the-weather') . '</option></select>'; 
 }
 function under_the_weather_show_details_field_html() {
 	$options = get_option('under_the_weather_settings'); $value = isset($options['show_details']) ? $options['show_details'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_details]' value='1' " . checked($value, '1', false) . "> " . esc_html__("Display 'Feels Like' and wind.", 'under-the-weather'); 
@@ -659,6 +679,7 @@ function under_the_weather_load_scripts_manually() {
     );
     $settings_for_js = [
         'style_set'      => isset($options['style_set']) ? $options['style_set'] : 'default_images',
+        'theme_mode'   => isset($options['theme_mode']) ? $options['theme_mode'] : 'light',
         'display_mode'   => isset($options['display_mode']) ? $options['display_mode'] : 'current',
         'forecast_days'  => isset($options['forecast_days']) ? intval($options['forecast_days']) : 5,
         'show_details'   => !empty($options['show_details']),
