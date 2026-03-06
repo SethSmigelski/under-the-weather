@@ -369,6 +369,11 @@ Here is the link to their privacy policy:
 
 == Changelog ==
 
+= 2.6 =
+* NEW: Added a "Dark Mode" theme setting to optimize text and border contrast for dark backgrounds and footers.
+* NEW: Added the ability to set forecast days to "0", allowing for a highly compact widget that only displays current conditions or today's forecast.
+* IMPROVEMENT: Refined CSS layout and border rendering when the extended forecast is hidden.
+
 = 2.5 =
 * NEW: Added an "Async CSS Loading" option to the Advanced Settings to eliminate "Render Blocking Resources" and improve PageSpeed Insights scores.
 * IMPROVEMENT: Implemented native "Defer" strategy for plugin JavaScript (requires WP 6.3+), ensuring scripts do not block page rendering.
