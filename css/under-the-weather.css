@@ -5,7 +5,7 @@
 	/* This setting is optional */ 
 	/* However, setting a minimum height helps to reduce browser repaints */
 }
-.weather-widget.no-forecast { min-height: 165px; } /* When the forecaset is excluded less height is required */
+.weather-widget.no-forecast { min-height: 175px; } /* When the forecaset is excluded less height is required */
 .weather-widget.has-sunrise { min-height: 375px; } /* When sunrise sunset is shown using min-height: 375px; is better */
 .weather-widget.no-forecast.has-sunrise {min-height: 255px;}/* With sunrise sunset but without forecast */
 
