@@ -131,21 +131,21 @@ Pick the style that suits you best. Choose between four weather icon options:
 Note: Selecting the icon font will load an additional small CSS file.
 
 **Icon Font Color:**
-Use the color picker to customize the color of the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
+Use the color picker to customize the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
 
 **Widget Mode:** 
-The weather widgets is designed to look good on light or dark backgrounds. Select **Light Mode** when displaying weather widgets on white and light backgrounds. Switch to **Dark Mode** to display weather widgets on black or dark backgrounds.
+The weather widgets are designed to look good on light or dark backgrounds. Select **Light Mode** when displaying weather widgets on white and light backgrounds. Switch to **Dark Mode** to display weather widgets on black or dark backgrounds.
 
 **Primary Display:** 
 Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
 
 **Number of Forecast Days:** 
-Adjust the number of days shown in the extended forecast row, from 2 to 6 days. When set to set 0 days, the forecast area of the widget disappears, offering a compact widget of the current day's weather.
+Adjust the number of days shown in the extended forecast row, from 2 to 6 days. When set to 0 days, the widget's forecast area disappears, leaving a compact widget showing the current day's weather.
 
 **Extra Details:**
 Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
 
-**Sunrise & Sunset:** This setting allows you to display the local sunrise and sunset times for the location, which is useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
+**Sunrise & Sunset:** This setting displays the local sunrise and sunset times for the location, useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
 
 **Weather Alerts:** When enabled, the widget will display any active severe weather alerts (e.g., thunderstorm warnings, flood advisories) issued by official authorities for the specified location.  This provides critical, at-a-glance information for your visitors.
 
@@ -156,7 +156,7 @@ Indicates the time elapsed since the weather data was last updated from the sour
 Adds the unit symbol (F or C) next to the main temperature. This option allows you to select whether or not the widget should include the temperature unit symbol in the primary temperature display.
 
 **Advanced Settings**
-**Enable Cache:**  You can uncheck this box, if you would like to use this plugin without the benefit of the caching function.
+**Enable Cache:**  You can uncheck this box if you would like to use this plugin without the benefit of the caching function.
 
 **Enable Rate Limiting:** Check this box to protect your site against excessive API requests from a single IP address. You can set the maximum number of requests per hour (default is 100). This helps prevent malicious traffic from exhausting your API quota. 
 
@@ -220,7 +220,7 @@ This most commonly occurs when there is an issue with your OpenWeather API subsc
 3. **Activation Time:** New API keys can take up to 2 hours to become fully active.
 4. **Performance Report:** Go to Settings > Under The Weather > Performance Report to view the "Raw Data" section for the specific error code (e.g., 401 or 402) returned by the server.
 
-= How can I monitor how many OpenWeather API calls the plugin is making? =
+= How can I monitor the number of OpenWeather API calls the plugin makes? =
 
 Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
 
@@ -228,7 +228,7 @@ Seeing how the plugin's cache system reduces the number of API calls demonstrate
 
 = Do I need to use the plugin's caching function? =
 
-No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
+No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system greatly reduces API hits, but turning this function off during your initial widget setup may be useful.
 
 = Will my website ever show yesterday's weather if I set a long cache time? =
 
@@ -250,7 +250,7 @@ If you're feeling patient, just wait for the weather widget to update after the 
 
 = Does the Weather Widget work in Fahrenheit or Celsius? =
 
-Both. By default, the weather widget will show a forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). Additionally, checking the box for "Display Unit Symbol" on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
+Both. By default, the weather widget will show a forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). Additionally, checking the "Display Unit Symbol" box on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
 
 = What if I don't know the latitude and longitude for a weather location? =
 
@@ -327,7 +327,7 @@ Adding scripts this way is purely optional. Most users can just leave the Load P
 
 = Are there additional ways to customize this plugin? =
 
-Yes. You can modify the appearance of the Weather Icons Fonts by making customizations using CSS. The Weather Icons Fonts are sharp, scalable, and can be customized through CSS to match your website's color palette. 
+Yes. You can modify the appearance of the Weather Icons Fonts using CSS. The Weather Icons Fonts are sharp, scalable, and customizable via CSS to match your website's color palette. 
 
 == Screenshots ==
 
@@ -415,78 +415,7 @@ Here is the link to their privacy policy:
 * IMPROVEMENT: Block previews the location name and temperature unit directly in the editor.
 * IMPROVEMENT: Added input validation, rate limiting, request timeout, and response validation for location searches from the Custom block, accompanied by user-friendly error messages.
 
-= 1.8 =
-* NEW: Added a "Coordinate Finder" tool on the settings page to look up location coordinates and generate widget code.
-* IMPROVEMENT: The Coordinate Finder includes a persistent history of your last 5 searches that saves between sessions using WordPress user meta.
-* IMPROVEMENT: The plugin settings page is now organized into three tabs: Settings, Coordinate Finder, and Performance Report.
-* IMPROVEMENT: Enhanced input validation and sanitization for the geocoding tool with proper JSON handling.
-
-= 1.7.8 =
-* SECURITY: Improved sanitization and validation for rate-limiting feature.
-
-= 1.7.7 =
-* SECURITY: Added nonce verification to JavaScript REST API requests to prevent CSRF attacks on weather data endpoints.
-* IMPROVEMENT: Added front-end validation for coordinates to prevent unnecessary API calls with invalid data.
-* IMPROVEMENT: Added front-end validation to ensure weather data is complete before display, providing protection against unexpected or bad API responses.
-* IMPROVEMENT: Added a "Loading..." message to improve user experience while the widget fetches weather data. This message appears after data checks have passed and before the weather is shown.
-* IMPROVEMENT: Implemented a 10-second timeout for API requests to prevent the widget from hanging indefinitely.
-
-= 1.7.6 =
-* SECURITY: Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data.
-
-= 1.7.5 =
-* IMPROVEMENT: Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging.
-* IMPROVEMENT: Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback.
-* IMPROVEMENT: Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities.
-* IMPROVEMENT: Added custom User-Agent identification for OpenWeather API requests following best practices.
-
-= 1.7.4 =
-* IMPROVEMENT: The Performance Report now displays rate-limiting status, including a "Blocked Requests" column in the data table and a status box to show if the feature is active.  This will log the occurrence of any blocked requests.
-* IMPROVEMENT: Refined styling for the Performance Report.
-
-= 1.7.3 =
-* NEW: Added an optional, user-configurable rate-limiting feature to the REST API endpoint to protect against API quota exhaustion and resource abuse.
-* IMPROVEMENT: The "Requests per Hour" for the rate limit can be configured on the settings page.
-
-= 1.7.2 =
-* SECURITY: Enhanced input validation for REST API parameters - added coordinate range validation (-90 to 90 for latitude, -180 to 180 for longitude) and location name screening to prevent XSS and injection attacks.
-* IMPROVEMENT: Separated validation and sanitization logic in REST API for better error handling.
-
-= 1.7.1 =
-* FIX: Completed nonce verification to prevent CSRF attacks on tab switching.
-* IMPROVEMENT: Added format validation to verify that the OpenWeather API key is a 32-character alphanumeric string.
-* IMPROVEMENT: Escape URL in JavaScript Localization.
-
-= 1.7 =
-* SECURITY: Added nonce verification to the admin settings tabs to protect against CSRF attacks.
-* DEV: Implemented PHPCS ignore comments for the necessary direct database queries, resolving plugin checker warnings.
-
-= 1.6 =
-* ENHANCEMENT: Added visual examples of the icon sets to the settings page to clarify the style options.
-
-= 1.5 =
-* SECURITY: Updated all function, option, and transient prefixes to be more unique to prevent conflicts.
-* ENHANCEMENT: Bundled weather icon images directly with the plugin to remove remote dependencies, per WordPress.org guidelines.
-* ENHANCEMENT: Added full disclosure of external API usage in the readme.txt file.
-* DEV: Updated code to be fully compliant with the WordPress Plugin Review Team's feedback.
-
-= 1.4 =
-* IMPROVEMENT: Better organization of the settings Menu.
-*  NEW: Added an Enable Cache option, which can be disabled to use this plugin without the benefit of caching. 
-
-= 1.3 =
-* IMPROVEMENT: Refactored JavaScript handling for better security and to follow WordPress best practices. 
-* NEW: Added a template tag (`under_the_weather_load_scripts_manually`) to allow for manual/conditional loading of the plugin's JavaScript for performance optimization. 
-* DEV: Added full internationalization support.
-
-= 1.2 =
-* IMPROVEMENT: Improved the appearance of the Performance Report.
-
-= 1.1 =
-* NEW: Introduced a Performance Report tab to the Under The Weather Settings Page so that users can monitor the plugin's usage and observe the effectiveness of the cache system.
-
-= 1.0 =
-* NEW: Initial version intended for public release.
+Review the changelog.txt for previous changes.
 
 == Upgrade Notice ==
 
