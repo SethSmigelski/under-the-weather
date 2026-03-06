@@ -165,7 +165,7 @@ Pick the style that suits you best. Choose between four weather icon options:
 Note: Selecting the icon font will load an additional small CSS file.
 
 **Icon Font Color:**
-Use the color picker to customize the color of the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
+Use the color picker to customize the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
 
 **Widget Mode:** 
 The weather widgets are designed to look good on light or dark backgrounds. Select **Light Mode** when displaying weather widgets on white and light backgrounds. Switch to **Dark Mode** to display weather widgets on black or dark backgrounds.
@@ -174,12 +174,12 @@ The weather widgets are designed to look good on light or dark backgrounds. Sele
 Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
 
 **Number of Forecast Days:** 
-Adjust the number of days shown in the extended forecast row, from 2 to 6 days. When set to set 0 days, the forecast area of the widget disappears, offering a compact widget of the current day's weather.
+Adjust the number of days shown in the extended forecast row, from 2 to 6 days. When set to 0 days, the widget's forecast area disappears, leaving a compact widget showing the current day's weather.
 
 **Extra Details:**
 Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
 
-**Sunrise & Sunset:** This setting allows you to display the local sunrise and sunset times for the location, which is useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
+**Sunrise & Sunset:** This setting displays the local sunrise and sunset times for the location, useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
 
 **Weather Alerts:** When enabled, the widget will display any active severe weather alerts (e.g., thunderstorm warnings, flood advisories) issued by official authorities for the specified location.  This provides critical, at-a-glance information for your visitors.
 
@@ -194,7 +194,7 @@ Adds the unit symbol (F or C) next to the main temperature. This option allows y
 _The Widget Display options on the plugin's settings page._
 
 **Advanced Settings**
-**Enable Cache:**  You can uncheck this box, if you would like to use this plugin without the benefit of the caching function. 
+**Enable Cache:**  You can uncheck this box if you would like to use this plugin without the benefit of the caching function. 
 
 **Enable Rate Limiting:** Check this box to protect your site against excessive API requests from a single IP address. You can set the maximum number of requests per hour (default is 100). This helps prevent malicious traffic from exhausting your API quota.
 
@@ -281,7 +281,7 @@ This most commonly occurs when there is an issue with your OpenWeather API subsc
 3. **Activation Time:** New API keys can take up to 2 hours to become fully active.
 4. **Performance Report:** Go to Settings > Under The Weather > Performance Report to view the "Raw Data" section for the specific error code (e.g., 401 or 402) returned by the server.
 
-###  How can I monitor how many OpenWeather API calls the plugin is making?
+###  How can I monitor the number of OpenWeather API calls the plugin makes?
 
 Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
 
@@ -289,7 +289,7 @@ Seeing how the plugin's cache system reduces the number of API calls demonstrate
 
 ###  Do I need to use the plugin's caching function?
 
-No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system provides a great benefit for reducing API hits, but turning off this function during your initial widget setup may be useful.
+No. To retrieve fresh weather data every time a widget page loads, you can uncheck "Enable Cache" under the plugin's advanced settings. The caching system greatly reduces API hits, but turning this function off during your initial widget setup may be useful.
 
 ### Will my website ever show yesterday's weather if I set a long cache time?
 
@@ -311,7 +311,7 @@ If you're feeling patient, just wait for the weather widget to update after the 
 
 ### Does the Weather Widget work in Fahrenheit or Celsius?
 
-Both. By default, the weather widget will show a forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). Additionally, checking the box for "Display Unit Symbol" on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
+Both. By default, the weather widget will show a forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). Additionally, checking the "Display Unit Symbol" box on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
 
 ### What if I don't know the latitude and longitude for a weather location?
 
@@ -388,7 +388,7 @@ Adding scripts this way is purely optional. Most users can just leave the Load P
 
 ###  Are there additional ways to customize this plugin?
 
-Yes. You can modify the appearance of the Weather Icons Fonts by making customizations using CSS. The Weather Icons Fonts are sharp, scalable, and can be customized through CSS to match your website's color palette. 
+Yes. You can modify the appearance of the Weather Icons Fonts using CSS. The Weather Icons Fonts are sharp, scalable, and customizable via CSS to match your website's color palette. 
 
 ---
 
