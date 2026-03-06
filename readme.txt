@@ -325,10 +325,6 @@ For example, if you only intend to display the weather widget on events pages, y
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
-= Are there additional ways to customize this plugin? =
-
-Yes. You can modify the appearance of the Weather Icons Fonts using CSS. The Weather Icons Fonts are sharp, scalable, and customizable via CSS to match your website's color palette. 
-
 == Screenshots ==
 
 1. The weather widget, displaying current conditions with the Weather Icons.
