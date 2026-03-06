@@ -318,7 +318,7 @@
     color: #ffffff;
 }
 .utw-dark-mode .weather-location-name{
-    border: 1px solid #333; /* Dark gray separators */
+    border-bottom: 1px solid #333; /* Dark gray separators */
 }
 .utw-dark-mode .sunrise-sunset-container,
 .utw-dark-mode .weather-extra-details,
