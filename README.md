@@ -385,10 +385,6 @@ if ( is_singular('event') && function_exists('under_the_weather_load_scripts_man
 
 Adding scripts this way is purely optional. Most users can just leave the Load Plugin JavaScript box checked.
 
-###  Are there additional ways to customize this plugin?
-
-Yes. You can modify the appearance of the Weather Icons Fonts using CSS. The Weather Icons Fonts are sharp, scalable, and customizable via CSS to match your website's color palette. 
-
 ---
 
 ## Screenshots
