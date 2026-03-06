@@ -19,10 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
  * @param {HTMLElement} widget The widget's div element.
  */
 function loadWeatherData(widget) {
+
     const locationName = widget.dataset.locationName;
     // Get the lat/lon from the data attributes
     let lat = widget.dataset.lat;
     let lon = widget.dataset.lon;
+    // Extract the new settings for your classes
+    const forecast_days = widget.dataset.forecastDays;
+    const sunrise_sunset_format = widget.dataset.sunriseSunsetFormat;
 
     // Attempt to parse/convert them (this handles DD, DDM, and DMS formats)
     const parsedLat = parseCoordinate(lat);
@@ -46,6 +50,9 @@ function loadWeatherData(widget) {
         widget.innerHTML = 'Invalid location coordinates.';
         return;
     }
+
+    
+    const forecastDaysToShow = (forecast_days !== "" && forecast_days !== undefined) ? parseInt(forecast_days, 10) : 5;
 
     widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
     
@@ -237,7 +244,7 @@ function getAlertSVGFilename(eventText) {
 }
 
 function displayWeather(data, widget) {
-    const { style_set, display_mode, forecast_days, show_details, show_unit, show_alerts, show_timestamp, sunrise_sunset_format } = under_the_weather_settings;
+    const { style_set, display_mode, forecast_days, show_details, show_unit, show_alerts, show_timestamp, sunrise_sunset_format, theme_mode } = under_the_weather_settings;
     const locationName = widget.dataset.locationName || '';
     
     const tempSymbol = '°';
@@ -442,27 +449,32 @@ function displayWeather(data, widget) {
             `;
         });
     }
+    const forecastDaysToShow = (forecast_days !== "" && forecast_days !== undefined) ? parseInt(forecast_days, 10) : 5;
+    let forecastContainerHtml = '';
+    if (forecastDaysToShow > 0) {
+        const dailyForecasts = data.daily.slice(1, 1 + forecastDaysToShow);
+        let forecastHtml = '';
+        dailyForecasts.forEach(day => {
+            const dayName = new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' });
+            const highTemp = Math.round(day.temp.max);
+            const lowTemp = Math.round(day.temp.min);
 
-    const forecastDaysToShow = parseInt(forecast_days, 10) || 5;
-    const dailyForecasts = data.daily.slice(1, 1 + forecastDaysToShow);
-    let forecastHtml = '';
-
-    dailyForecasts.forEach(day => {
-        const dayName = new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' });
-        const highTemp = Math.round(day.temp.max);
-        const lowTemp = Math.round(day.temp.min);
-
-        forecastHtml += `
-          <div class="forecast-day">
-            <div class="forecast-day-name">${dayName}</div>
-            ${getIconHtml(day.weather[0])}
-            <div class="forecast-temps">
-              <span class="high">${highTemp}${tempSymbol}</span><span class="slash"> / </span><span class="low">${lowTemp}${tempSymbol}</span>
-            </div>
-          </div>
-        `;
-    });
-
+            forecastHtml += `
+              <div class="forecast-day">
+                <div class="forecast-day-name">${dayName}</div>
+                ${getIconHtml(day.weather[0])}
+                <div class="forecast-temps">
+                  <span class="high">${highTemp}${tempSymbol}</span><span class="slash"> / </span><span class="low">${lowTemp}${tempSymbol}</span>
+                </div>
+              </div>
+            `;
+        });
+        forecastContainerHtml = `
+        <div class="forecast-container">
+            ${forecastHtml}
+        </div>
+    `;
+    }
     let timestampHtml = '';
     if (show_timestamp && data.fetched_at) {
         timestampHtml = `<div class="last-updated">Updated ${timeAgo(data.fetched_at)}</div>`;
@@ -474,10 +486,23 @@ function displayWeather(data, widget) {
         ${primaryDisplayHtml}
         ${extraDetailsHtml}
         ${sunriseSunsetHtml}
-        <div class="forecast-container">
-            ${forecastHtml}
-        </div>
+        ${forecastContainerHtml}
         ${timestampHtml}
     `;
     widget.innerHTML = finalHtml;
+
+    // 1. Check Forecast
+    if (parseInt(forecast_days, 10) === 0) {
+        widget.classList.add('no-forecast');
+    }
+
+    // 2. Check Sunrise
+    if (sunrise_sunset_format && sunrise_sunset_format !== 'off') {
+        widget.classList.add('has-sunrise');
+    }
+
+    // 3. Check Theme Mode
+    if (theme_mode === 'dark') {
+        widget.classList.add('utw-dark-mode');
+    }
 }
