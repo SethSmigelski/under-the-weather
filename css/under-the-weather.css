@@ -1,16 +1,13 @@
-/* --- New to version 2.3: Styling classes for animated SVG weather icons --- */
-/* .weather-icon-svg: For the main weather condition and forecast day icons */
-/* .sunrise-sunset-icon-svg: For the sunrise and sunset icons */
-/* .weather-alert-icon-svg: For the icons used in weather alerts */
-/* .wind-icon-svg: For the wind icon in the "extra details" section */
-
+/* --- New to version 2.6: Dark theme --- */
 /* --- Weather Widget Styling --- */
 .weather-widget {
 	min-height: 285px;
 	/* This setting is optional */ 
 	/* However, setting a minimum height helps to reduce browser repaints */
-	/* When sunrise sunset is shown, consider using, min-height: 375px; */
 }
+.weather-widget.no-forecast { min-height: 165px; } /* When the forecaset is excluded less height is required */
+.weather-widget.has-sunrise { min-height: 375px; } /* When sunrise sunset is shown using min-height: 375px; is better */
+.weather-widget.no-forecast.has-sunrise {min-height: 255px;}/* With sunrise sunset but without forecast */
 
 .weather-location-name {
 	border-bottom: 2px solid #eee;
@@ -23,7 +20,6 @@
 
 .current-weather {
 	align-items: center;
-	border-bottom: 2px solid #eee;
 	display: flex;
 	justify-content: space-around;
 	margin-bottom: 8px;
@@ -155,11 +151,10 @@
 }
 
 .weather-extra-details {
-	border-bottom: 1px solid #eee;
 	color: #555;
 	display: flex;
 	font-size: .9em;
-	justify-content: space-between;
+	justify-content: space-around;
 	margin-bottom: 10px;
 	padding: 10px 5px;
 }
@@ -184,6 +179,20 @@
     border-radius: 50%;
 }
 /* --- END NEW SVG STYLES --- */
+
+
+/* Remove specific borders that cause stacking */
+.current-weather, 
+.weather-extra-details, 
+.sunrise-sunset-container {
+    border-bottom: 1px solid #eee;
+}
+
+/* If it's the last element before the updated timestamp, or if forecast is off */
+.no-forecast .sunrise-sunset-container,
+.no-forecast .weather-extra-details {
+    border-bottom: none;
+}
 
 .last-updated {
 	color: #999;
@@ -252,7 +261,6 @@
     justify-content: space-around;
     text-align: center;
     padding: 10px 5px;
-    border-bottom: 1px solid #eee;
     margin-bottom: 10px;
     color: #555;
 }
@@ -302,3 +310,46 @@
     justify-content: center;
 }
 /* --- END NEW SVG STYLES --- */
+
+/* --- DARK MODE STYLES --- */
+/* Dark Mode Overrides */
+.weather-widget.utw-dark-mode {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+.utw-dark-mode .sunrise-sunset-container,
+.utw-dark-mode .weather-extra-details,
+.utw-dark-mode .weather-location-name,
+.utw-dark-mode .current-weather,
+.utw-dark-mode .forecast-day,
+.utw-dark-mode .last-updated {
+    border-color: #333; /* Dark gray separators */
+}
+
+.utw-dark-mode .sunrise-sunset-value, 
+.utw-dark-mode .high {
+    color: #ffffff;
+}
+
+/* Make alerts pop in dark mode without clashing */
+.utw-dark-mode .weather-alert {
+    background-color: rgba(255, 69, 0, 0.15); /* A subtle, translucent bright orange/red */
+    border-color: #ff4500; /* Bright orange/red border to grab attention */
+    color: #ffffff; /* Crisp white text */
+}
+.utw-dark-mode .forecast-day-name,
+.utw-dark-mode  .temp-unit{
+    color: #aaa; /* darkest of the light text */
+}
+
+.utw-dark-mode .weather-alert-sender,
+.utw-dark-mode .weather-extra-details {
+    color: #ccc; /* Slightly dimmed secondary text. Light gray for conditions */
+}
+.utw-dark-mode .sunrise-sunset-label,
+.utw-dark-mode .low,
+.utw-dark-mode .last-updated {
+    color: #bbb; /* Light gray for secondary text */
+}
+/* --- END DARK MODE STYLES --- */
