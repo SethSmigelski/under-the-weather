@@ -7,7 +7,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Tags:** weather, openweather, forecast, cache, block
 * **Requires at least:** 5.0
 * **Tested up to:** 6.9
-* **Stable tag:** 2.5
+* **Stable tag:** 2.6
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
 * **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
@@ -32,12 +32,15 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Easy to Use:** Add weather widgets using the WordPress block editor or by placing a simple `<div>` with data attributes anywhere on your site.
 * **Server-Side Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for all users.
 * **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
-* **Customizable Display:** Use the main display to show either the current live weather or the high/low forecast for the current day, and set the number of days to include in the forecast ahead.
+* **Flexible Primary Display:** Choose whether the widget's main focal point highlights the live current conditions or today's high and low temperatures.
+* **Customizable Forecast Length:** Display a 2 to 6-day extended forecast, or set the forecast length to 0 days to create a compact widget that only shows the immediate weather.
+* **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
 * **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options.
 * **Color Picker:**  Customize the color of the "Weather Icons Font" set directly from the settings page.
+* **Light and Dark Modes:** Seamlessly integrate the widget into any site design. Use the default Light Mode for bright backgrounds, or toggle on the new Dark Mode for nicely contrasted text on dark backgrounds.
 * **Performance Optimized:** Built for speed with native script deferral, smart font preloading, and optional async CSS loading to score high on PageSpeed Insights.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
@@ -164,11 +167,14 @@ Note: Selecting the icon font will load an additional small CSS file.
 **Icon Font Color:**
 Use the color picker to customize the color of the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
 
+**Widget Mode:** 
+The weather widgets are designed to look good on light or dark backgrounds. Select **Light Mode** when displaying weather widgets on white and light backgrounds. Switch to **Dark Mode** to display weather widgets on black or dark backgrounds.
+
 **Primary Display:** 
 Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
 
 **Number of Forecast Days:** 
-Adjust the number of days shown in the extended forecast row, from 2 to 6 days.
+Adjust the number of days shown in the extended forecast row, from 2 to 6 days. When set to set 0 days, the forecast area of the widget disappears, offering a compact widget of the current day's weather.
 
 **Extra Details:**
 Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
@@ -437,6 +443,11 @@ Here is the link to their privacy policy:
 
 ## Changelog
 
+### 2.6
+* **NEW:** Added a "Dark Mode" theme setting to optimize text and border contrast for dark backgrounds and footers.
+* **NEW:** Added the ability to set forecast days to "0", allowing for a highly compact widget that only displays current conditions or today's forecast.
+* **IMPROVEMENT:** Refined CSS layout and border rendering when the extended forecast is hidden.
+
 ### 2.5
 * **NEW:** Added an "Async CSS Loading" option to the Advanced Settings to eliminate "Render Blocking Resources" and improve PageSpeed Insights scores.
 * **IMPROVEMENT:** Implemented native "Defer" strategy for plugin JavaScript (requires WP 6.3+), ensuring scripts do not block page rendering.
@@ -478,78 +489,7 @@ Here is the link to their privacy policy:
 * **IMPROVEMENT:** Block previews the location name and temperature unit directly in the editor.
 * **IMPROVEMENT:** Added input validation, rate limiting, request timeout, and response validation for location searches from the Custom block, accompanied by user-friendly error messages.
 
-### 1.8
-* **NEW:** Added a "Coordinate Finder" tool on the settings page to look up location coordinates and generate widget code.
-* **IMPROVEMENT:** The Coordinate Finder includes a persistent history of your last 5 searches that saves between sessions using WordPress user meta.
-* **IMPROVEMENT:** The plugin settings page is now organized into three tabs: Settings, Coordinate Finder, and Performance Report.
-* **IMPROVEMENT:** Enhanced input validation and sanitization for the geocoding tool with proper JSON handling.
-
-### 1.7.8
-* **SECURITY:** Improved sanitization and validation for rate-limiting feature.
-
-### 1.7.7
-* **SECURITY:** Added nonce verification to JavaScript REST API requests to prevent CSRF attacks on weather data endpoints.
-* **IMPROVEMENT:** Added front-end validation for coordinates to prevent unnecessary API calls with invalid data.
-* **IMPROVEMENT:** Added front-end validation to ensure weather data is complete before display, providing protection against unexpected or bad API responses.
-* **IMPROVEMENT:** Added a "Loading..." message to improve user experience while the widget fetches weather data. This message appears after data checks have passed and before the weather is shown.
-* **IMPROVEMENT:** Implemented a 10-second timeout for API requests to prevent the widget from hanging indefinitely.
-  
-### 1.7.6
-* **SECURITY:**  Implemented comprehensive API response validation with temperature range checking, data sanitization, and XSS prevention for external weather data.
-
-### 1.7.5
-* **IMPROVEMENT:**  Enhanced API error handling with safer HTTP request processing, including 10-second timeout protection and detailed error logging.
-* **IMPROVEMENT:**  Added centralized database transaction safety for cache clearing operations that validate that cache clearing actually worked before showing success messaging for proper error validation and user feedback.
-* **IMPROVEMENT:**  Implemented structured error responses for Graceful failure handling, better debugging, and greater troubleshooting capabilities.
-* **IMPROVEMENT:**  Added custom User-Agent identification for OpenWeather API requests following best practices.
-
-### 1.7.4
-* **IMPROVEMENT:** The Performance Report now displays rate-limiting status, including a "Blocked Requests" column in the data table and a status box to show if the feature is active.  This will log the occurrence of any blocked requests.
-* **IMPROVEMENT:** Refined styling for the Performance Report.
-
-### 1.7.3
-* **NEW:** Added an optional, user-configurable rate-limiting feature to the REST API endpoint to protect against API quota exhaustion and resource abuse.
-* **IMPROVEMENT:** The "Requests per Hour" for the rate limit can be configured on the settings page.
-
-### 1.7.2
-* **SECURITY:** Enhanced input validation for REST API parameters - added coordinate range validation (-90 to 90 for latitude, -180 to 180 for longitude) and location name screening to prevent XSS and injection attacks.
-* **IMPROVEMENT:** Separated validation and sanitization logic in REST API for better error handling.
-
-### 1.7.1
-* **FIX:** Completed nonce verification to prevent CSRF attacks on tab switching.
-* **IMPROVEMENT:** Added format validation to verify that the OpenWeather API key is a 32-character alphanumeric string.
-* **IMPROVEMENT:** Escape URL in JavaScript Localization.
-  
-### 1.7
-* **SECURITY:** Added nonce verification to the admin settings tabs to protect against CSRF attacks.
-* **DEV:** Implemented PHPCS ignore comments for the necessary direct database queries, resolving plugin checker warnings.
-
-### 1.6
-* **ENHANCEMENT:** Added visual examples of the icon sets to the settings page to clarify the style options.
-
-### 1.5
-* **SECURITY:** Updated all function, option, and transient prefixes to be more unique to prevent conflicts.
-* **ENHANCEMENT:** Bundled weather icon images directly with the plugin to remove remote dependencies, per WordPress.org guidelines.
-* **ENHANCEMENT:** Added full disclosure of external API usage in the readme.txt file.
-* **DEV:** Updated code to be fully compliant with the WordPress Plugin Review Team's feedback.
-
-### 1.4
-* **IMPROVEMENT:** Better organization of the settings Menu.
-* **NEW:** Added an Enable Cache option, which can be disabled to use this plugin without the benefit of caching. 
-
-### 1.3
-* **IMPROVEMENT:** Refactored JavaScript handling for better security and to follow WordPress best practices. 
-* **NEW:** Added a template tag (`under_the_weather_load_scripts_manually`) to allow for manual/conditional loading of the plugin's JavaScript for performance optimization. 
-* **DEV:** Added full internationalization support.
-
-### 1.2
-* **IMPROVEMENT:** Improved the appearance of the Performance Report.
-
-### 1.1
-* **NEW:** Introduced a Performance Report tab to the Under The Weather Settings Page so that users can monitor the plugin's usage and observe the effectiveness of the cache system.
-
-### 1.0
-* **NEW:** Initial version intended for public release.
+Review the changelog.txt for previous changes.
 
 ---
 
