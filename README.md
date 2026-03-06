@@ -209,7 +209,7 @@ if ( function_exists( 'under_the_weather_load_scripts_manually' ) ) {
 ?>
 ```
 
-For most users, simply leaving these boxes checked is the best way to use the weather widget.
+For most users, leaving these boxes checked is the best way to use the weather widget.
 
 ---
 
@@ -320,7 +320,7 @@ The plugin offers two methods for looking up coordinates using its built-in **Co
 
 ### How do I use the weather block?
 
-In the WordPress block editor, simply search for "Under The Weather Forecast" when adding a new block. The block includes a built-in coordinate finder, so you can search for locations by name rather than manually entering latitude and longitude. Configure your preferences in the block settings sidebar, and the weather will appear automatically on your published page.
+In the WordPress block editor, search for "Under The Weather Forecast" when adding a new block. The block includes a built-in coordinate finder, so you can search for locations by name rather than manually entering latitude and longitude. Configure your preferences in the block settings sidebar, and the weather will appear automatically on your published page.
 
 ### Can I still use the manual div method if I prefer it?
 
