@@ -35,7 +35,6 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Flexible Primary Display:** Choose whether the widget's main focal point highlights the live current conditions or today's high and low temperatures.
 * **Customizable Forecast Length:** Display a 2 to 6-day extended forecast, or set the forecast length to 0 days to create a compact widget that only shows the immediate weather.
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
-* **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
 * **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options.
