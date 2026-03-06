@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, block
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 2.5
+Stable tag: 2.6
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -28,13 +28,15 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 * **Server-Side Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for all users.
 * **Smart Caching:** In addition to a configurable cache duration, the plugin automatically resets the forecast after midnight in the location's timezone, ensuring your visitors always see the current day's weather.
 * **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
-* **Customizable Display:** Use the main display to show either the current live weather or the high/low forecast for the current day, and set the number of days to include in the forecast ahead.
+* **Flexible Primary Display:** Choose whether the widget's main focal point highlights the live current conditions or today's high and low temperatures.
+* **Customizable Forecast Length:** Display a 2 to 6-day extended forecast, or set the forecast length to 0 days to create a compact widget that only shows the immediate weather.
 * **Imperial & Metric Units:** Display weather in Fahrenheit/mph or Celsius/kph on a per-widget basis.
 * **Extra Details:** Optionally display "Feels Like" temperature and detailed wind information.
 * **Weather Alerts:** Display official severe weather alerts directly in the widget to keep visitors informed. 
 * **Sunrise & Sunset Times:** Optionally show daily sunrise and sunset times, with 12-hour and 24-hour format options.
 * **Color Picker:**  Customize the color of the "Weather Icons Font" set directly from the settings page.
 * **Performance Optimized:** Built for speed with native script deferral, smart font preloading, and optional async CSS loading to score high on PageSpeed Insights.
+* **Light and Dark Modes:** Seamlessly integrate the widget into any site design. Use the default Light Mode for bright backgrounds, or toggle on the new Dark Mode for nicely contrasted text on dark backgrounds.
 * **Lightweight:** Enqueues assets only when needed and does not rely on heavy JavaScript libraries.
 * **Settings Page Coordinate Finder:** An easy-to-use tool on the settings page retrieves coordinates by location name and generates ready-to-use widget `<div>` code.
 * **Block Editor Coordinate Finder:** Search for locations by name and automatically fill in coordinates without ever leaving the block editor.
@@ -131,11 +133,14 @@ Note: Selecting the icon font will load an additional small CSS file.
 **Icon Font Color:**
 Use the color picker to customize the color of the "Weather Icons Font" set to perfectly match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
 
+**Widget Mode:** 
+The weather widgets is designed to look good on light or dark backgrounds. Select **Light Mode** when displaying weather widgets on white and light backgrounds. Switch to **Dark Mode** to display weather widgets on black or dark backgrounds.
+
 **Primary Display:** 
 Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
 
 **Number of Forecast Days:** 
-Adjust the number of days shown in the extended forecast row, from 2 to 6 days.
+Adjust the number of days shown in the extended forecast row, from 2 to 6 days. When set to set 0 days, the forecast area of the widget disappears, offering a compact widget of the current day's weather.
 
 **Extra Details:**
 Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
