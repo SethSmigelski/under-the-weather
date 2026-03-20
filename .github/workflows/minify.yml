@@ -1,0 +1,53 @@
+name: Minify Assets
+
+# This triggers the action manually from the Actions tab, 
+# AND automatically whenever you push changes to an unminified CSS/JS file.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.js'
+      - '!**.min.js'
+      - '**.css'
+      - '!**.min.css'
+
+# Required permission to allow the action to push commits back to your repo
+permissions:
+  contents: write
+
+jobs:
+  minify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Minify CSS files
+        run: |
+          # Find all CSS files, ignore already minified ones, and process them
+          find . -type f -name "*.css" ! -name "*.min.css" | while read -r file; do
+            echo "Minifying $file..."
+            npx --yes clean-css-cli -o "${file%.css}.min.css" "$file"
+          done
+
+      - name: Minify JS files
+        run: |
+          # Find all JS files, ignore already minified ones, and process them
+          find . -type f -name "*.js" ! -name "*.min.js" | while read -r file; do
+            echo "Minifying $file..."
+            npx --yes terser "$file" -o "${file%.js}.min.js" --compress --mangle
+          done
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: Auto-minify CSS and JS assets"
+          file_pattern: "**.min.css **.min.js"
