@@ -1,3 +1,31 @@
+/* DASHBOARD WIDGET */
+.utw-dashboard-pie-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 25px 0;
+}
+.utw-dashboard-pie-chart {
+    width: 136px;
+    height: 136px;
+    border-radius: 50%;
+    /* The mask cuts a transparent hole in the center */
+    -webkit-mask-image: radial-gradient(circle, transparent 42.5px, black 43px);
+    mask-image: radial-gradient(circle, transparent 42.5px, black 43px);
+}
+.utw-dashboard-footer{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding-top: 2px;
+}
+#dashboard-widgets h3.utw-dashboard-usage-heading {
+    margin-top: 0;
+    font-size: 1.2em;
+    font-weight:bold;
+}
+
+
 /* Admin Page Tabs */
 .nav-tab-wrapper {
     margin-bottom: 20px;
@@ -6,13 +34,13 @@
 /* Admin settings visual reference */
 .under-the-weather-visual-reference-container {
 	display: flex;
-    gap: 26px;
+    gap: 25px;
     align-items: flex-start;
 	background: #fff;
     border: 1px solid #999;
     border-radius: 5px;
 	padding: 10px 22px 15px 22px;
-    width: 304px;
+    width: 408px;
 }
 
 .under-the-weather-visual-reference-item {
@@ -35,15 +63,51 @@
     max-width: 800px;
 }
 
+.utw-pie-section{
+    display: flex;    
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 30px 50px;
+    margin: 0 0 25px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+}
+
+.utw-pie-stats h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+    font-weight:bold;
+}
+.utw-pie-stats p {
+    font-size: 14px;
+    margin: 8px 0;
+}
+.utw-color-swatch {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+.utw-pie-chart {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    /* The mask cuts a transparent hole in the center */
+    -webkit-mask-image: radial-gradient(circle, transparent 49.5px, black 50px);
+    mask-image: radial-gradient(circle, transparent 49.5px, black 50px);
+}
+
 .under-the-weather-chart-container {
-    display: flex;
+    display: flex;    
     justify-content: space-around;
     align-items: flex-end;
     height: 250px;
-	border: 1px solid #c3c4c7;
-	padding: 35px 0 10px;
-	gap: 10px;
-	background: #f9f9f9;
+    padding: 35px 0 10px;
+    gap: 10px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
 }
 
 .under-the-weather-chart-day {
@@ -102,9 +166,10 @@
     display: flex;
     justify-content: center;
     gap: 20px;
-    background: #f9f9f9;
+    background: #fff;
 	border: 1px solid #c3c4c7;
 	padding: 8px;
+    margin-bottom:25px;
 }
 
 .under-the-weather-legend-item {
@@ -123,6 +188,7 @@
 /* Data Table */
 .under-the-weather-data-table {
     width: 100%;
+    margin: 0 0 25px;
 }
 .under-the-weather-status-box {
 	background: #f9f9f9;
