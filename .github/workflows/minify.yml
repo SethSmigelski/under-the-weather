@@ -44,11 +44,30 @@ jobs:
 
       - name: Minify JS files
         run: |
+          # Create a temporary Node script to strip whitespace from template literals
+          cat << 'EOF' > strip-space.js
+          const fs = require('fs');
+          const file = process.argv[2];
+          let code = fs.readFileSync(file, 'utf8');
+          // Replace literal "\n" strings followed by spaces
+          code = code.replace(/\\n\s+/g, '');
+          // Replace actual newlines followed by spaces
+          code = code.replace(/\n\s+/g, '');
+          fs.writeFileSync(file, code);
+          EOF
+
           # Find JS files, ignore .min.js, and explicitly skip block builder folders
           find . -type f -name "*.js" ! -name "*.min.js" -not -path "*/src/*" -not -path "*/build/*" -not -path "*/node_modules/*" | while read -r file; do
             echo "Minifying $file..."
-            npx --yes terser "$file" -o "${file%.js}.min.js" --compress --mangle
+            minfile="${file%.js}.min.js"
+            npx --yes terser "$file" -o "$minfile" --compress --mangle
+            
+            # Run the cleanup script on the newly minified file
+            node strip-space.js "$minfile"
           done
+          
+          # Delete the temporary script so it doesn't get committed
+          rm strip-space.js
 
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
