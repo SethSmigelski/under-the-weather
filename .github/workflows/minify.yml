@@ -32,20 +32,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24' # Updated to Node 24
+          node-version: '24'
 
       - name: Minify CSS files
         run: |
-          # Find all CSS files, ignore already minified ones, and process them
-          find . -type f -name "*.css" ! -name "*.min.css" | while read -r file; do
+          # Find CSS files, ignore .min.css, and explicitly skip block builder folders
+          find . -type f -name "*.css" ! -name "*.min.css" -not -path "*/src/*" -not -path "*/build/*" -not -path "*/node_modules/*" | while read -r file; do
             echo "Minifying $file..."
             npx --yes clean-css-cli -o "${file%.css}.min.css" "$file"
           done
 
       - name: Minify JS files
         run: |
-          # Find all JS files, ignore already minified ones, and process them
-          find . -type f -name "*.js" ! -name "*.min.js" | while read -r file; do
+          # Find JS files, ignore .min.js, and explicitly skip block builder folders
+          find . -type f -name "*.js" ! -name "*.min.js" -not -path "*/src/*" -not -path "*/build/*" -not -path "*/node_modules/*" | while read -r file; do
             echo "Minifying $file..."
             npx --yes terser "$file" -o "${file%.js}.min.js" --compress --mangle
           done
