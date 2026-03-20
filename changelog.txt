@@ -1,6 +1,12 @@
 == Changelog ==
+= 2.7 =
+* NEW: Introduced an admin dashboard widget for a quick, at-a-glance view of daily API and cache usage.
+* IMPROVEMENT: Enhanced the Performance Report tab with a new Daily Average pie chart to better visualize caching efficiency.
+* Performance: Added a dynamic skeleton UI loader to provide immediate visual feedback while weather data is fetched.
+* Performance: Implemented CSS `contain: content` to eliminate Cumulative Layout Shift (CLS) and reduce browser repaints.
+
 = 2.6 =
-* NEW: Added a "Dark Mode" theme setting to optimize text and border contrast for dark backgrounds and footers.
+* NEW: Added a "Widget Mode" setting to easily toggle the widget between Light Mode and a new "Dark Mode" theme for better background contrast.
 * NEW: Added the ability to set forecast days to "0", allowing for a highly compact widget that only displays current conditions or today's forecast.
 * IMPROVEMENT: Refined CSS layout and border rendering when the extended forecast is hidden.
 
