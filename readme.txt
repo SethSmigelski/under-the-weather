@@ -68,7 +68,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 
 == Usage ==
 
-The Under The Weather plugin offers two ways to add a weather forecast: using the block editor or manually placing a `<div>`.
+The Under The Weather plugin offers three ways to add a weather forecast: using the block editor or manually placing a `<div>` or shortcode.
 
 **Using the Block Editor (Recommended)**
 
@@ -141,6 +141,7 @@ For displaying live conditions (using the **Primary Display** or **Extra Details
 For displaying only the daily high/low, a longer cache time of 3 or 8 hours effectively reduces API calls.
 
 **Widget Display & Style**
+
 Tailor the widget to perfectly match your website's aesthetic and your users' needs:
 
 **Icon & Style Set:** 
@@ -294,7 +295,7 @@ In the WordPress block editor, simply search for "Under The Weather Forecast" wh
 
 = Can I still use the manual div method if I prefer it? =
 
-Absolutely! While the **block** is the recommended, user-friendly method for the modern WordPress editor, the plugin fully supports traditional methods for maximum flexibility.
+Absolutely! While the **block** is the user-friendly method for the modern WordPress editor, the plugin fully supports traditional methods for maximum flexibility.
 
 You can use the `[under_the_weather]` shortcode to easily place the widget in the Classic Editor, text widgets, or with various page builders. 
 
