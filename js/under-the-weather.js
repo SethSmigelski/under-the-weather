@@ -50,12 +50,62 @@ function loadWeatherData(widget) {
         widget.innerHTML = 'Invalid location coordinates.';
         return;
     }
-
     
     const forecastDaysToShow = (forecast_days !== "" && forecast_days !== undefined) ? parseInt(forecast_days, 10) : 5;
 
-    widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
+    // widget.innerHTML = '<div class="weather-loading">Loading weather data...</div>';
+    // Replace with skeleton loader
+    // 1. Build a dynamic skeleton based on global settings
+    const settings = window.under_the_weather_settings;
+    // Safely extract the setting from the localized WordPress object
+    const showShimmer = (typeof under_the_weather_settings !== 'undefined' && under_the_weather_settings.show_shimmer !== '0');
+    // If showShimmer is false, apply our trusty hide class!
+    const shimmerClass = !showShimmer ? ' utw-hide-shimmer' : '';
+
+    let skeletonHtml = `
+    <div class="utw-skeleton-wrapper${shimmerClass}">
+            <div class="utw-skeleton utw-skeleton-title"></div>
+            <div class="utw-skeleton-current-weather">
+                <div class="utw-skeleton utw-skeleton-temp-block"></div>
+                <div class="utw-skeleton utw-skeleton-icon"></div>
+            </div>
+        `;
+    // Add skeleton extra details (Feels like/Wind) if enabled
+    if (settings && settings.show_details) {
+        skeletonHtml += `<div class="utw-skeleton utw-skeleton-details"></div>`;
+    }
+
+    // Add skeleton sunrise/sunset blocks if enabled
+    if (settings && settings.sunrise_sunset_format && settings.sunrise_sunset_format !== 'off') {
+        skeletonHtml += `
+            <div class="utw-skeleton-sunrise-container">
+                <div class="utw-skeleton utw-skeleton-sun"></div>
+                <div class="utw-skeleton utw-skeleton-sun"></div>
+            </div>
+        `;
+    }
+
+    // Add skeleton forecast rows based on user settings
+    const daysToShow = settings ? parseInt(settings.forecast_days, 10) : 5;
+    if (daysToShow > 0) {
+        skeletonHtml += `<div class="utw-skeleton-forecast-container">`;
+        for (let i = 0; i < daysToShow; i++) {
+            skeletonHtml += `<div class="utw-skeleton utw-skeleton-forecast-row"></div>`;
+        }
+        skeletonHtml += `</div>`;
+    }
     
+    // Add skeleton timestamp at the bottom if enabled
+    if (settings && settings.show_timestamp) {
+        skeletonHtml += `<div class="utw-skeleton utw-skeleton-timestamp"></div>`;
+    }
+
+    skeletonHtml += `</div>`; // Close wrapper
+    
+    // 2. Output the skeleton instead of plain text
+    widget.innerHTML = skeletonHtml;
+    // End of Skeleton loaded to reduce repaints
+
     const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
@@ -244,7 +294,7 @@ function getAlertSVGFilename(eventText) {
 }
 
 function displayWeather(data, widget) {
-    const { style_set, display_mode, forecast_days, show_details, show_unit, show_alerts, show_timestamp, sunrise_sunset_format, theme_mode } = under_the_weather_settings;
+    const { style_set, display_mode, forecast_days, show_details, show_unit, show_alerts, show_timestamp, sunrise_sunset_format, theme_mode} = under_the_weather_settings;
     const locationName = widget.dataset.locationName || '';
     
     const tempSymbol = '°';
