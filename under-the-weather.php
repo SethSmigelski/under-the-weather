@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.6.0
+ * Version:           2.7.0
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.6.0' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.7.0' );
 
 // Add the Under The Weather Forecast block.
 add_action('init', 'under_the_weather_register_widget_block');
@@ -43,6 +43,17 @@ function under_the_weather_add_admin_menu() {
         'manage_options',
         'under-the-weather',
         'under_the_weather_settings_page_html'
+    );
+}
+/**
+ * Add the Under THE WEATHER USAGE API WIDGET TO THE DASHBOARD.
+ */
+add_action('wp_dashboard_setup', 'under_the_weather_add_dashboard_widget');
+function under_the_weather_add_dashboard_widget() {
+    wp_add_dashboard_widget(
+        'utw_api_usage_widget', 
+        'Under The Weather - Forecasts Displayed',
+        'under_the_weather_dashboard_widget_render' 
     );
 }
 
@@ -90,6 +101,7 @@ function under_the_weather_settings_init() {
     add_settings_field('under_the_weather_enqueue_script', __('Load Plugin JavaScript', 'under-the-weather'), 'under_the_weather_enqueue_script_field_html', $page_slug, 'under_the_weather_advanced_section');
     add_settings_field('under_the_weather_enqueue_style', __('Load Plugin CSS', 'under-the-weather'), 'under_the_weather_enqueue_style_field_html', $page_slug, 'under_the_weather_advanced_section');
     add_settings_field('under_the_weather_async_css', __('Async CSS Loading', 'under-the-weather'), 'under_the_weather_async_css_field_html', $page_slug, 'under_the_weather_advanced_section');
+    add_settings_field('under_the_weather_show_shimmer', __('Shimmer While Loading', 'under-the-weather'), 'under_the_weather_show_shimmer_field_html', $page_slug, 'under_the_weather_advanced_section');
 
 	$finder_page_slug = 'under-the-weather-finder';
 	// Section for Coordinate Finder Tool
@@ -195,6 +207,7 @@ function under_the_weather_sanitize_settings($input) {
     $new_input['enqueue_script'] = isset($input['enqueue_script']) ? '1' : '0';
     // NEW: Sanitize Async CSS setting
     $new_input['async_css'] = isset($input['async_css']) ? '1' : '0';
+    $new_input['show_shimmer'] = isset($input['show_shimmer']) ? '1' : '0';
 
     return $new_input;
 }
@@ -225,10 +238,14 @@ function under_the_weather_style_set_visual_html() {
             <p><em><?php esc_html_e('Weather Icons Font', 'under-the-weather'); ?></em></p>
         </div>
         <div class="under-the-weather-visual-reference-item">
-            <img src="<?php echo esc_url($plugin_assets_url . 'svg/fill/partly-cloudy-day.svg'); ?>" alt="Animated SVG Style Example">
-            <p><em><?php esc_html_e('Animated SVG', 'under-the-weather'); ?></em></p>
+            <img src="<?php echo esc_url($plugin_assets_url . 'svg/fill/partly-cloudy-day.svg'); ?>" alt="Animated SVG Style Fill Example">
+            <p><em><?php esc_html_e('Animated SVG (Fill)', 'under-the-weather'); ?></em></p>
         </div>
+        <div class="under-the-weather-visual-reference-item">
+            <img src="<?php echo esc_url($plugin_assets_url . 'svg/outline/partly-cloudy-day.svg'); ?>" alt="Animated SVG Style Outline Example">
+            <p><em><?php esc_html_e('Animated SVG (Outline)', 'under-the-weather'); ?></em></p>
         </div>
+    </div>
     <?php
 }
 
@@ -390,17 +407,31 @@ function under_the_weather_enqueue_style_field_html() {
 function under_the_weather_enqueue_script_field_html() {
 	$options = get_option('under_the_weather_settings'); $value = isset($options['enqueue_script']) ? $options['enqueue_script'] : '1'; echo "<input type='checkbox' name='under_the_weather_settings[enqueue_script]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Load plugin JavaScript.', 'under-the-weather');
 }
-// NEW: Output the Async CSS Checkbox
+// Output the Async CSS Checkbox
 function under_the_weather_async_css_field_html() {
     $options = get_option('under_the_weather_settings');
-    // Default to '1' (On) if the setting hasn't been saved yet
-    $value = isset($options['async_css']) ? $options['async_css'] : '1'; 
+    // Default to '0' (Off) if the setting hasn't been saved yet
+    $value = isset($options['async_css']) ? $options['async_css'] : '0'; 
     ?>
     <input type='checkbox' name='under_the_weather_settings[async_css]' value='1' <?php checked($value, '1'); ?>>
-    <?php esc_html_e('Load CSS asynchronously to fix "Render Blocking" issues.', 'under-the-weather'); ?>
-    <p class="description"><?php esc_html_e('Recommended for most sites. Uncheck this if the widget is at the very top of your page and you see a "flash" of unstyled content.', 'under-the-weather'); ?></p>
+    <?php esc_html_e('Load CSS asynchronously.', 'under-the-weather'); ?>
+    <p class="description"><?php esc_html_e('Optional: Enable this to reduce render-blocking resources for faster initial page loading. It is recommended to leave this unchecked if your weather widget is located "above the fold" (near the top of the page) to prevent layout shifting or a flash of unstyled content. If you enable async loading, please consider adding a "min-height" rule for ".weather-widget" to your theme\'s custom CSS to reserve the widget\'s vertical space while the stylesheet loads.', 'under-the-weather'); ?></p>
     <?php
 }
+// Output the Show Shimmer Checkbox
+function under_the_weather_show_shimmer_field_html() {
+    $options = get_option('under_the_weather_settings');
+    // Default to '1' (Checked) for new installs
+    $value = isset($options['show_shimmer']) ? $options['show_shimmer'] : '1'; 
+    ?>
+    <label for="utw_show_shimmer_checkbox">
+        <input type='checkbox' id="utw_show_shimmer_checkbox" name='under_the_weather_settings[show_shimmer]' value='1' <?php checked($value, '1'); ?>>
+        <?php esc_html_e('Shimmer while loading.', 'under-the-weather'); ?>
+    </label>
+    <p class="description"><?php esc_html_e('This visual placeholder provides layout stability to the weather widget before the weather appears. Uncheck this box to instead display a clear, transparent widget area before the weather appears.', 'under-the-weather'); ?></p>
+    <?php
+}
+
 function under_the_weather_geocoding_section_callback() {
 	echo '<p>' . esc_html__('Enter a location to find its coordinates and generate a ready-to-use widget div. This tool uses OpenStreetMap\'s geocoding service to look up coordinates.', 'under-the-weather') . '</p>';
 }
@@ -487,6 +518,7 @@ function under_the_weather_handle_clear_cache_action() {
 // Log errors in debug mode
 function under_the_weather_log($message) {
     if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
         error_log('UTW: ' . $message);
     }
 }
@@ -495,7 +527,9 @@ function under_the_weather_clear_transients_safely() {
     global $wpdb;
     $prefix = $wpdb->esc_like('_transient_under_the_weather_') . '%';
     $timeout_prefix = $wpdb->esc_like('_transient_timeout_under_the_weather_') . '%';
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $result1 = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $prefix));
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $result2 = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $timeout_prefix));
     if ($result1 === false || $result2 === false) {
 		under_the_weather_log('Failed to clear weather transients - DB error');
@@ -508,7 +542,9 @@ function under_the_weather_clear_rate_limit_transients_safely() {
     global $wpdb;
     $prefix = $wpdb->esc_like('_transient_utw_rate_limit_') . '%';
     $timeout_prefix = $wpdb->esc_like('_transient_timeout_utw_rate_limit_') . '%';
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $result1 = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $prefix));
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $result2 = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $timeout_prefix));
     if ($result1 === false || $result2 === false) {
 		under_the_weather_log('Failed to clear rate limit transients - DB error');
@@ -605,6 +641,7 @@ function under_the_weather_save_search_history() {
 	
 	// Intentionally not sanitized here - JSON string must be decoded first, 
 	// Individual elements are sanitized below
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
     $history_raw = wp_unslash($_POST['history'] ?? '');
     $decoded = json_decode($history_raw, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -651,9 +688,12 @@ function under_the_weather_get_search_history() {
  */
 add_action('admin_enqueue_scripts', 'under_the_weather_enqueue_admin_assets');
 function under_the_weather_enqueue_admin_assets($hook) { 
-    if ($hook != 'settings_page_under-the-weather') return;
-    wp_enqueue_style('wp-color-picker'); // Add this
-    wp_enqueue_script('wp-color-picker-script', plugins_url('js/admin-color-picker.js', __FILE__), ['wp-color-picker'], false, true); // Add this
+    // Load on the plugin settings page OR the main dashboard to accomodate widget ('index.php')
+    if ($hook != 'settings_page_under-the-weather' && $hook != 'index.php') {
+        return;
+    }
+    wp_enqueue_style('wp-color-picker'); 
+    wp_enqueue_script('wp-color-picker-script', plugins_url('js/admin-color-picker.js', __FILE__), ['wp-color-picker'], UNDER_THE_WEATHER_VERSION, true);
     wp_enqueue_style('under-the-weather-admin-styles', plugins_url('css/admin-styles.min.css', __FILE__), [], UNDER_THE_WEATHER_VERSION); 
 	wp_enqueue_script('under-the-weather-geocoder', plugins_url('js/admin-geocoder.js', __FILE__), [], UNDER_THE_WEATHER_VERSION, true);
     // Localize script with nonce
@@ -687,6 +727,7 @@ function under_the_weather_load_scripts_manually() {
 		'sunrise_sunset_format' => isset($options['sunrise_sunset']) ? $options['sunrise_sunset'] : 'off',
         'show_timestamp' => !empty($options['show_timestamp']),
         'show_unit'      => !empty($options['show_unit']),
+        'show_shimmer' => isset($options['show_shimmer']) ? $options['show_shimmer'] : '1',
         'nonce'          => wp_create_nonce('wp_rest'),
     ];
     wp_localize_script('under-the-weather-script', 'under_the_weather_settings', $settings_for_js);
@@ -1168,7 +1209,101 @@ function under_the_weather_shortcode_callback( $atts ) {
 }
 
 // =============================================================================
-// SECTION 4: USAGE REPORT DISPLAY
+// SECTION 4: DASHBOARD WIDGET
+// =============================================================================
+
+/**
+ * Renders the daily average pie cahrt in the dashboard widget.
+ */
+function under_the_weather_dashboard_widget_render() {
+    // 1. Fetch your options and stats
+    $usage_stats = get_option('under_the_weather_usage_stats', []);
+    
+    // 2. Run the exact same 6-day average math here
+    $past_6_api = 0;
+    $past_6_cache = 0;
+    $days_counted = 0;
+    $today_date = wp_date('Y-m-d');
+
+    foreach ($usage_stats as $date => $data) {
+        if ($date !== $today_date) {
+            $past_6_api += $data['api'] ?? 0;
+            $past_6_cache += $data['cache'] ?? 0;
+            $days_counted++;
+        }
+    }
+
+    $avg_api = $days_counted > 0 ? round($past_6_api / $days_counted) : 0;
+    $avg_cache = $days_counted > 0 ? round($past_6_cache / $days_counted) : 0;
+    $total_avg = $avg_api + $avg_cache;
+
+    $api_percent = $total_avg > 0 ? round(($avg_api / $total_avg) * 100) : 0;
+    $cache_percent = $total_avg > 0 ? round(($avg_cache / $total_avg) * 100) : 0;
+
+    $api_color = '#f0ad4e'; // Orange
+        $cache_color = '#46b450'; // Standard WordPress Green 
+
+    // 3. Output the exact same HTML structure
+    if ($total_avg > 0) {
+        echo '<div class="utw-dashboard-pie-section">';
+        echo '<div class="utw-dashboard-pie-chart" style="background: conic-gradient(' . esc_attr($api_color) . ' 0% ' . esc_attr($api_percent) . '%, ' . esc_attr($cache_color) . ' ' . esc_attr($api_percent) . '% 100%);"></div>';
+        echo '<div class="utw-pie-stats">';
+        echo '<h3 class="utw-dashboard-usage-heading">Daily Average</h3>';
+        echo '<p><span class="utw-color-swatch" style="background: ' . esc_attr($api_color) . ';"></span><strong>API Hits:</strong> ' . esc_html($avg_api) . ' (' . esc_html($api_percent) . '%)</p>';
+        echo '<p><span class="utw-color-swatch" style="background: ' . esc_attr($cache_color) . ';"></span><strong>Cache Hits:</strong> ' . esc_html($avg_cache) . ' (' . esc_html($cache_percent) . '%)</p>';
+        echo '<hr>';
+        echo '<p><strong>Total Requests:</strong> ' . esc_html($total_avg) . ' per day</p>';
+        echo '</div></div>';
+        
+        // 4. Fetch the user's style setting to determine the image
+        $settings = get_option('under_the_weather_settings');
+        $style_set = isset($settings['style_set']) ? $settings['style_set'] : 'default_images';
+        
+        $image_path = '';
+        $extra_css = '';
+        
+        // Map the setting to the correct image path
+        if ($style_set === 'weather_icons_font') {
+            $image_path = 'images/font-style-example.svg';
+        } elseif ($style_set === 'svg_fill') {
+            $image_path = 'svg/fill/partly-cloudy-day.svg';
+        } elseif ($style_set === 'svg_outline') {
+            $image_path = 'svg/outline/partly-cloudy-day.svg';
+        } else {
+            $image_path = 'images/default-style-example.png';
+            // Add the drop shadow to the PNG just like the settings page
+            $extra_css = 'filter: drop-shadow(1px 2px 3px #555);'; 
+        }
+        
+        $image_url = plugins_url($image_path, __FILE__);
+
+        // 5. Safely generate the URLs with nonces
+        $report_url = admin_url('options-general.php?page=under-the-weather&tab=performance_report');
+        $report_nonce_url = wp_nonce_url($report_url, 'utw_switch_tab', 'utw_tab_nonce');
+        
+        $settings_url = admin_url('options-general.php?page=under-the-weather&tab=main_settings');
+        $settings_nonce_url = wp_nonce_url($settings_url, 'utw_switch_tab', 'utw_tab_nonce');
+
+        // 6. Output the footer with Flexbox layout
+        echo '<hr>';
+        echo '<div class="utw-dashboard-footer">';
+        
+        // Left side: Text Link
+        echo '<p style="margin: 0;"><a href="' . esc_url($report_nonce_url) . '">View Full Performance Report &rarr;</a></p>';
+        
+        // Right side: Image Link
+        echo '<a href="' . esc_url($settings_nonce_url) . '" title="' . esc_attr__('Edit Widget Settings', 'under-the-weather') . '">';
+        echo '<img src="' . esc_url($image_url) . '" alt="Under The Weather Forecast Style" style="width: 45px; height: auto; transition: transform 0.2s; ' . esc_attr($extra_css) . '" onmouseover="this.style.transform=\'scale(1.1)\'" onmouseout="this.style.transform=\'scale(1)\'">';
+        echo '</a>';
+        
+        echo '</div>'; // Close flex container
+    } else {
+        echo '<p>Gathering data. Check back tomorrow!</p>';
+    }
+}
+
+// =============================================================================
+// SECTION 5: USAGE REPORT DISPLAY
 // =============================================================================
 
 /**
@@ -1197,9 +1332,63 @@ function under_the_weather_display_performance_report_html() {
     }
     ?>
     <div class="under-the-weather-usage-report">
-        <h2><?php esc_html_e('Last 7 Days of Activity', 'under-the-weather'); ?></h2>
-        <p><?php esc_html_e('This report shows the number of times weather data was served from the cache versus making a new call to the OpenWeather API.', 'under-the-weather'); ?></p>
+        <p><?php esc_html_e('Monitor how frequently weather data is served from the cache versus making new calls to the OpenWeatherMap One Call API 3.0 (which offers a free tier of 1,000 API calls per day).', 'under-the-weather'); ?></p>
+        
+        <?php
+        // --- DAILH AVERAGE PIE CHART ---
+        $past_6_api = 0;
+        $past_6_cache = 0;
+        $days_counted = 0;
+        $today_date = wp_date('Y-m-d');
 
+        // Loop through data and exclude today
+        foreach ($report_data as $date => $data) {
+            if ($date !== $today_date) {
+                $past_6_api += $data['api'];
+                $past_6_cache += $data['cache'];
+                $days_counted++;
+            }
+        }
+
+        // Calculate Averages
+        $avg_api = $days_counted > 0 ? round($past_6_api / $days_counted) : 0;
+        $avg_cache = $days_counted > 0 ? round($past_6_cache / $days_counted) : 0;
+        $total_avg = $avg_api + $avg_cache;
+
+        // Calculate Percentages for the Pie Chart
+        $api_percent = $total_avg > 0 ? round(($avg_api / $total_avg) * 100) : 0;
+        $cache_percent = $total_avg > 0 ? round(($avg_cache / $total_avg) * 100) : 0;
+        
+        // Use a generic blue and green if your CSS doesn't dictate exact colors here
+        $api_color = '#f0ad4e'; // Orange
+        $cache_color = '#46b450'; // Standard WordPress Green
+        ?>
+        <?php 
+            // The magic of conic-gradient draws the pie chart perfectly 
+        ?>
+        <h2><?php esc_html_e('Average Daily Usage', 'under-the-weather'); ?></h2>
+        <div class="utw-pie-section">
+            <?php if ($total_avg > 0) : ?>
+                <div class="utw-pie-chart" style="background: conic-gradient(<?php echo esc_attr($api_color); ?> 0% <?php echo esc_attr($api_percent); ?>%, <?php echo esc_attr($cache_color); ?> <?php echo esc_attr($api_percent); ?>% 100%);"></div>
+                <div class="utw-pie-stats">
+                    <h3><?php esc_html_e('Daily Average', 'under-the-weather'); ?></h3>
+                    <p>
+                        <span class="utw-color-swatch" style="background: <?php echo esc_attr($api_color); ?>;"></span>
+                        <strong><?php esc_html_e('API Hits:', 'under-the-weather'); ?></strong> <?php echo esc_html($avg_api); ?> (<?php echo esc_html($api_percent); ?>%)
+                    </p>
+                    <p>
+                        <span class="utw-color-swatch" style="background: <?php echo esc_attr($cache_color); ?>;"></span>
+                        <strong><?php esc_html_e('Cache Hits:', 'under-the-weather'); ?></strong> <?php echo esc_html($avg_cache); ?> (<?php echo esc_html($cache_percent); ?>%)
+                    </p>
+                    <hr>
+                    <p><strong><?php esc_html_e('Total Requests:', 'under-the-weather'); ?></strong> <?php echo esc_html($total_avg); ?> / day</p>
+                </div>
+            <?php else : ?>
+                <p><?php esc_html_e('A pie chart will display after the first full day of usage.', 'under-the-weather'); ?></p>
+            <?php endif; ?>
+        </div>
+
+        <h2><?php esc_html_e('Last 7 Days of Activity', 'under-the-weather'); ?></h2>
         <div class="under-the-weather-chart-container">
             <?php foreach ($report_data as $date => $data) : ?>
                 <div class="under-the-weather-chart-day">
@@ -1211,7 +1400,7 @@ function under_the_weather_display_performance_report_html() {
                             <span class="value"><?php echo esc_html($data['cache']); ?></span>
                         </div>
                     </div>
-                    <div class="under-the-weather-chart-day-label"><?php echo esc_html(wp_date('M j', strtotime($date))); ?></div>
+                    <div class="under-the-weather-chart-day-label"><?php echo esc_html(wp_date('M j', strtotime($date . ' UTC'), new DateTimeZone('UTC'))); ?></div>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -1223,21 +1412,6 @@ function under_the_weather_display_performance_report_html() {
             <div class="under-the-weather-legend-item">
                 <span class="under-the-weather-legend-color cache"></span> <?php esc_html_e('Cache Hits', 'under-the-weather'); ?>
             </div>
-        </div>
-        
-        <div class="under-the-weather-status-box">
-            <h4><?php esc_html_e('Rate Limit Status', 'under-the-weather'); ?></h4>
-            <?php if (!empty($options['enable_rate_limit'])) : ?>
-                <p><?php
-                    printf(
-						/* translators: %s is the maximum number of requests, a bolded number like 100. */
-                        esc_html__('Rate limiting is currently ACTIVE, blocking requests in excess of %s per hour from a single IP address.', 'under-the-weather'),
-                        '<strong>' . esc_html($options['rate_limit_count'] ?? 100) . '</strong>'
-                    );
-                ?></p>
-            <?php else : ?>
-                <p><?php esc_html_e('Rate limiting is currently DISABLED. This is the default preference.', 'under-the-weather'); ?></p>
-            <?php endif; ?>
         </div>
 
         <h3><?php esc_html_e('Raw Data', 'under-the-weather'); ?></h3>
@@ -1254,7 +1428,7 @@ function under_the_weather_display_performance_report_html() {
             <tbody>
                 <?php foreach (array_reverse($report_data, true) as $date => $data) : ?>
                     <tr>
-                        <td><?php echo esc_html(wp_date('F j, Y', strtotime($date))); ?></td>
+                        <td><?php echo esc_html(wp_date('F j, Y', strtotime($date . ' UTC'), new DateTimeZone('UTC'))); ?></td>
                         <td><?php echo esc_html($data['api']); ?></td>
                         <td><?php echo esc_html($data['cache']); ?></td>
                         <td><?php echo esc_html($data['blocked']); ?></td>
@@ -1267,6 +1441,22 @@ function under_the_weather_display_performance_report_html() {
                 <?php endif; ?>
             </tbody>
         </table>
+
+
+        <div class="under-the-weather-status-box">
+            <h4><?php esc_html_e('Rate Limit Status', 'under-the-weather'); ?></h4>
+            <?php if (!empty($options['enable_rate_limit'])) : ?>
+                <p><?php
+                    printf(
+                        /* translators: %s is the maximum number of requests, a bolded number like 100. */
+                        esc_html__('Rate limiting is currently ACTIVE, blocking requests in excess of %s per hour from a single IP address.', 'under-the-weather'),
+                        '<strong>' . esc_html($options['rate_limit_count'] ?? 100) . '</strong>'
+                    );
+                ?></p>
+            <?php else : ?>
+                <p><?php esc_html_e('Rate limiting is currently DISABLED. This is the default preference.', 'under-the-weather'); ?></p>
+            <?php endif; ?>
+        </div>
     </div>
     <?php
 }
