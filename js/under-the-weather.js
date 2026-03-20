@@ -1,4 +1,4 @@
-// Check webpage for Weather Widgets and load widget data. 
+// Check webpage for Weather Widgets and load widget data. v2.7
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Find ALL weather widgets on the page
     const weatherWidgets = document.querySelectorAll('.weather-widget');
