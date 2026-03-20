@@ -15,6 +15,10 @@ on:
 permissions:
   contents: write
 
+# Opt into the modern Node 24 runner environment
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   minify:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24' # Updated to Node 24
 
       - name: Minify CSS files
         run: |
