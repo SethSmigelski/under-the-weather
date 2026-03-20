@@ -447,10 +447,6 @@ _The weather widget displaying current conditions with default icons (in Celsius
 
 _The weather widget with Weather Alerts shown._
 
-![The weather widget with Weather Alerts shown](https://ps.w.org/under-the-weather/assets/screenshot-11.png)
-
-_The weather widget with Sunrise and Sunset times shown._
-
 ![The weather widget with Weather Alerts shown](https://ps.w.org/under-the-weather/assets/screenshot-12.png)
 
 _The weather widget in dark mode with Sunrise and Sunset times shown._
