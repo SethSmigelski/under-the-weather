@@ -1,21 +1,23 @@
-/* --- New to version 2.6: Dark theme --- */
+/* --- New to version 2.7: Dark theme and loading skeleton --- */
 /* --- Weather Widget Styling --- */
 .weather-widget {
-	min-height: 285px;
+	contain: content;
+	min-height: 300px;
 	/* This setting is optional */ 
 	/* However, setting a minimum height helps to reduce browser repaints */
 }
 .weather-widget.no-forecast { min-height: 175px; } /* When the forecaset is excluded less height is required */
 .weather-widget.has-sunrise { min-height: 375px; } /* When sunrise sunset is shown using min-height: 375px; is better */
-.weather-widget.no-forecast.has-sunrise {min-height: 255px;}/* With sunrise sunset but without forecast */
+.weather-widget.no-forecast.has-sunrise {min-height: 250px;}/* With sunrise sunset but without forecast */
 
 .weather-location-name {
 	border-bottom: 2px solid #eee;
 	font-size: 1.375em;
 	font-weight: bold;
 	margin-bottom: 15px;
-	padding-bottom: 7px;
+	padding-bottom: 6px;
 	text-align: center;
+	min-height:42px;
 }
 
 .current-weather {
@@ -23,7 +25,8 @@
 	display: flex;
 	justify-content: space-around;
 	margin-bottom: 8px;
-	padding: 10px;
+	padding: 0 10px 10px; /* Zero top padding for here for greater icon spacing flexibility */
+	gap:10px;
 }
 
 .current-temp {
@@ -37,52 +40,28 @@
 	flex-direction: column;
 	font-size: 1.125em;
 	text-transform: capitalize;
+	line-height: 35px;
 }
-
-.current-conditions img {
-	filter: drop-shadow(1px 2px 3px #555);
-	height: 50px;
-	width: 50px;
-}
-
-/* --- NEW SVG STYLES --- */
-.current-conditions .weather-icon-svg {
-    filter: none; /* No Drop Shadow on animated SVGs */
-    width: 75px;
-    height: 75px;
-}
-/* --- END NEW SVG STYLES --- */
 
 .forecast-container {
 	display: flex;
 	justify-content: space-between;
 	text-align: center;
+	padding: 5px;
 }
 
 .forecast-day {
 	flex: 1;
-	padding: 5px;
+	min-height: 115px;
 }
 
 .forecast-day-name {
 	color: #444;
 	font-size: 1em;
-	margin-bottom: 8px;
+	margin-bottom: 3px;
 }
 
-.forecast-day img {
-	filter: drop-shadow(1px 2px 3px #666);
-	height: 40px;
-	width: 40px;
-}
 
-/* --- NEW SVG STYLES --- */
-.forecast-day .weather-icon-svg {
-    filter: none;
-    width: 50px;
-    height: 50px;
-}
-/* --- END NEW SVG STYLES --- */
 
 .forecast-temps .slash {
 	color: transparent;
@@ -106,11 +85,16 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	padding-top: 10px;
 }
 
 .today-forecast-label {
 	font-size: 1.375em;
-	margin: 6px 0 11px;
+	margin: 5px 0;
+	line-height: 1.375em;
+}
+.temps-wrapper{
+	line-height: 2.25em;
 }
 
 .today-forecast-temps .temps-wrapper .slash{
@@ -139,16 +123,68 @@
 	top: -8px;
 }
 
+/* SIZING VISUALS */
+.current-conditions img {
+	filter: drop-shadow(1px 2px 3px #555);
+	height: 50px;
+	width: 50px;
+	margin: 10px 0 5px; /* Margin for image, equal to svg height  */
+}
+.current-conditions .weather-icon-svg {
+    filter: none; /* No Drop Shadow on animated SVGs */
+    width: 65px;
+    height: 65px;
+}
 .weather-widget .wi {
 	color: #555;
 	font-size: 45px;
 	line-height: 1;
-	margin-bottom: 5px;
+	margin: 10px 0; /* Match SVG height of 65px */
+}
+.forecast-day img {
+	filter: drop-shadow(1px 2px 3px #666);
+	height: 40px;
+	width: 40px;
+	margin: 5px 0; /* Match 50px svg sizing */
 }
 
-.forecast-day .wi {
-	font-size: 40px;
+.forecast-day .weather-icon-svg {
+    filter: none;
+    width: 50px;
+    height: 50px;
+    margin:0; 
 }
+.forecast-day .wi {
+	font-size: 35px;
+	margin: 5px 0 10px; /* Match SVG height of 50px */
+}
+
+.sunrise-sunset-container .wi {
+    font-size: 30px;
+    line-height: 1;
+    color: #f28c1f;
+	display: inline;
+	width: 39px;
+    margin: 0 8px;
+}
+
+.sunrise-sunset-container .sunrise-sunset-icon {
+    width: 25px;
+    height: 25px;
+    filter: drop-shadow(1px 2px 2px #888);
+	display: inline;
+	margin:0 15px;
+}
+
+/* --- NEW SVG STYLES --- */
+.sunrise-sunset-container .sunrise-sunset-icon-svg {
+    width: 45px;
+    height: 45px;
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0 5px;
+}
+
 
 .weather-extra-details {
 	color: #555;
@@ -156,7 +192,8 @@
 	font-size: .9em;
 	justify-content: space-around;
 	margin-bottom: 10px;
-	padding: 10px 5px;
+    padding: 5px 0 10px;
+    line-height: 30px;
 }
 
 .wind-details {
@@ -165,20 +202,18 @@
 }
 
 .wind-details .wi {
-	font-size: 1.5em;
-	line-height: 1;
+	font-size: 30px;
+    line-height: 30px;
 	margin-right: 5px;
 }
 
-/* --- NEW SVG STYLES --- */
 .wind-details .wind-icon-svg {
     width: 25px;
     height: 25px;
-    margin-right: 5px;
+        margin: 0 5px 5px 0;
     border:1.5px solid #e2e8f0;
     border-radius: 50%;
 }
-/* --- END NEW SVG STYLES --- */
 
 
 /* Remove specific borders that cause stacking */
@@ -201,6 +236,7 @@
 	text-align: center;
 	border-top: 1px solid #eee;
 	padding-top: 5px;
+    line-height: 29px;
 }
 
 /* --- Weather Alert Styling --- */
@@ -245,13 +281,11 @@
     line-height: 1;
 }
 
-/* --- NEW SVG STYLES --- */
 .weather-alert-icon-left .weather-alert-icon-svg {
     width: 50px;
     height: 50px;
     vertical-align: middle;
 }
-/* --- END NEW SVG STYLES --- */
 
 
 /* --- Sunrise & Sunset Styling --- */
@@ -265,51 +299,32 @@
     color: #555;
 }
 
+.sunrise-sunset-text-wrapper{
+	min-height:64px;
+}
+
+
 .sunrise-time, .sunset-time {
     flex-basis: 50%;
 }
 
 .sunrise-sunset-label {
     font-size: 1em;
-	margin: 0 0 0 10px;
 	display: inline;
 }
 
 .sunrise-sunset-value {
     font-weight: bold;
-    font-size: 1.375em;
+    font-size: 1.25em;
 }
 
-.sunrise-sunset-container .wi {
-    font-size: 30px;
-    line-height: 1;
-    color: #f28c1f;
-	display: inline;
-}
 
-.sunrise-sunset-container .sunrise-sunset-icon {
-    width: 25px;
-    height: 25px;
-    filter: drop-shadow(1px 2px 2px #888);
-	display: inline;
-}
 
-/* --- NEW SVG STYLES --- */
-.sunrise-sunset-container .sunrise-sunset-icon-svg {
-    width: 50px;
-    height: 50px;
-    vertical-align: middle;
-    display: inline-block;
-    margin-right: 5px;
-}
-
-/* Adjust layout for SVG icons */
 .sunrise-time, .sunset-time {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-/* --- END NEW SVG STYLES --- */
 
 /* --- DARK MODE STYLES --- */
 /* Dark Mode Overrides */
@@ -319,6 +334,7 @@
 }
 .utw-dark-mode .weather-location-name{
     border-bottom: 1px solid #333; /* Dark gray separators */
+    padding-bottom: 7px;
 }
 .utw-dark-mode .sunrise-sunset-container,
 .utw-dark-mode .weather-extra-details,
@@ -353,3 +369,107 @@
     color: #bbb; /* Light gray for secondary text */
 }
 /* --- END DARK MODE STYLES --- */
+
+
+/* =========================================
+   SKELETON LOADER
+========================================= */
+/* The Shimmer Animation */
+@keyframes utw-shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: 200px 0; }
+}
+
+/* Base Skeleton Block */
+.utw-skeleton {
+    background: #d0d0d0;
+    background-image: linear-gradient(90deg, #d0d0d0 0px, #e0e0e0 40px, #d0d0d0 80px);
+    background-size: 400px 100%;
+    animation: utw-shimmer 1.5s infinite linear;
+    border-radius: 4px;
+}
+
+/* Skeleton Shapes */
+.utw-skeleton-wrapper {
+    padding: 10px 0;
+}
+
+.utw-skeleton-title {
+    height: 25px;
+    width: 60%;
+    margin: 0 auto 20px auto;
+}
+
+.utw-skeleton-temp {
+    height: 36px;
+    width: 40%;
+    margin: 0 auto 15px auto;
+}
+
+/* Mimic the real .current-weather flex container */
+.utw-skeleton-current-weather {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 10px;
+}
+
+/* The block representing "Today" and "78 / 68" */
+.utw-skeleton-temp-block {
+    height: 45px; 
+    width: 40%;
+    border-radius: 4px;
+}
+
+/* Update your existing skeleton icon to remove the auto margins */
+.utw-skeleton-icon {
+    height: 75px;
+    width: 75px;
+    border-radius: 50%;
+    margin: 0 auto 15px auto;
+    /* Skeleton area is designed to match 90px tall current-conditions / icon and text div  */
+}
+
+
+.utw-skeleton-sunrise-container {
+    display: flex;
+    justify-content: space-between;
+    margin:15px 0 20px;
+}
+
+.utw-skeleton-sun {
+    height: 50px;
+    width: 45%;
+}
+.utw-skeleton-forecast-container{
+display: flex;
+    justify-content: space-between;	
+    gap: 10px; /* Adds clean spacing between the blocks */
+    padding: 5px;
+}
+.utw-skeleton-forecast-row {
+	flex: 1; /* Forces them to stretch evenly side-by-side */
+    height: 115px; 
+}
+/* New Details and Timestamp Skeletons */
+.utw-skeleton-details {
+    height: 31px;
+    width: 75%;
+    margin: 15px auto;
+}
+
+.utw-skeleton-timestamp {
+    height: 15px;
+    width: 40%;
+    margin: 15px auto;
+}
+/* =========================================
+   INVISIBLE SKELETON OVERRIDE
+========================================= */
+/* If the user checks 'Hide Shimmer', make the blocks transparent but keep their physical dimensions */
+.utw-skeleton-wrapper.utw-hide-shimmer .utw-skeleton {
+    background: transparent !important;
+    background-image: none !important;
+    animation: none !important;
+}
