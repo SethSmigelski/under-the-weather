@@ -56,8 +56,8 @@ jobs:
           fs.writeFileSync(file, code);
           EOF
 
-          # Find JS files, ignore .min.js, and explicitly skip block builder folders
-          find . -type f -name "*.js" ! -name "*.min.js" -not -path "*/src/*" -not -path "*/build/*" -not -path "*/node_modules/*" | while read -r file; do
+          # Find JS files, ignore .min.js, ignore the cleanup script, and skip block folders
+          find . -type f -name "*.js" ! -name "*.min.js" ! -name "strip-space.js" -not -path "*/src/*" -not -path "*/build/*" -not -path "*/node_modules/*" | while read -r file; do
             echo "Minifying $file..."
             minfile="${file%.js}.min.js"
             npx --yes terser "$file" -o "$minfile" --compress --mangle
