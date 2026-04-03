@@ -1,4 +1,4 @@
-// Check webpage for Weather Widgets and load widget data. version 2.7 with dark mode and loading shimmer
+// Check webpage for Weather Widgets and load widget data. version 2.7.1 with dark mode and loading shimmer
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Find ALL weather widgets on the page
     const weatherWidgets = document.querySelectorAll('.weather-widget');
