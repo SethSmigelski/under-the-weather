@@ -1,4 +1,9 @@
 == Changelog ==
+
+== Changelog ==
+= 2.7.1 =
+* FIX: Updated REST API validation rules to properly support location names containing apostrophes (e.g., O'Brien).
+
 = 2.7 =
 * NEW: Introduced an admin dashboard widget for a quick, at-a-glance view of daily API and cache usage.
 * IMPROVEMENT: Enhanced the Performance Report tab with a new Daily Average pie chart to better visualize caching efficiency.
