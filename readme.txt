@@ -3,7 +3,7 @@ Contributors: sethsm
 Tags: weather, openweather, forecast, cache, block
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 2.7
+Stable tag: 2.7.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -411,6 +411,8 @@ Here is the link to their privacy policy:
 * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
 
 == Changelog ==
+= 2.7.1 =
+* FIX: Updated REST API validation rules to properly support location names containing apostrophes (e.g., O'Brien).
 
 = 2.7 =
 * NEW: Introduced an admin dashboard widget for a quick, at-a-glance view of daily API and cache usage.
