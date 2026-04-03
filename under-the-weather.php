@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.7.0
+ * Version:           2.7.1
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.7.0' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.7.1' );
 
 // Add the Under The Weather Forecast block.
 add_action('init', 'under_the_weather_register_widget_block');
@@ -834,14 +834,14 @@ function under_the_weather_validate_location_name($location) {
     } 
     // Remove obviously malicious patterns while allowing international characters
     // Block HTML tags, script tags, and common injection patterns
-    $dangerous_patterns = [
+	$dangerous_patterns = [
         '/<[^>]*>/',           // HTML tags
         '/javascript:/i',      // JavaScript protocol
         '/on\w+\s*=/i',       // Event handlers (onclick, onload, etc.)
         '/data:/i',           // Data URLs
         '/vbscript:/i',       // VBScript
         '/&#x?\d+;/',         // HTML entities (could hide malicious code)
-        '/[<>"\'\{\}]/',      // Potentially dangerous characters
+        '/[<>"\{\}]/',        // Potentially dangerous characters (Removed \' to allow names with apostrophes)
     ];
     foreach ($dangerous_patterns as $pattern) {
         if (preg_match($pattern, $location)) {
