@@ -1,6 +1,9 @@
 == Changelog ==
 
-== Changelog ==
+= 2.7.2 =
+* DEV: Tested Up To WordPress 7.0.
+* DEV: Requires At Least WordPress 5.3.
+
 = 2.7.1 =
 * FIX: Updated REST API validation rules to properly support location names containing apostrophes (e.g., O'Brien).
 
