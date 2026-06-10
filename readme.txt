@@ -1,9 +1,9 @@
 === Under The Weather ===
 Contributors: sethsm
 Tags: weather, openweather, forecast, cache, block
-Requires at least: 5.0
-Tested up to: 6.9
-Stable tag: 2.7.1
+Requires at least: 5.3
+Tested up to: 7.0
+Stable tag: 2.7.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -411,6 +411,11 @@ Here is the link to their privacy policy:
 * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
 
 == Changelog ==
+
+= 2.7.2 =
+* DEV: Tested Up To WordPress 7.0.
+* DEV: Requires At Least WordPress 5.3.
+
 = 2.7.1 =
 * FIX: Updated REST API validation rules to properly support location names containing apostrophes (e.g., O'Brien).
 
