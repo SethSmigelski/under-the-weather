@@ -311,7 +311,10 @@ function under_the_weather_api_version_field_html() {
         <option value="3.0" <?php selected($value, '3.0'); ?>><?php esc_html_e('One Call API 3.0 (For Legacy Subscriptions)', 'under-the-weather'); ?></option>
     </select>
     <p class="description">
-        <strong>Note on API Limits:</strong> One Call API 4.0 uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts. Using 4.0 will consume your 1,000 free daily API calls faster than they would on a legacy 3.0 subscription.  It is recommended to set a higher Cache Expiration Time to prevent exceeding the free tier.
+        <strong>Note on API Limits:</strong> Unlike version 3.0, which relies on a single call, One Call API 4.0 uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts. 
+    </p>
+    <p class="description">
+            Using 4.0 can consume your 1,000 free daily API calls faster than version 3.0. Consider setting a higher Cache Expiration Time to avoid exceeding the free tier.
     </p>
     <?php
 }
