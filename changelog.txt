@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 2.8.0 =
+* NEW: Added full support for the OpenWeather One Call API 4.0 architecture.
+* NEW: Added a settings toggle allowing administrators to choose between One Call API 3.0 and 4.0.
+* IMPROVEMENT: Seamlessly normalizes modular 4.0 endpoint data on the server-side to maintain fast front-end performance without requiring heavier JavaScript payloads.
+
 = 2.7.2 =
 * DEV: Tested Up To WordPress 7.0.
 * DEV: Requires At Least WordPress 5.3.
