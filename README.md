@@ -6,7 +6,7 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 * **Contributors:** sethsm
 * **Tags:** weather, openweather, forecast, cache, block
 * **Requires at least:** 5.3
-* **Tested up to:** 7.0
+* **Tested up to:** 7.1.2
 * **Stable tag:** 2.7.2
 * **Requires PHP:** 7.2
 * **License:** GPLv2 or later
@@ -81,7 +81,7 @@ This plugin is ideal for travel blogs, outdoor activity sites, or any website th
 1.  Download a copy of the plugin, available in the WordPress Plugin Directory [Under The Weather](https://wordpress.org/plugins/under-the-weather/) webpage. 
 2.  Upload the **under-the-weather** folder to the `/wp-content/plugins/` directory 
 3.  Activate the plugin through the **Plugins** menu in WordPress.
-4.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0. by OpenWeather.
+4.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0 or 4.0 by OpenWeather.
 
 ---
 
@@ -157,9 +157,18 @@ You can also display the weather by using the `[under_the_weather]` shortcode. T
 
 ## Configuration
 
-Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) and sign up for an API key and register for the One Call API 3.0 subscription. Paste your API key into the Under the Weather Settings Page.
+Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) and sign up for an API key.  You must register for the "One Call by Call" API subscription (the subscription for sht specific API version you plan to use (3.0 and 4.0). Paste your API key into the Under the Weather Settings Page.
 
 ### API & Cache
+
+**API Version Selection:**
+OpenWeather currently supports two versions of their One Call API.
+
+One Call 3.0: Uses a single API call to retrieve all weather data, resulting in fewer API calls.
+
+One Call 4.0: Uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts.
+
+Important: Because 4.0 requires multiple endpoint requests, it will consume your 1,000 free daily API calls faster than 3.0. If you select One Call 4.0, it is recommended to set a higher Cache Expiration Time to protect your free tier limit.
 
 **Cache Expiration Time:** 
 Use the slider to set the maximum time weather data is stored before fetching a new forecast, from 30 minutes to 8 hours. 
@@ -282,7 +291,7 @@ _The Coordinate Finder tool, which generates widget code from a location name._
 
 The Under The Weather plugin includes a Performance Report tab on the settings page (**Settings > Under The Weather > Performance Report**) to provide clear insight into the plugin's efficiency and API usage. 
 
-* **Average Daily Usage:** A daily average pie chart provides a snapshot of how frequently weather data is served from the cache versus making new calls to the OpenWeatherMap One Call API 3.0 (which offers a free tier of 1,000 API calls per day).
+* **Average Daily Usage:** A daily average pie chart provides a snapshot of how frequently weather data is served from the cache versus making new calls to the OpenWeatherMap One Call API (which offers a free tier of 1,000 API calls per day).
 
 * **Last 7 Days of Activity:** A 7-day bar chart that displays a more detailed comparison of **cached hits versus new calls to the OpenWeather API**. This chart includes the current day's usage, which is not calculated into the daily average.
 
@@ -301,13 +310,20 @@ _The Under The Weather Performance Report depicting seven days of information on
 ## Frequently Asked Questions
 
 ### What API key do I need?
-This plugin works with the **OpenWeather One Call API 3.0**. You can get a free API key by signing up on the OpenWeather website. Make sure you have subscribed to the One Call API on your account's API page.
+This plugin works with both the **OpenWeather One Call API 3.0** and the newer **One Call API 4.0.** You can get a free API key by signing up on the OpenWeather website. Ensure you have subscribed to the "One Call by Call" subscription on your account's API page. Both 3.0 and 4.0 share the same standard API key and operate under the exact same 1,000 free calls per day limit.
+
+### Which API version should I use?
+OpenWeatherMap currently offers two versions of the One Call API. You can use either version, but you must ensure your OpenWeather account is subscribed to the specific version you select.
+
+* **Use One Call API 3.0 (Recommended for Efficiency):** While OpenWeatherMap marks this as "deprecated," it is still available to users. Because version 3.0 packages current conditions, daily forecasts, and alerts into a single response, it consumes significantly fewer API hits than the modular 4.0 architecture. Sticking with 3.0 is recommended for users looking to stretch their 1,000 free daily calls as far as possible.
+
+* **Use One Call API 4.0:** This is OpenWeatherMap's newest standard. Use this if you already have an active 4.0 subscription. Please note that because 4.0 requires multiple endpoint requests to gather the same data, it will consume your 1,000 free daily API calls much faster.
 
 ### Why do I see "Could not retrieve forecast. Server error?"
 
 This most commonly occurs when there is an issue with your OpenWeather API subscription. Please check the following:
-1. **API Plan:** Ensure you have subscribed to the "One Call API 3.0" specifically. Other free plans (like "Current Weather") are not compatible with this plugin.
-2. **Payment Info:** OpenWeather requires a valid credit card on file for the One Call 3.0 plan. Although the first 1,000 calls per day are free, the API will return an error if no payment method is registered.
+1. **API Plan:** Ensure you have subscribed to the "One Call API" specifically. Other free plans (like "Current Weather") are not compatible with this plugin.
+2. **Payment Info:** OpenWeather requires a valid credit card on file for the One Call plan. Although the first 1,000 calls per day are free, the API will return an error if no payment method is registered.
 3. **Activation Time:** New API keys can take up to 2 hours to become fully active.
 4. **Performance Report:** Go to Settings > Under The Weather > Performance Report to view the "Raw Data" section for the specific error code (e.g., 401 or 402) returned by the server.
 
@@ -482,6 +498,13 @@ Here is the link to their privacy policy:
 ---
 
 ## Changelog
+
+### 2.8.0
+
+* **NEW:** Added full support for the OpenWeather One Call API 4.0 architecture.
+* **NEW:** Added a settings toggle allowing administrators to choose between One Call API 3.0 and 4.0.
+* **IMPROVEMENT:** Seamlessly normalizes modular 4.0 endpoint data on the server-side to maintain fast front-end performance without requiring heavier JavaScript payloads.
+
 ### 2.7.2
 * **DEV:** Tested Up To WordPress 7.0.
 * **DEV:** Requires At Least WordPress 5.3.
@@ -511,6 +534,9 @@ Review the changelog.txt for previous changes.
 ---
 
 ## Upgrade Notice
+
+### 2.8.0 ###
+This version adds support for OpenWeather One Call API 4.0.
 
 ### 1.3
 This version includes a template tag function, described in the README file, that allows you to load the plugin's JavaScript manually.
