@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.7.2
+ * Version:           2.8.0
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.7.1' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.8.0' );
 
 // Add the Under The Weather Forecast block.
 add_action('init', 'under_the_weather_register_widget_block');
@@ -68,6 +68,9 @@ function under_the_weather_settings_init() {
     // Section for basic API and cache duration settings
     add_settings_section('under_the_weather_settings_section', __('API & Cache Settings', 'under-the-weather'), 'under_the_weather_settings_section_callback', $page_slug);
     add_settings_field('under_the_weather_api_key', __('OpenWeather API Key', 'under-the-weather'), 'under_the_weather_api_key_field_html', $page_slug, 'under_the_weather_settings_section');
+    // Allow user to select API version
+    add_settings_field('under_the_weather_api_version', __('One Call API Version', 'under-the-weather'), 'under_the_weather_api_version_field_html', $page_slug, 'under_the_weather_settings_section');
+
     add_settings_field('under_the_weather_expiration', __('Cache Expiration Time (Hours)', 'under-the-weather'), 'under_the_weather_expiration_field_html', $page_slug, 'under_the_weather_settings_section');
 
     // Extra save button field (with empty label)
@@ -142,6 +145,13 @@ function under_the_weather_sanitize_settings($input) {
             $old_options = get_option('under_the_weather_settings');
             $new_input['api_key'] = isset($old_options['api_key']) ? $old_options['api_key'] : '';
         }
+    }
+
+    // Ensure the version string is safely stored in the database
+    if (isset($input['api_version']) && in_array($input['api_version'], ['3.0', '4.0'])) {
+        $new_input['api_version'] = $input['api_version'];
+    } else {
+        $new_input['api_version'] = '3.0'; // Default to 3.0 to prevent breaking existing setups
     }
 	
 	// Sanitize the expiration time from the range slider
@@ -287,6 +297,21 @@ function under_the_weather_expiration_field_html() {
     </div>
     <p id="utw-min-cache-notice" class="description">
         <?php esc_html_e('Minimum cache time is 30 minutes. To disable caching, use the advanced settings below.', 'under-the-weather'); ?>
+    </p>
+    <?php
+}
+
+// Callback function to output an API selection field and API usage warning text:
+function under_the_weather_api_version_field_html() {
+    $options = get_option('under_the_weather_settings');
+    $value = isset($options['api_version']) ? $options['api_version'] : '3.0';
+    ?>
+    <select name="under_the_weather_settings[api_version]">
+        <option value="4.0" <?php selected($value, '4.0'); ?>><?php esc_html_e('One Call API 4.0 (Default for New Accounts)', 'under-the-weather'); ?></option>
+        <option value="3.0" <?php selected($value, '3.0'); ?>><?php esc_html_e('One Call API 3.0 (For Legacy Subscriptions)', 'under-the-weather'); ?></option>
+    </select>
+    <p class="description">
+        <strong>Note on API Limits:</strong> One Call API 4.0 uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts. Using 4.0 will consume your 1,000 free daily API calls faster than they would on a legacy 3.0 subscription.  It is recommended to set a higher Cache Expiration Time to prevent exceeding the free tier.
     </p>
     <?php
 }
@@ -1049,10 +1074,12 @@ function under_the_weather_get_svg_icon_map() {
 
 /**
  * The Weather API call.
+ * Honors ONE CALL 4.0 modular logic and 3.0 legacy single-call logic ---
  */
 function under_the_weather_get_forecast_data($request) { 
     $options = get_option('under_the_weather_settings'); 
     $api_key = isset($options['api_key']) ? $options['api_key'] : ''; 
+    $api_version = isset($options['api_version']) ? $options['api_version'] : '3.0';
     $expiration_hours = isset($options['expiration']) ? intval($options['expiration']) : 2;
     $style_set = isset($options['style_set']) ? $options['style_set'] : 'default_images'; 
     $caching_enabled = isset($options['enable_cache']) ? (bool)$options['enable_cache'] : true;
@@ -1067,7 +1094,6 @@ function under_the_weather_get_forecast_data($request) {
         $cached_weather = get_transient($transient_key); 
         if ($cached_weather) { 
             under_the_weather_update_usage_stats('cache');
-            // Check if data needs to be added to cached object
             $data_updated = false;
             if ($style_set === 'weather_icons_font' && !isset($cached_weather->current->weather[0]->icon_class)) {
                 $cached_weather->current->weather[0]->icon_class = under_the_weather_get_icon_class($cached_weather->current->weather[0]->icon);
@@ -1084,26 +1110,93 @@ function under_the_weather_get_forecast_data($request) {
                 }
                 $data_updated = true;
             }
-            // If we added data, we don't need to re-save the transient, just return it.
             return new WP_REST_Response($cached_weather, 200); 
         } 
     }
     
     $lat = $request['lat']; 
     $lon = $request['lon']; 
-    $api_url = "https://api.openweathermap.org/data/3.0/onecall?lat={$lat}&lon={$lon}&appid={$api_key}&units={$unit}"; 
+
+    if ($api_version === '4.0') {
+        // --- ONE CALL 4.0 MODULAR LOGIC ---
+        // 4.0 splits requests into isolated timelines
+        $current_url = "https://api.openweathermap.org/data/4.0/onecall/current?lat={$lat}&lon={$lon}&appid={$api_key}&units={$unit}";
+        // Pass cnt=8 to ensure we retrieve enough days to match the 3.0 frontend UI requirements
+        $daily_url = "https://api.openweathermap.org/data/4.0/onecall/timeline/1day?lat={$lat}&lon={$lon}&appid={$api_key}&units={$unit}&cnt=8";
+
+        $current_response_body = under_the_weather_safe_api_call($current_url);
+        $daily_response_body = under_the_weather_safe_api_call($daily_url);
+
+        if ($current_response_body === false || $daily_response_body === false) {
+            return new WP_REST_Response(__('Could not fetch modular weather data from OpenWeather 4.0.', 'under-the-weather'), 502);
+        }
+
+        // Each endpoint counts as a distinct billable call against the 4.0 subscription limit
+        under_the_weather_update_usage_stats('api'); 
+        under_the_weather_update_usage_stats('api');
+
+        $current_data = json_decode($current_response_body);
+        $daily_data = json_decode($daily_response_body);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return new WP_REST_Response(__('Error decoding weather data.', 'under-the-weather'), 500); 
+        }
+
+        // Stitch the 4.0 modular responses together to perfectly mimic the 3.0 schema
+        $weather_data = new stdClass();
+        $weather_data->lat = isset($current_data->lat) ? $current_data->lat : $lat;
+        $weather_data->lon = isset($current_data->lon) ? $current_data->lon : $lon;
+        $weather_data->timezone = isset($current_data->timezone) ? $current_data->timezone : '';
+        $weather_data->timezone_offset = isset($current_data->timezone_offset) ? $current_data->timezone_offset : 0;
+        
+        // 4.0 wraps timeline variables in a 'data' array. Isolate the primary record.
+        $current_obj = (isset($current_data->data) && is_array($current_data->data)) ? $current_data->data[0] : $current_data->data;
+        $weather_data->current = clone $current_obj;
+        
+        $weather_data->daily = (isset($daily_data->data) && is_array($daily_data->data)) ? $daily_data->data : [];
+        $weather_data->alerts = [];
+
+        // 4.0 alerts are embedded as an array of IDs rather than full text objects.
+        if (isset($current_obj->alerts) && is_array($current_obj->alerts) && !empty($options['show_alerts'])) {
+            // Hard-cap at 3 alerts to prevent burning through the free tier limit in the event of a severe weather outbreak
+            $alert_ids = array_slice($current_obj->alerts, 0, 3);
+            
+            foreach ($alert_ids as $alert_id) {
+                // Secondary API call required for each alert ID to fetch descriptive text
+                if (is_string($alert_id)) {
+                    $alert_url = "https://api.openweathermap.org/data/4.0/onecall/alert/" . sanitize_text_field($alert_id) . "?appid={$api_key}";
+                    $alert_body = under_the_weather_safe_api_call($alert_url);
+                    if ($alert_body) {
+                        under_the_weather_update_usage_stats('api');
+                        $alert_obj = json_decode($alert_body);
+                        if ($alert_obj) {
+                            // Map the 4.0 'sender' key back to the 3.0 'sender_name' key the frontend expects
+                            if (isset($alert_obj->sender) && !isset($alert_obj->sender_name)) {
+                                $alert_obj->sender_name = $alert_obj->sender;
+                            }
+                            $weather_data->alerts[] = $alert_obj;
+                        }
+                    }
+                } elseif (is_object($alert_id)) {
+                    // Safety fallback if OWM eventually embeds full objects in the timeline
+                    $weather_data->alerts[] = $alert_id;
+                }
+            }
+        }
+    } else {
+        // --- ONE CALL 3.0 LEGACY LOGIC ---
+        $api_url = "https://api.openweathermap.org/data/3.0/onecall?lat={$lat}&lon={$lon}&appid={$api_key}&units={$unit}"; 
+        $response_body = under_the_weather_safe_api_call($api_url);
+        if ($response_body === false) return new WP_REST_Response(__('Could not fetch new weather data from OpenWeather 3.0.', 'under-the-weather'), 502);
+        
+        $weather_data = json_decode($response_body);
+        under_the_weather_update_usage_stats('api'); 
+        if (json_last_error() !== JSON_ERROR_NONE) return new WP_REST_Response(__('Error decoding weather data.', 'under-the-weather'), 500); 
+    }
     
-	// Check API Response
-	$response_body = under_the_weather_safe_api_call($api_url);
-	if ($response_body === false) return new WP_REST_Response(__('Could not fetch new weather data from OpenWeather.', 'under-the-weather'), 502);
-	
-	$weather_data = json_decode($response_body);
-    under_the_weather_update_usage_stats('api'); 
-    if (json_last_error() !== JSON_ERROR_NONE) return new WP_REST_Response(__('Error decoding weather data.', 'under-the-weather'), 500); 
+    $weather_data = under_the_weather_validate_api_response($weather_data);
+    if ($weather_data === false) return new WP_REST_Response(__('Invalid weather data received.', 'under-the-weather'), 502);
     
-	$weather_data = under_the_weather_validate_api_response($weather_data);
-	if ($weather_data === false) return new WP_REST_Response(__('Invalid weather data received.', 'under-the-weather'), 502);
-	
     $weather_data->fetched_at = time(); 
     $weather_data->units = $unit; 
     
@@ -1120,42 +1213,40 @@ function under_the_weather_get_forecast_data($request) {
             $weather_data->daily[array_search($day, $weather_data->daily)]->weather[0]->svg_icon_name = $svg_map[$day->weather[0]->icon] ?? 'not-available';
         }
     }
-	
-	
-	// Establish midnight cache expiration logic, so the previous day's weather is not shown from the cache
-	// Incorporate midnight cache expiration with timed cache expiration preference
-	// Add a 10-minute buffer to avoid caching the previous day's forecast at midnight due to service clock differences.
-	// This is like treating 12:10 a.m. as midnight as a precaution
-	
-	if ($caching_enabled) {
-		// Enforce minimum cache time of 30 minutes
-		$expiration_hours = isset($options['expiration']) ? floatval($options['expiration']) : 4;
-		$expiration_hours = max(0.5, $expiration_hours); 
-		$midnight_expiration_seconds = 0;
-		if (isset($weather_data->timezone) && is_string($weather_data->timezone)) {
-			try {
-				$timezone_obj = new DateTimeZone($weather_data->timezone);
-				$now = new DateTime('now', $timezone_obj);
-				$midnight = new DateTime('tomorrow midnight', $timezone_obj);
-				$seconds_until_midnight = $midnight->getTimestamp() - $now->getTimestamp();
-				$midnight_expiration_seconds = $seconds_until_midnight + (10 * 60);
-			} catch (Exception $e) {
-				under_the_weather_log('Invalid timezone from API: ' . $weather_data->timezone);
-				$midnight_expiration_seconds = 0;
-			}
-		}
-		// Calculate fixed duration
-		$fixed_duration_seconds = $expiration_hours * HOUR_IN_SECONDS;
-		// Use the shorter of: fixed duration or midnight expiration
-		if ($midnight_expiration_seconds > 0) {
-			$final_expiration_seconds = min($fixed_duration_seconds, $midnight_expiration_seconds);
-		} else {
-			$final_expiration_seconds = $fixed_duration_seconds;
-		}
-		// Final safety check: ensure at least 30 minutes
-		$final_expiration_seconds = max(1800, $final_expiration_seconds);
-		set_transient($transient_key, $weather_data, $final_expiration_seconds);
-	}
+    
+    // Establish midnight cache expiration logic, so the previous day's weather is not shown from the cache
+    // Incorporate midnight cache expiration with timed cache expiration preference
+    // Add a 10-minute buffer to avoid caching the previous day's forecast at midnight due to service clock differences.
+    // This is like treating 12:10 a.m. as midnight as a precaution
+    if ($caching_enabled) {
+        // Enforce minimum cache time of 30 minutes
+        $expiration_hours = isset($options['expiration']) ? floatval($options['expiration']) : 4;
+        $expiration_hours = max(0.5, $expiration_hours); 
+        $midnight_expiration_seconds = 0;
+        if (isset($weather_data->timezone) && is_string($weather_data->timezone)) {
+            try {
+                $timezone_obj = new DateTimeZone($weather_data->timezone);
+                $now = new DateTime('now', $timezone_obj);
+                $midnight = new DateTime('tomorrow midnight', $timezone_obj);
+                $seconds_until_midnight = $midnight->getTimestamp() - $now->getTimestamp();
+                $midnight_expiration_seconds = $seconds_until_midnight + (10 * 60);
+            } catch (Exception $e) {
+                under_the_weather_log('Invalid timezone from API: ' . $weather_data->timezone);
+                $midnight_expiration_seconds = 0;
+            }
+        }
+        // Calculate fixed duration
+        $fixed_duration_seconds = $expiration_hours * HOUR_IN_SECONDS;
+        // Use the shorter of: fixed duration or midnight expiration
+        if ($midnight_expiration_seconds > 0) {
+            $final_expiration_seconds = min($fixed_duration_seconds, $midnight_expiration_seconds);
+        } else {
+            $final_expiration_seconds = $fixed_duration_seconds;
+        }
+        // Final safety check: ensure at least 30 minutes
+        $final_expiration_seconds = max(1800, $final_expiration_seconds);
+        set_transient($transient_key, $weather_data, $final_expiration_seconds);
+    }
     return new WP_REST_Response($weather_data, 200); 
 }
 
