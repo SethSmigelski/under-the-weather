@@ -157,18 +157,17 @@ You can also display the weather by using the `[under_the_weather]` shortcode. T
 
 ## Configuration
 
-Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) and sign up for an API key.  You must register for the "One Call by Call" API subscription (the subscription for sht specific API version you plan to use (3.0 and 4.0). Paste your API key into the Under the Weather Settings Page.
+Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) and sign up for an API key.  You must register for the "One Call by Call" API subscription (the subscription for the specific API version you plan to use (3.0 and 4.0). Paste your API key into the Under the Weather Settings Page.
 
 ### API & Cache
 
 **API Version Selection:**
 OpenWeather currently supports two versions of their One Call API.
 
-One Call 3.0: Uses a single API call to retrieve all weather data, resulting in fewer API calls.
+* **One Call 3.0:** Uses a single API call to retrieve all weather data, resulting in fewer API calls.
+* **One Call 4.0:** Uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts.
 
-One Call 4.0: Uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts.
-
-Important: Because 4.0 requires multiple endpoint requests, it will consume your 1,000 free daily API calls faster than 3.0. If you select One Call 4.0, it is recommended to set a higher Cache Expiration Time to protect your free tier limit.
+**Important:** Because 4.0 requires multiple endpoint requests, it will consume your 1,000 free daily API calls faster than 3.0. If you select One Call 4.0, consider setting a higher Cache Expiration Time to protect your free tier limit.
 
 **Cache Expiration Time:** 
 Use the slider to set the maximum time weather data is stored before fetching a new forecast, from 30 minutes to 8 hours. 
