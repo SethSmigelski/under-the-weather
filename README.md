@@ -21,9 +21,17 @@ A WordPress plugin to create lightweight and customizable weather widgets, power
 
 Under The Weather is a powerful yet simple plugin that displays location-specific weather forecasts on your WordPress site. Featuring a dedicated "Under The Weather Forecast" block to add and customize weather widgets directly in the WordPress editor for a seamless workflow.
 
-With performance in mind, Under The Weather uses a server-side caching system (WordPress Transients) to minimize API calls and ensure your site remains fast. Under The Weather is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JavaScript frameworks. Built with modern security practices, including input validation, CSRF protection, and optional rate limiting to protect your site and API quota.
+Under The Weather is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins.
 
-This plugin is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins.
+### Built for Performance, Rain or Shine
+
+* Works with the highly reliable OpenWeather One Call API 4.0 and 3.0
+
+* Uses server-side caching to minimize API calls and maximize speed
+
+* Employs modern security practices, including input validation, CSRF protection, and optional rate limiting to protect your site and API quota
+
+* JavaScript is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JS frameworks
 
 ![The weather widget with Sunrise and Sunset times shown](https://ps.w.org/under-the-weather/assets/screenshot-11.png)
 
