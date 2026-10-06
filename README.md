@@ -172,7 +172,7 @@ Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) a
 ### API & Cache
 
 **API Version Selection:**
-OpenWeather currently supports two versions of their One Call API.
+OpenWeather currently supports two versions of its One Call API.
 
 * **One Call 3.0:** Uses a single API call to retrieve all weather data, resulting in fewer API calls.
 * **One Call 4.0:** Uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts.
