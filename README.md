@@ -33,6 +33,8 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
 
 * JavaScript is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JS frameworks
 
+---
+
 ![The weather widget with Sunrise and Sunset times shown](https://ps.w.org/under-the-weather/assets/screenshot-11.png)
 
 ## Key Features:
