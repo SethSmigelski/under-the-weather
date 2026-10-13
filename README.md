@@ -177,8 +177,6 @@ OpenWeather currently supports two versions of its One Call API.
 * **One Call 3.0:** Uses a single API call to retrieve all weather data, resulting in fewer API calls.
 * **One Call 4.0:** Uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts.
 
-**Important:** Because 4.0 requires multiple endpoint requests, it will consume your 1,000 free daily API calls faster than 3.0. If you select One Call 4.0, consider setting a higher Cache Expiration Time to protect your free tier limit.
-
 **Cache Expiration Time:** 
 Use the slider to set the maximum time weather data is stored before fetching a new forecast, from 30 minutes to 8 hours. 
 
@@ -326,7 +324,7 @@ OpenWeatherMap currently offers two versions of the One Call API. You can use ei
 
 * **Use One Call API 3.0 (Recommended for Efficiency):** While OpenWeatherMap marks this as "deprecated," it is still available to users. Because version 3.0 packages current conditions, daily forecasts, and alerts into a single response, it consumes significantly fewer API hits than the modular 4.0 architecture. Sticking with 3.0 is recommended for users looking to stretch their 1,000 free daily calls as far as possible.
 
-* **Use One Call API 4.0:** This is OpenWeatherMap's newest standard. Use this if you already have an active 4.0 subscription. Please note that because 4.0 requires multiple endpoint requests to gather the same data, it will consume your 1,000 free daily API calls much faster.
+* **Use One Call API 4.0:** This is OpenWeatherMap's newest standard. Use this if you already have an active 4.0 subscription. Because 4.0 requires multiple endpoint requests to gather the same data, it will consume your 1,000 free daily API calls faster than 3.0. If you select One Call 4.0, consider setting a higher Cache Expiration Time to protect your free tier limit.
 
 ### Why do I see "Could not retrieve forecast. Server error?"
 
