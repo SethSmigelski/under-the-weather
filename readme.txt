@@ -460,9 +460,6 @@ Review the changelog.txt for previous changes.
 
 == Upgrade Notice ==
 
-= 2.8.0 =
-This version adds support for OpenWeather One Call API 4.0.
-
 = 1.3 =
 This version includes a template tag function, described in the README file, that allows you to load the plugin's JavaScript manually.
 
@@ -480,3 +477,6 @@ This version introduces a new `[under_the_weather]` shortcode for easy widget pl
 
 = 2.7 =
 This version introduces a new Under The Weather dashboard widget.
+
+= 2.8 =
+This version adds support for OpenWeather One Call API 4.0.
