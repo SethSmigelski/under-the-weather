@@ -26,7 +26,7 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
 * Employs modern security practices, including input validation, CSRF protection, and optional rate limiting to protect your site and API quota
 * JavaScript is completely "vanilla" on the front-end, meaning it does not rely on jQuery or any other JS frameworks
 
-= Key Features =
+== Key Features ==
 
 * **Easy Integration:** Add weather widgets in the WordPress editor by using a dedicated weather block, an `[under_the_weather]` shortcode, or by placing a simple `<div>` with data attributes anywhere on your site.
 
