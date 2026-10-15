@@ -3,7 +3,7 @@
  * Plugin Name:       Under The Weather
  * Plugin URI:        https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
  * Description:       A lightweight weather widget that caches OpenWeather API data and offers multiple style options.
- * Version:           2.8.0
+ * Version:           2.9.0
  * Author:      	  Seth Smigelski
  * Author URI:  	  https://www.sethcreates.com/plugins-for-wordpress/
  * License:     	  GPL-2.0+
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define a constant for the plugin version for easy maintenance.
-define( 'UNDER_THE_WEATHER_VERSION', '2.8.0' );
+define( 'UNDER_THE_WEATHER_VERSION', '2.9.0' );
 
 // Add the Under The Weather Forecast block.
 add_action('init', 'under_the_weather_register_widget_block');
@@ -89,6 +89,15 @@ function under_the_weather_settings_init() {
     add_settings_field('under_the_weather_display_mode', __('Primary Display', 'under-the-weather'), 'under_the_weather_display_mode_field_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_forecast_days', __('Number of Forecast Days', 'under-the-weather'), 'under_the_weather_forecast_days_field_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_show_unit', __('Unit Symbol', 'under-the-weather'), 'under_the_weather_show_unit_field_html', $page_slug, 'under_the_weather_display_section');	
+
+    // Give users control over the displayed units
+    add_settings_field(
+        'under_the_weather_allow_unit_toggle',
+        __('Unit Toggle Switch', 'under-the-weather'),
+        'under_the_weather_allow_unit_toggle_field_html',
+        $page_slug,
+        'under_the_weather_display_section'
+    );
     add_settings_field('under_the_weather_show_details', __('Extra Details', 'under-the-weather'), 'under_the_weather_show_details_field_html', $page_slug, 'under_the_weather_display_section');
     add_settings_field('under_the_weather_sunrise_sunset', __('Sunrise & Sunset', 'under-the-weather'), 'under_the_weather_sunrise_sunset_field_html', $page_slug, 'under_the_weather_display_section');
 	add_settings_field('under_the_weather_show_alerts', __('Weather Alerts', 'under-the-weather'), 'under_the_weather_show_alerts_field_html', $page_slug, 'under_the_weather_display_section');
@@ -210,6 +219,7 @@ function under_the_weather_sanitize_settings($input) {
 	
     $new_input['show_details'] = isset($input['show_details']) ? '1' : '0';
     $new_input['show_unit'] = isset($input['show_unit']) ? '1' : '0';
+    $new_input['allow_unit_toggle'] = isset($input['allow_unit_toggle']) ? '1' : '0';
 	$new_input['show_alerts'] = isset($input['show_alerts']) ? '1' : '0';
     $new_input['show_timestamp'] = isset($input['show_timestamp']) ? '1' : '0';
     $new_input['enable_cache'] = isset($input['enable_cache']) ? '1' : '0';
@@ -394,6 +404,21 @@ function under_the_weather_show_details_field_html() {
 }
 function under_the_weather_show_unit_field_html() { 
 	$options = get_option('under_the_weather_settings'); $value = isset($options['show_unit']) ? $options['show_unit'] : '0'; echo "<input type='checkbox' name='under_the_weather_settings[show_unit]' value='1' " . checked($value, '1', false) . "> " . esc_html__('Show the temperature unit symbol (F or C) in the primary display.', 'under-the-weather');
+}
+
+// Unit Toggle
+function under_the_weather_allow_unit_toggle_field_html() {
+    $options = get_option('under_the_weather_settings');
+    $value = isset($options['allow_unit_toggle']) ? $options['allow_unit_toggle'] : '0';
+    ?>
+    <label for="utw_unit_toggle_checkbox">
+        <input type="checkbox" id="utw_unit_toggle_checkbox" name="under_the_weather_settings[allow_unit_toggle]" value="1" <?php checked($value, '1'); ?>>
+        <?php esc_html_e('Allow visitors to toggle between °F and °C.', 'under-the-weather'); ?>
+    </label>
+    <p class="description">
+        <?php esc_html_e('Displays an interactive pill toggle in the corner of the widget so readers can switch temperature scales on the fly.', 'under-the-weather'); ?>
+    </p>
+    <?php
 }
 function under_the_weather_show_alerts_field_html() {
     $options = get_option('under_the_weather_settings');
@@ -630,23 +655,28 @@ function under_the_weather_enqueue_assets() {
         } 
     }
 
-    // Conditionally add the user's customized color for the weather icon font
-    // Check if we are using the icon font AND a custom color is set
-    if (isset($options['style_set']) && $options['style_set'] === 'weather_icons_font' && !empty($options['icon_font_color'])) {
+    // Conditionally add the user's customized color
+    if (!empty($options['icon_font_color'])) {
         $custom_color = esc_attr($options['icon_font_color']);
         
         // Make sure the color isn't the default, just to be efficient
         if ($custom_color !== '#555555' && $custom_color !== '#555') {
-            // This CSS will override the .css file
+            
+            // 1. ALWAYS attach the CSS variable to the widget so the unit toggle can use it
             $custom_css = "
-                .weather-widget .wi {
-                    color: {$custom_color};
-                }
-                /* This is for the sunrise/sunset icon color */
-                .sunrise-sunset-container .wi {
-                    color: {$custom_color};
+                .weather-widget {
+                    --utw-icon-color: {$custom_color};
                 }
             ";
+            
+            // 2. Apply it directly to the weather icons ONLY if they selected the font set
+            if (isset($options['style_set']) && $options['style_set'] === 'weather_icons_font') {
+                $custom_css .= "
+                    .weather-widget .wi { color: {$custom_color}; }
+                    .sunrise-sunset-container .wi { color: {$custom_color}; }
+                ";
+            }
+            
             // Add the dynamic CSS right after the main stylesheet
             wp_add_inline_style('under-the-weather-styles', $custom_css);
         }
@@ -755,6 +785,8 @@ function under_the_weather_load_scripts_manually() {
 		'sunrise_sunset_format' => isset($options['sunrise_sunset']) ? $options['sunrise_sunset'] : 'off',
         'show_timestamp' => !empty($options['show_timestamp']),
         'show_unit'      => !empty($options['show_unit']),
+        'allow_unit_toggle' => !empty($options['allow_unit_toggle']),
+        'icon_font_color'   => isset($options['icon_font_color']) ? $options['icon_font_color'] : '#555555',
         'show_shimmer' => isset($options['show_shimmer']) ? $options['show_shimmer'] : '1',
         'nonce'          => wp_create_nonce('wp_rest'),
     ];
