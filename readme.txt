@@ -11,13 +11,13 @@ Donate link: https://www.paypal.com/donate/?hosted_button_id=M3B2Q94PGVVWL
 Plugin URI:  https://www.sethcreates.com/plugins-for-wordpress/under-the-weather/
 Author URI:  https://www.sethcreates.com/plugins-for-wordpress/
 
-A lightweight and customizable weather widget, powered by the OpenWeather API, that caches and presents weather data with multiple style options.
+A lightweight, customizable weather widget powered by the OpenWeather API that caches and presents weather data with multiple style options.
 
 == Description ==
 
 Under The Weather is an option-packed yet simple plugin that displays location-specific weather forecasts on your WordPress site. It includes a dedicated "Under The Weather Forecast" block to add and customize weather widgets directly in the WordPress editor.
 
-Under The Weather is ideal for travel blogs, outdoor activity sites, or any website that needs to display weather conditions for specific locations without the bloat of heavy, multi-dependency plugins.
+Under The Weather is ideal for travel blogs, outdoor activity sites, or any website that needs to display location-specific weather without the bloat of heavy, multi-dependency plugins.
 
 = Built for Performance, Rain or Shine =
 
@@ -46,7 +46,7 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
 
 * **Visual Performance Report:** Monitor your site's API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
 
-* **Smart Caching:** All API calls are cached on your server, dramatically reducing calls to the OpenWeather API and speeding up page loads for visitors. The plugin includes a configurable cache duration and automatically resets the forecast after midnight in the location's timezone, ensuring your visitors always see the current day's weather.
+* **Smart Caching:** All API calls are cached on your server using WordPress transients, dramatically reducing calls to the OpenWeather API and speeding up page loads for visitors. The plugin includes a configurable cache duration and automatically resets the forecast after midnight in the location's timezone, ensuring your visitors always see the current day's weather. Forecasts sharing the same location name automatically reuse the same cached data across your entire site, rather than requesting new data for each widget.
 
 * **Fast Weather Location Lookup:** An easy-to-use Coordinate Finder tool located in the settings page and the Block Editor retrieves coordinates by location name worldwide. Generates ready-to-use widget `<div>` code from the settings page. Automatically fill coordinates in the block editor.
 
@@ -62,7 +62,7 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
 
 * **Zero Layout Shift (CLS):** Using an intelligent, dynamic skeleton loading UI and modern CSS containment, the widget claims its vertical space immediately, preventing the page from "jumping" when the weather data arrives and eliminating Cumulative Layout Shift (CLS) issues that can negatively impact your Core Web Vitals.
 
-* **Smart Server-Side Caching:** API requests to OpenWeather are handled safely by your server, not the visitor's browser. Data is securely cached with WordPress transients to deliver lightning-fast results while drastically reducing API calls and protecting your OpenWeather quota.
+* **Smart Server-Side Caching:** API requests to OpenWeather are handled safely by your server, not the visitor's browser. Data is securely cached in WordPress transients to deliver lightning-fast results, drastically reduce API calls, and protect your OpenWeather quota.
 
 == Usage ==
 
@@ -85,7 +85,7 @@ To display the weather widget on a post, page, or in a template file, add a simp
 
 * `data-lat`: The latitude for the forecast.
 * `data-lon`: The longitude for the forecast.
-* `data-location-name`: The city or location name you want to display as the title of the widget. (Beyond its display purpose, the 'data-location-name' is also used to create the shared cache key).
+* `data-location-name`: The city or location name you want to display as the title of the widget. (Beyond its display purpose, 'data-location-name' serves as a shared cache key.)
 * `data-unit` (optional): The unit system for temperature and wind speed. Accepts `metric` or `imperial`. The default unit is `imperial` if not provided.
 
 **Examples:**
@@ -165,35 +165,35 @@ The weather widgets are designed to look good on light or dark backgrounds. Sele
 Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
 
 **Number of Forecast Days:** 
-Adjust the number of days shown in the extended forecast row, from 2 to 6 days. When set to 0 days, the widget's forecast area disappears, leaving a compact widget showing the current day's weather.
+Adjust the number of days shown in the extended forecast row from 2 to 6. When set to 0 days, the widget's forecast area disappears, leaving a compact widget showing the current day's weather.
 
 **Extra Details:**
 Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
 
 **Sunrise & Sunset:** 
-This setting displays the local sunrise and sunset times for the location, useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
+This setting displays the location's sunrise and sunset times, useful for planning outdoor activities.  Choose to show the times in a 12-hour (e.g., 6:30 AM) or 24-hour (e.g., 18:30) format.
 
 **Weather Alerts:** 
 When enabled, the widget will display any active severe weather alerts (e.g., thunderstorm warnings, flood advisories) issued by official authorities for the specified location, providing critical, at-a-glance information for your visitors.
 
 **Timestamp:**
-Display the time elapsed since the weather data was last updated from the source, allowing readers to see how recently the weather widget obtained its information. 
+Display the time elapsed since the weather data was last updated from the source, so readers can see how recently the widget obtained its information. 
 
 **Unit Symbol:**
-Display the unit symbol (F or C) next to the main temperature. This option lets you choose whether the widget should include the temperature unit symbol in the primary temperature display.
+Display the unit symbol (F or C) next to the main temperature. This option lets you choose whether the widget includes the temperature unit symbol in the primary temperature display.
 
 **Unit Toggle Switch:**
 Display an interactive toggle in the corner of the widget that allows visitors to choose between viewing the forecast in °F or °C and have that preference saved.
 
 **Advanced Settings**
 **Enable Cache:**  
-You can uncheck this box if you would like to use this plugin without the benefit of caching.
+Only uncheck this box if you want to use this plugin without the benefit of caching.
 
 **Enable Rate Limiting:** 
 Check this box to protect your site against excessive API requests from a single IP address. You can set the maximum number of requests per hour (default is 100). This helps prevent malicious traffic from exhausting your API quota. 
 
 **Asset Loading:** 
-For the plugin to function correctly, the **Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files as part of your theme's own optimized assets.
+For the plugin to function correctly, the **Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files in your theme's optimized assets.
 
 Developers who uncheck **Load Plugin JavaScript**, can load the Under The Weather scripts manually on select pages. For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
@@ -254,13 +254,13 @@ Install the Under The Weather Plugin using one of two common methods.
 3.  Search for the plugin: **Under The Weather.**
 4.  Install the plugin: Once you locate the correct plugin, click the **"Install Now"** button next to it.
 5.  Activate the plugin: After the installation is complete, click the **"Activate Plugin"** button that appears.
-6.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0 or 4.0 by OpenWeather.
+6.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with OpenWeather's One Call API 3.0 or 4.0.
 
 **From a Zip File:**
 1.  Download a copy of the plugin, available in the WordPress Plugin Directory Under The Weather webpage.
 2.  Upload the entire `under-the-weather` folder to the `/wp-content/plugins/` directory.
 3.  Activate the plugin through the 'Plugins' menu in WordPress.
-4.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0 or 4.0 by OpenWeather.
+4.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with OpenWeather's One Call API 3.0 or 4.0.
 
 = What API key do I need? =
 
@@ -448,6 +448,14 @@ Here are the links to their terms of service and privacy policy:
 
 Here is the link to their privacy policy:
 * **Privacy Policy:** [https://osmfoundation.org/wiki/Privacy_Policy](https://osmfoundation.org/wiki/Privacy_Policy)
+
+== Privacy & Data ==
+
+Under The Weather is built to respect user privacy and does not track or collect personally identifiable information. 
+
+* **Local Storage:** If the **"Unit Toggle Switch"** is enabled, the widget uses the browser's Local Storage to save the visitor's preferred temperature scale (°F or °C). This is strictly a functional UI preference that lets the widget remember their choice as they navigate between pages. It does not track personal data.
+* **No Tracking Cookies:** The plugin does not set any analytics, tracking, or marketing cookies.
+* **IP Addresses:** If **"Rate Limiting"** is enabled, IP addresses are temporarily processed on your own server to prevent API abuse, but this data is not sent to external third parties for tracking.
 
 == Changelog ==
 
