@@ -1,17 +1,27 @@
-/* --- New to version 2.7: Dark theme and loading skeleton --- */
+/* --- New to version 2.9: Unit Toggle --- */
+
 /* --- Weather Widget Styling --- */
 .weather-widget {
+	/* This optional setting helps to reduce browser repaints */
+	min-height: 300px; 
 	contain: content;
-	min-height: 300px;
-	/* This setting is optional */ 
-	/* However, setting a minimum height helps to reduce browser repaints */
 }
-.weather-widget.no-forecast { min-height: 175px; } /* When the forecaset is excluded less height is required */
-.weather-widget.has-sunrise { min-height: 375px; } /* When sunrise sunset is shown using min-height: 375px; is better */
-.weather-widget.no-forecast.has-sunrise {min-height: 250px;}/* With sunrise sunset but without forecast */
+.weather-widget.no-forecast { 
+	/* When the forecaset is excluded less height is required */
+	min-height: 175px; 
+}
+.weather-widget.has-sunrise { 
+	/* When sunrise sunset is shown using min-height: 375px; is better */
+	min-height: 375px; 
+} 
+.weather-widget.no-forecast.has-sunrise { 
+	/* With sunrise sunset but without forecast */
+	min-height: 250px;
+}
 
 .weather-location-name {
-	border-bottom: 2px solid #eee;
+	border-bottom: 2px solid;
+	border-color: #eee;
 	font-size: 1.375em;
 	font-weight: bold;
 	margin-bottom: 15px;
@@ -19,7 +29,6 @@
 	text-align: center;
 	min-height:42px;
 }
-
 .current-weather {
 	align-items: center;
 	display: flex;
@@ -28,12 +37,10 @@
 	padding: 0 10px 10px; /* Zero top padding for here for greater icon spacing flexibility */
 	gap:10px;
 }
-
 .current-temp {
 	font-size: 2.5em;
 	font-weight: 700;
 }
-
 .current-conditions {
 	align-items: center;
 	display: flex;
@@ -42,44 +49,35 @@
 	text-transform: capitalize;
 	line-height: 35px;
 }
-
 .forecast-container {
 	display: flex;
 	justify-content: space-between;
 	text-align: center;
 	padding: 5px;
 }
-
 .forecast-day {
 	flex: 1;
 	min-height: 115px;
 }
-
 .forecast-day-name {
 	color: #444;
 	font-size: 1em;
 	margin-bottom: 3px;
 }
-
-
-
 .forecast-temps .slash {
 	color: transparent;
 	font-size: 0.375em;
 	/*Change the color and size to see the / between high and low */
 }
-
 .forecast-temps .high {
 	color: #000;
 	font-size: 1.06em;
 	font-weight: 700;
 }
-
 .forecast-temps .low {
 	color: #555;
 	font-size: 0.875em;
 }
-
 .today-forecast-temps {
 	align-items: center;
 	display: flex;
@@ -87,7 +85,6 @@
 	justify-content: center;
 	padding-top: 10px;
 }
-
 .today-forecast-label {
 	font-size: 1.375em;
 	margin: 5px 0;
@@ -96,25 +93,21 @@
 .temps-wrapper{
 	line-height: 2.25em;
 }
-
 .today-forecast-temps .temps-wrapper .slash{
 	color: transparent;
 	font-size: 0.55em;
 	/*Change the color and size to see the / between high and low */
 }
-
 .today-forecast-temps .high {
 	color: #000;
 	font-size: 2.25em; /* Converted from 36px */
 	font-weight: 700;
 }
-
 .today-forecast-temps .low {
 	color: #555;
 	font-size: 1.625em; /* Converted from 26px */
 	font-weight: 400;
 }
-
 .today-forecast-temps .temp-unit {
 	color: #666;
 	font-size: 0.94em; /* Converted from 15px */
@@ -147,7 +140,6 @@
 	width: 40px;
 	margin: 5px 0; /* Match 50px svg sizing */
 }
-
 .forecast-day .weather-icon-svg {
     filter: none;
     width: 50px;
@@ -158,7 +150,6 @@
 	font-size: 35px;
 	margin: 5px 0 10px; /* Match SVG height of 50px */
 }
-
 .sunrise-sunset-container .wi {
     font-size: 30px;
     line-height: 1;
@@ -167,7 +158,6 @@
 	width: 39px;
     margin: 0 8px;
 }
-
 .sunrise-sunset-container .sunrise-sunset-icon {
     width: 25px;
     height: 25px;
@@ -184,8 +174,6 @@
     display: inline-block;
     margin: 0 5px;
 }
-
-
 .weather-extra-details {
 	color: #555;
 	display: flex;
@@ -196,18 +184,15 @@
     padding: 5px 0 10px;
     line-height: 30px;
 }
-
 .wind-details {
 	align-items: center;
 	display: flex;
 }
-
 .wind-details .wi {
 	font-size: 30px;
     line-height: 30px;
 	margin-right: 5px;
 }
-
 .wind-details .wind-icon-svg {
     width: 25px;
     height: 25px;
@@ -216,12 +201,12 @@
     border-radius: 50%;
 }
 
-
 /* Remove specific borders that cause stacking */
 .current-weather, 
 .weather-extra-details, 
 .sunrise-sunset-container {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid;
+    border-color: #eee;
 }
 
 /* If it's the last element before the updated timestamp, or if forecast is off */
@@ -229,19 +214,18 @@
 .no-forecast .weather-extra-details {
     border-bottom: none;
 }
-
 .last-updated {
 	color: #999;
 	font-size: .8em;
 	margin-top: 10px;
 	text-align: center;
-	border-top: 1px solid #eee;
+	border-top: 1px solid;
+	border-color: #eee;
 	padding-top: 5px;
     line-height: 29px;
 }
 
 /* --- Weather Alert Styling --- */
-
 .weather-alert {
     display: flex;
     align-items: center; /* Vertically aligns the icon with the text block */
@@ -252,45 +236,36 @@
     margin-bottom: 15px;
     color: #333;
 }
-
 .weather-alert-icon-left {
     margin-right: 12px;
 }
-
 .weather-alert-message {
     flex-grow: 1; /* Allows the message area to take up remaining space */
 }
-
 .weather-alert-event {
     font-weight: bold;
     margin-bottom: 4px;
 }
-
 .weather-alert-sender {
     font-size: 0.9em;
     opacity: 0.8;
 }
-
 .weather-alert-icon-left .weather-alert-icon {
     width: 32px;
     height: 32px;
     vertical-align: middle;
 }
-
 .weather-alert-icon-left .wi {
     font-size: 2em;
     line-height: 1;
 }
-
 .weather-alert-icon-left .weather-alert-icon-svg {
     width: 50px;
     height: 50px;
     vertical-align: middle;
 }
 
-
 /* --- Sunrise & Sunset Styling --- */
-
 .sunrise-sunset-container {
     display: flex;
     justify-content: space-around;
@@ -299,32 +274,119 @@
     margin-bottom: 10px;
     color: #555;
 }
-
 .sunrise-sunset-text-wrapper{
 	min-height:64px;
 }
-
-
 .sunrise-time, .sunset-time {
     flex-basis: 50%;
 }
-
 .sunrise-sunset-label {
     font-size: 1em;
 	display: inline;
 }
-
 .sunrise-sunset-value {
     font-weight: bold;
     font-size: 1.25em;
 }
-
-
-
 .sunrise-time, .sunset-time {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* =========================================
+   Unit Toggle
+========================================= */
+
+/* Wrapper to align the toggle and allow it to straddle the border */
+.utw-toggle-wrapper {
+    position: relative;
+    height: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 8px; /* Adjust this to move the pill left or right along the line */
+    z-index: 5;
+    top: -16px;
+}
+
+/* The Pill Switch */
+.utw-unit-toggle {
+    transform: translateY(-50%); /* Pull it perfectly half-up over the line */
+    width: 52px;
+    height: 26px;
+    border-radius: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: #eee; /* Solid background to hide the border line underneath */
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    outline: none;
+    user-select: none;
+    transition: opacity 0.2s ease;
+}
+
+.utw-unit-toggle:hover {
+    background: #eee;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* The Sliding Thumb with Thermometer */
+.utw-toggle-thumb {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Thermometer - Standard State */
+.utw-thumb-thermometer {
+    width: 16px;
+    height: 16px;
+    stroke: #555555;
+    transition: stroke 0.2s ease;
+}
+
+/* Unit Label Text - Standard State */
+.utw-toggle-label {
+    position: absolute;
+    top: 0;
+    right: 6px;
+    line-height: 24px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #555555;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+}
+
+/* Hover/Active State - Inject the custom color */
+.utw-unit-toggle:hover .utw-thumb-thermometer,
+.utw-unit-toggle:focus .utw-thumb-thermometer {
+    stroke: var(--utw-icon-color, #555555);
+}
+
+.utw-unit-toggle:hover .utw-toggle-label,
+.utw-unit-toggle:focus .utw-toggle-label {
+    color: var(--utw-icon-color, #555555);
+}
+
+
+/* Slide State: Thumb moves right, text moves left */
+.utw-unit-toggle.is-metric .utw-toggle-thumb {
+    transform: translateX(26px);
+}
+.utw-unit-toggle.is-metric .utw-toggle-label {
+    transform: translateX(-22px);
 }
 
 /* --- DARK MODE STYLES --- */
@@ -369,7 +431,31 @@
 .utw-dark-mode .last-updated {
     color: #bbb; /* Light gray for secondary text */
 }
-/* --- END DARK MODE STYLES --- */
+
+/* Dark Mode Overrides for units toggle*/
+.weather-widget.utw-dark-mode .utw-unit-toggle {
+	background:#333;
+}
+.weather-widget.utw-dark-mode .utw-thumb-thermometer {
+    stroke: #333;
+}
+.weather-widget.utw-dark-mode .utw-toggle-label {
+    color: #ccc;
+}
+
+.weather-widget.utw-dark-mode .utw-toggle-thumb {
+	background: #ccc;
+}
+
+/* Dark Mode Hover/Active State */
+.weather-widget.utw-dark-mode .utw-unit-toggle:hover .utw-thumb-thermometer,
+.weather-widget.utw-dark-mode .utw-unit-toggle:focus .utw-thumb-thermometer {
+    stroke: var(--utw-icon-color, #555);
+}
+.weather-widget.utw-dark-mode .utw-unit-toggle:hover .utw-toggle-label,
+.weather-widget.utw-dark-mode .utw-unit-toggle:focus .utw-toggle-label {
+    color: var(--utw-icon-color, #ffffff);
+}
 
 
 /* =========================================
@@ -394,13 +480,11 @@
 .utw-skeleton-wrapper {
     padding: 10px 0;
 }
-
 .utw-skeleton-title {
     height: 25px;
     width: 60%;
     margin: 0 auto 20px auto;
 }
-
 .utw-skeleton-temp {
     height: 36px;
     width: 40%;
@@ -431,14 +515,11 @@
     margin: 0 auto 15px auto;
     /* Skeleton area is designed to match 90px tall current-conditions / icon and text div  */
 }
-
-
 .utw-skeleton-sunrise-container {
     display: flex;
     justify-content: space-between;
     margin:15px 0 20px;
 }
-
 .utw-skeleton-sun {
     height: 50px;
     width: 45%;
@@ -453,18 +534,19 @@ display: flex;
 	flex: 1; /* Forces them to stretch evenly side-by-side */
     height: 115px; 
 }
+
 /* New Details and Timestamp Skeletons */
 .utw-skeleton-details {
     height: 31px;
     width: 75%;
     margin: 15px auto;
 }
-
 .utw-skeleton-timestamp {
     height: 15px;
     width: 40%;
     margin: 15px auto;
 }
+
 /* =========================================
    INVISIBLE SKELETON OVERRIDE
 ========================================= */
