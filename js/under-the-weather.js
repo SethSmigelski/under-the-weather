@@ -106,7 +106,19 @@ function loadWeatherData(widget) {
     widget.innerHTML = skeletonHtml;
     // End of Skeleton loaded to reduce repaints
 
-    const unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
+    let unit = widget.dataset.unit ? widget.dataset.unit.toLowerCase() : 'imperial';
+    
+    // Check if the user previously toggled their unit preference (i.e. switch from Fahrenheit to Celsius on another widget)
+    if (under_the_weather_settings && under_the_weather_settings.allow_unit_toggle) {
+        try {
+            const savedUnit = localStorage.getItem('utw_user_unit');
+            if (savedUnit && (savedUnit === 'imperial' || savedUnit === 'metric')) {
+                unit = savedUnit;
+                widget.dataset.unit = savedUnit; // update the DOM element to match
+            }
+        } catch (err) {}
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     const apiUrl = `/wp-json/under-the-weather/v1/forecast?lat=${lat}&lon=${lon}&location_name=${encodeURIComponent(locationName)}&unit=${unit}`;
@@ -132,6 +144,9 @@ function loadWeatherData(widget) {
         if (!validateWeatherData(data)) {
             throw new Error('The weather data structure is invalid');
         }
+      // Store the raw weather data in memory when fetched
+      widget._cachedWeatherData = data;
+        
       displayWeather(data, widget);
     })
     .catch(error => {
@@ -530,9 +545,36 @@ function displayWeather(data, widget) {
         timestampHtml = `<div class="last-updated">Updated ${timeAgo(data.fetched_at)}</div>`;
     }
 
+    // Gives users the option to change weather units
+    let toggleHtml = '';
+    if (under_the_weather_settings && under_the_weather_settings.allow_unit_toggle) {
+        
+        // Current unit of data loaded (default is imperial unless specified)
+        const activeUnit = data.units === 'metric' ? 'metric' : 'imperial';
+        const isMetric = activeUnit === 'metric';
+        
+        // Wrap the toggle in a zero-height wrapper to straddle the border
+        toggleHtml = `
+            <div class="utw-toggle-wrapper">
+                <button type="button" class="utw-unit-toggle ${isMetric ? 'is-metric' : 'is-imperial'}" aria-label="Toggle Temperature Unit" data-current-unit="${activeUnit}">
+                    <span class="utw-toggle-thumb">
+                        <svg class="utw-thumb-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                            <line x1="11.5" y1="6" x2="13.5" y2="6"></line>
+                            <line x1="11.5" y1="9" x2="13.5" y2="9"></line>
+                            <line x1="11.5" y1="12" x2="13.5" y2="12"></line>
+                        </svg>
+                    </span>
+                    <span class="utw-toggle-label">${isMetric ? '°C' : '°F'}</span>
+                </button>
+            </div>
+        `;
+    }
+
     const finalHtml = `
         <div class="weather-location-name">${locationName}</div>
         ${alertHtml}
+        ${toggleHtml}
         ${primaryDisplayHtml}
         ${extraDetailsHtml}
         ${sunriseSunsetHtml}
@@ -555,4 +597,92 @@ function displayWeather(data, widget) {
     if (theme_mode === 'dark') {
         widget.classList.add('utw-dark-mode');
     }
+}
+
+// Delegated click handler for the toggle switch (attaches once when script loads)
+// Allow usert to select their temperature unit.
+document.addEventListener('click', function(e) {
+    const toggleBtn = e.target.closest('.utw-unit-toggle');
+    if (!toggleBtn) return;
+
+    const widget = toggleBtn.closest('.weather-widget');
+    if (!widget || !widget._cachedWeatherData) return;
+
+    const currentUnit = toggleBtn.dataset.currentUnit;
+    const targetUnit = currentUnit === 'imperial' ? 'metric' : 'imperial';
+    const isMetric = targetUnit === 'metric';
+
+    // 1. Immediately trigger the CSS slide animation on the button
+    toggleBtn.dataset.currentUnit = targetUnit;
+    toggleBtn.classList.remove('is-metric', 'is-imperial');
+    toggleBtn.classList.add(isMetric ? 'is-metric' : 'is-imperial');
+    
+    const label = toggleBtn.querySelector('.utw-toggle-label');
+    if (label) {
+        label.textContent = isMetric ? '°C' : '°F';
+    }
+
+    // 2. Remember visitor preference across pages
+    try {
+        localStorage.setItem('utw_user_unit', targetUnit);
+    } catch (err) {}
+
+    // 3. Wait exactly 250ms for the thumb to finish sliding, THEN flip the numbers!
+    setTimeout(() => {
+        convertAndRenderWeather(widget._cachedWeatherData, widget, targetUnit);
+    }, 250);
+});
+
+/**
+ * Converts temperatures and wind speeds inside the cached data object 
+ * and instantly re-renders the widget without making a new API call.
+ */
+function convertAndRenderWeather(data, widget, targetUnit) {
+    // If the data is already in the target unit, do nothing
+    if (data.units === targetUnit) return;
+
+    // 1. Convert current conditions
+    data.current.temp = convertTemperature(data.current.temp, data.units, targetUnit);
+    data.current.feels_like = convertTemperature(data.current.feels_like, data.units, targetUnit);
+    
+    // 2. Convert wind speed (mph <-> kph)
+    if (data.current.wind_speed !== undefined) {
+        data.current.wind_speed = convertWindSpeed(data.current.wind_speed, data.units, targetUnit);
+    }
+
+    // 3. Convert multi-day daily forecast
+    if (data.daily) {
+        data.daily.forEach(day => {
+            if (day.temp) {
+                day.temp.max = convertTemperature(day.temp.max, data.units, targetUnit);
+                day.temp.min = convertTemperature(day.temp.min, data.units, targetUnit);
+            }
+        });
+    }
+
+    // 4. Update the core unit state
+    data.units = targetUnit;
+
+    // 5. Send it back to the main renderer!
+    displayWeather(data, widget);
+}
+
+// Helper: Temperature Math
+function convertTemperature(temp, fromUnit, toUnit) {
+    if (fromUnit === 'imperial' && toUnit === 'metric') {
+        return (temp - 32) * (5 / 9);
+    } else if (fromUnit === 'metric' && toUnit === 'imperial') {
+        return (temp * 9 / 5) + 32;
+    }
+    return temp;
+}
+
+// Helper: Wind Speed Math
+function convertWindSpeed(speed, fromUnit, toUnit) {
+    if (fromUnit === 'imperial' && toUnit === 'metric') {
+        return speed * 1.60934; // mph to kph
+    } else if (fromUnit === 'metric' && toUnit === 'imperial') {
+        return speed / 1.60934; // kph to mph
+    }
+    return speed;
 }
