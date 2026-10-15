@@ -35,7 +35,7 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
     * **A Crisp Weather Icons font**
     * **2 Animated SVG icon sets**
 
-* **Styled to Match Your Site:** Seamlessly fit the widget into any site design using the **Light Mode** for white and light backgrounds or toggle on the **Dark Mode** for nicely contrasted text on dark backgrounds. Apply a custom colors to the "Weather Icons Font" with the **Color Picker** for an individualized integration.
+* **Styled to Match Your Site:** Seamlessly fit the widget into any site design using the **Light Mode** for white and light backgrounds or toggle on the **Dark Mode** for nicely contrasted text on dark backgrounds. Apply a custom color to the "Weather Icons Font" with the **Color Picker** for an individualized integration.
 
 * **Fully Customizable Layouts:** Choose whether the widget's main focal point highlights the live current conditions or today's high and low temperatures. Build out the widget to meet your goals, from a compact day-of weather widget to a full weather hub, displaying:
     * **Extended forecasts** (up to 6 days)
@@ -60,7 +60,7 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
 
 * **Ultra-Lightweight Footprint:** At roughly 10 KB, the JavaScript payload is up to 25x smaller than many other weather widgets for WordPress, without sacrificing features.
 
-* **Zero Layout Shift (CLS):** Using an intelligent, dynamic skeleton loading UI and modern CSS containment, the widget claims its vertical space immediately, preventing the page from "jumping" when the weather data arrives, and eliminating Cumulative Layout Shift (CLS) issues that can negatively impact your Core Web Vitals.
+* **Zero Layout Shift (CLS):** Using an intelligent, dynamic skeleton loading UI and modern CSS containment, the widget claims its vertical space immediately, preventing the page from "jumping" when the weather data arrives and eliminating Cumulative Layout Shift (CLS) issues that can negatively impact your Core Web Vitals.
 
 * **Smart Server-Side Caching:** API requests to OpenWeather are handled safely by your server, not the visitor's browser. Data is securely cached with WordPress transients to deliver lightning-fast results while drastically reducing API calls and protecting your OpenWeather quota.
 
@@ -156,7 +156,7 @@ Pick the style that suits you best. Choose between four weather icon options:
 Note: Selecting the icon font will load an additional small CSS file.
 
 **Icon Font Color:**
-Use the color picker to customize the "Weather Icons Font" set to match your theme. This setting only has a visible effect when the "Weather Icons Font" style is selected (it does not impact PNGs or SVGs). If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
+Use the color picker to customize the "Weather Icons Font" set to match your theme. This setting only has a visible effect on the "Weather Icons Font" and does not impact PNGs or SVGs. The selected color also appears when a visitor uses the units toggle, when that option is enabled. If left at the default, the icons will use the gray color specified in the plugin's stylesheet.
 
 **Widget Mode:** 
 The weather widgets are designed to look good on light or dark backgrounds. Select **Light Mode** when displaying weather widgets on white and light backgrounds. Switch to **Dark Mode** to display weather widgets on black or dark backgrounds.
@@ -177,7 +177,7 @@ This setting displays the local sunrise and sunset times for the location, usefu
 When enabled, the widget will display any active severe weather alerts (e.g., thunderstorm warnings, flood advisories) issued by official authorities for the specified location, providing critical, at-a-glance information for your visitors.
 
 **Timestamp:**
-Display the time elapsed since the weather data was last updated from the source allowing readers to see how recently the weather widget obtained its information. 
+Display the time elapsed since the weather data was last updated from the source, allowing readers to see how recently the weather widget obtained its information. 
 
 **Unit Symbol:**
 Display the unit symbol (F or C) next to the main temperature. This option lets you choose whether the widget should include the temperature unit symbol in the primary temperature display.
@@ -186,19 +186,24 @@ Display the unit symbol (F or C) next to the main temperature. This option lets 
 Display an interactive toggle in the corner of the widget that allows visitors to choose between viewing the forecast in °F or °C and have that preference saved.
 
 **Advanced Settings**
-**Enable Cache:**  You can uncheck this box if you would like to use this plugin without the benefit of caching.
+**Enable Cache:**  
+You can uncheck this box if you would like to use this plugin without the benefit of caching.
 
-**Enable Rate Limiting:** Check this box to protect your site against excessive API requests from a single IP address. You can set the maximum number of requests per hour (default is 100). This helps prevent malicious traffic from exhausting your API quota. 
+**Enable Rate Limiting:** 
+Check this box to protect your site against excessive API requests from a single IP address. You can set the maximum number of requests per hour (default is 100). This helps prevent malicious traffic from exhausting your API quota. 
 
-**Asset Loading:** For the plugin to function correctly, the **Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files as part of your theme's own optimized assets.
+**Asset Loading:** 
+For the plugin to function correctly, the **Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files as part of your theme's own optimized assets.
 
 Developers who uncheck **Load Plugin JavaScript**, can load the Under The Weather scripts manually on select pages. For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
-**Async CSS Loading:** Enable this option to reduce render-blocking resources for faster initial page loading. 
+**Async CSS Loading:** 
+Enable this option to reduce render-blocking resources for faster initial page loading. 
     * It is recommended to leave this unchecked if your weather widget is located "above the fold" (near the top of the page) to prevent layout shifting or a flash of unstyled content. 
     * If you enable async loading, please consider adding a "min-height" rule for ".weather-widget" to your theme's custom CSS to reserve the widget's vertical space while the stylesheet loads. Example: `.weather-widget{min-height:300px}`
 
-**Shimmer While Loading:** Enabled by default, this visual placeholder provides layout stability before the weather data arrives. Uncheck this box to instead display a clear, transparent widget area before the weather data arrives.
+**Shimmer While Loading:** 
+Enabled by default, this visual placeholder provides layout stability before the weather data arrives. Uncheck this box to instead display a clear, transparent widget area before the weather data arrives.
 
 == Coordinate Finder ==
 
@@ -239,16 +244,16 @@ The report also includes a status indicator showing whether the optional **Rate 
 
 == Frequently Asked Questions ==
 
-= How do I Install this plugin? =
+= How do I install this plugin? =
 
 Install the Under The Weather Plugin using one of two common methods.
 
 **From the WordPress Plugin Directory:**
 1.  Log in to your WordPress Admin Dashboard.
-2.  Navigate to Plugins > Add Plugin in the left-hand menu.
-3.  Search for the plugin: Under The Weather.
-4.  Install the plugin: Once you locate the correct plugin, click the "Install Now" button next to it.
-5.  Activate the plugin: After the installation is complete, click the "Activate Plugin" button that appears.
+2.  Navigate to **Plugins > Add Plugin** in the left-hand menu.
+3.  Search for the plugin: **Under The Weather.**
+4.  Install the plugin: Once you locate the correct plugin, click the **"Install Now"** button next to it.
+5.  Activate the plugin: After the installation is complete, click the **"Activate Plugin"** button that appears.
 6.  Navigate to **Settings > Under The Weather** to configure the plugin. You must enter a valid OpenWeather API key for the plugin to function.  The plugin is designed to work with the One Call API 3.0 or 4.0 by OpenWeather.
 
 **From a Zip File:**
@@ -310,7 +315,11 @@ If you're feeling patient, just wait for the weather widget to update after the 
 
 = Does the Weather Widget work in Fahrenheit or Celsius? =
 
-Both. By default, the weather widget displays the forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). Additionally, checking the "Display Unit Symbol" box on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
+Both. By default, the weather widget displays the forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). 
+
+Additionally, checking the **"Display Unit Symbol"** box on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
+
+Enabling the **"Unit Toggle Switch"** allows visitors to switch back and forth between Fahrenheit and Celsius. 
 
 = What if I don't know the latitude and longitude for a weather location? =
 
