@@ -15,9 +15,9 @@ A lightweight, customizable weather widget powered by the OpenWeather API that c
 
 == Description ==
 
-Under The Weather is an option-packed yet simple plugin that displays location-specific weather forecasts on your WordPress site. It includes a dedicated "Under The Weather Forecast" block to add and customize weather widgets directly in the WordPress editor.
+Under The Weather displays location-specific weather forecasts on your WordPress site. It includes a dedicated "Under The Weather Forecast" block to add and customize weather widgets directly in the WordPress editor.
 
-Under The Weather is ideal for travel blogs, outdoor activity sites, or any website that needs to display location-specific weather without the bloat of heavy, multi-dependency plugins.
+Under The Weather is ideal for travel blogs, outdoor activity sites, or any website that needs to showcase stylish forecasts without the bloat of heavy, multi-dependency plugins.
 
 = Built for Performance, Rain or Shine =
 
@@ -35,7 +35,7 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
     * **A Crisp Weather Icons font**
     * **2 Animated SVG icon sets**
 
-* **Styled to Match Your Site:** Seamlessly fit the widget into any site design using the **Light Mode** or **Dark Mode**.
+* **Styled to Match Your Site:** Seamlessly fit the widget into any site design using the **Light Mode** or **Dark Mode** and icon font color picker.
 
 * **Fully Customizable Layouts:** Choose whether the widget's main focal point highlights the live current conditions or today's high and low temperatures. Build out the widget to meet your goals, from a compact day-of weather widget to a full weather hub, displaying:
     * **Extended forecasts**
@@ -44,11 +44,11 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
     * **Weather alerts**
     * **Sunrise & sunset times**
 
-* **Visual Performance Report:** Monitor API usage with a bar chart that displays a 7-day history of cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
+* **Visual Performance Report:** Monitor API usage with a 7-day bar chart displaying cached requests versus new calls to the OpenWeather API - a clear look at how the caching system is working to keep your site fast and your API calls low.
 
-* **Smart Caching:** All API calls are cached on your server using WordPress transients, dramatically reducing calls to the OpenWeather API and speeding up page loads for visitors. The plugin includes a configurable cache duration, and forecasts sharing the same location name automatically reuse the same cached data across your entire site, rather than requesting new data for each widget.
+* **Intelligent, Adjustable Caching:** All API calls are cached on your server using WordPress transients, significantly reducing calls to the OpenWeather API and speeding up page loads for visitors. Plus, forecasts with the same location name automatically share the same cached data across your entire site, rather than requesting new data for each widget.
 
-* **Fast Weather Location Lookup:** An easy-to-use Coordinate Finder tool located in the settings page and the Block Editor retrieves coordinates by location name worldwide. Generates ready-to-use widget `<div>` code from the settings page. Automatically fill coordinates in the block editor.
+* **Fast Weather Location Lookup:** An easy-to-use Coordinate Finder in the settings page and the Block Editor retrieves coordinates by location name worldwide. The tool generates ready-to-use widget `<div>` code from the settings page and automatically fills coordinates in the block editor.
 
 * **Fahrenheit & Celsius Forecasts with Interactive Unit Toggle:** Display weather in Imperial (°F/mph) or Metric (°C/kph) on a per-widget basis. Optionally, let visitors switch between units on the fly with a zero-latency frontend toggle that remembers their choice for future visits.
 
@@ -56,13 +56,13 @@ Under The Weather is ideal for travel blogs, outdoor activity sites, or any webs
 
 * **Page Speed Optimized:** Unlike other popular weather plugins that load hundreds of kilobytes of external libraries, Under The Weather is engineered specifically for speed and SEO, using native script deferral, smart font preloading, conditional asset enqueues, and optional async CSS loading.
 
-* **Zero Dependencies:** While other weather plugins require your site to load heavy external libraries like jQuery, Vue.js, or Swiper.js just to show a simple forecast, Under The Weather requires exactly 1 script request, written in pure, vanilla JavaScript. This guarantees faster loading and zero risk of library conflicts.
+* **Zero Dependencies:** While many weather plugins require your site to load heavy external libraries like jQuery, Vue.js, or Swiper.js just to show a simple forecast, Under The Weather requires exactly 1 script request, written in pure, vanilla JavaScript. This guarantees faster loading and zero risk of library conflicts.
 
 * **Ultra-Lightweight Footprint:** At roughly 10 KB, the JavaScript payload is up to 25x smaller than many other weather widgets for WordPress, without sacrificing features.
 
 * **Zero Layout Shift (CLS):** Using an intelligent, dynamic skeleton loading UI and modern CSS containment, the widget claims its vertical space immediately, preventing the page from "jumping" when the weather data arrives and eliminating Cumulative Layout Shift (CLS) issues detrimental to Core Web Vitals.
 
-* **Smart Server-Side Caching:** API requests to OpenWeather are handled safely by your server, not the visitor's browser. Data is securely cached in WordPress transients to deliver lightning-fast results, drastically reduce API calls, and protect your OpenWeather quota.
+* **Server-Side Caching:** API requests to OpenWeather are handled safely by your server, not the visitor's browser. Data is securely cached in WordPress transients to deliver fast results, reduce API calls, and protect your OpenWeather quota.
 
 == Usage ==
 
@@ -126,7 +126,7 @@ You can also display the weather by using the `[under_the_weather]` shortcode. T
 
 == Configuration ==
 
-Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) and sign up for an API key. You must register for the "One Call by Call" API subscription (the subscription for the specific API version you plan to use (3.0 and 4.0). Paste your API key into the Under the Weather Settings Page.
+Before you begin, go to [openweathermap.org](https://home.openweathermap.org/) and sign up for an API key. You must register for the "One Call by Call" API subscription. Paste your API key into the Under the Weather Settings Page.
 
 **API & Cache**
 
@@ -137,7 +137,7 @@ OpenWeather currently supports two versions of its One Call API.
 * **One Call 4.0:** Uses a modular structure requiring separate API calls for current conditions, daily forecasts, and weather alerts.
 
 **Cache Expiration Time:** 
-Use the slider to set the maximum time weather data is stored before fetching a new forecast, from 30 minutes to 8 hours. For daily high/low forecasts, a longer cache time of 3 or 8 hours reduces API calls. For live conditions, we recommend a shorter cache time of 1 or 2 hours.
+Use the slider to set the maximum time weather data is stored before fetching a new forecast. When showing live conditions, consider a shorter cache time of 30 minutes to 2 hours. For daily high/low forecasts, a longer cache time of 3 or 8 hours greatly reduces API calls. 
 
 The **smart caching** system automatically expires the cache after midnight in the location’s local time zone, ensuring your visitors always see the current day’s weather, regardless of your slider setting.
 
@@ -150,7 +150,6 @@ Pick the style that suits you best. Choose between four weather icon options:
 * Recognizable **Default images** (PNGs) provided by OpenWeather.
 * Sharp, modern **Weather Icons fonts** created by Erik Flowers.
 * Two **Animated SVG** icon sets (Fill and Outline) by Bas Milius.
-Note: Selecting the icon font loads an additional small CSS file.
 
 **Icon Font Color:**
 Apply a custom color to the **“Weather Icons Font”** with the **Color Picker** for an individualized integration. The selected color also appears when a visitor uses the units toggle, when that option is enabled. If left at the default, the icons will use the gray color specified in the plugin’s stylesheet.
@@ -159,13 +158,13 @@ Apply a custom color to the **“Weather Icons Font”** with the **Color Picker
 The weather widgets are designed to look good on light or dark backgrounds. Select **Light Mode** when displaying weather widgets on white and light backgrounds. Switch to **Dark Mode** to display weather widgets on black or dark backgrounds.
 
 **Primary Display:** 
-Select whether the main display of the widget shows the **Current** live temperature or **Today's Forecast** (the high and low for the day).
+Select between showing the **Current** live temperature or **Today's Forecast** (the high and low for the day) as the focal point of the widget.
 
 **Number of Forecast Days:** 
 Adjust the number of days shown in the extended forecast row from 2 to 6. When set to 0 days, the widget's forecast area disappears, leaving a compact widget showing the current day's weather.
 
 **Extra Details:**
-Selecting this option will **display 'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
+Selecting this option will display **'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
 
 **Sunrise & Sunset:** 
 This setting displays the location's sunrise and sunset times, useful for planning outdoor activities.  Choose to show the times in a 12-hour or 24-hour format.
@@ -177,7 +176,7 @@ When enabled, the widget displays active severe weather alerts, like thunderstor
 Display the time elapsed since the weather data was last updated from the source, so readers can see how recently the widget obtained its information. 
 
 **Unit Symbol:**
-Display the unit symbol (F or C) next to the main temperature. This option lets you choose whether the widget includes the temperature unit symbol in the primary temperature display.
+This option lets you choose whether the widget includes the temperature unit symbol (F or C) next to the primary temperature display.
 
 **Unit Toggle Switch:**
 Display an interactive toggle in the corner of the widget that allows visitors to choose between viewing the forecast in °F or °C and have that preference saved.
@@ -187,7 +186,7 @@ Display an interactive toggle in the corner of the widget that allows visitors t
 Only uncheck this box if you want to use this plugin without the benefit of caching.
 
 **Enable Rate Limiting:** 
-Check this box to protect your site against excessive API requests from a single IP address. Set the maximum number of requests per hour (default is 100)to prevent malicious traffic from exhausting your API quota. 
+Check this box to protect your site against excessive API requests from a single IP address. Set the maximum number of requests per hour (default is 100) to prevent malicious traffic from exhausting your API quota. 
 
 **Asset Loading:** 
 For the plugin to function correctly, the **Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files in your theme's optimized assets.
@@ -197,10 +196,10 @@ Developers who uncheck **Load Plugin JavaScript**, can load the Under The Weathe
 **Async CSS Loading:** 
 Enable this option to reduce render-blocking resources for faster initial page loading. 
     * Leave this unchecked if your weather widget is located "above the fold" (near the top of the page) to prevent layout shifting or a flash of unstyled content. 
-    * If you enable async loading, add a "min-height" rule for ".weather-widget" to your theme's custom CSS to reserve the widget's vertical space while the stylesheet loads. Example: `.weather-widget{min-height:300px}`
+    * When async loading is enabled, you may add a "min-height" rule for ".weather-widget" to your theme's custom CSS to reserve the widget's vertical space while the stylesheet loads. Example: `.weather-widget{min-height:300px}`
 
 **Shimmer While Loading:** 
-Enabled by default, this visual placeholder provides layout stability before the weather data arrives. Uncheck this box to instead display a clear, transparent widget area before the weather data arrives.
+This visual placeholder keeps the layout stable before the weather data arrives. Uncheck this box to instead display a clear, transparent widget area before the weather data arrives.
 
 == Coordinate Finder ==
 
@@ -224,7 +223,7 @@ Don't know the latitude and longitude for your desired location? No problem. The
 4. The tool will display the generated `<div>` with the correct coordinates and location name.
 5. Use the **"Copy Code"** button to copy the ready-to-use widget HTML and paste it into a post, page, or widget.
 
-The tool automatically saves a history of your last 5 searches, which persists between sessions. You can easily copy code from previous searches without having to look them up again.
+The tool automatically saves a history of your last 5 searches, so you can easily copy code from previous searches without looking them up again.
 
 == Performance Report ==
 
@@ -266,9 +265,9 @@ This plugin works with both the **OpenWeather One Call API 3.0** and the newer *
 = Which API version should I use? =
 OpenWeatherMap currently offers two versions of the One Call API. You can use either version, but you must ensure your OpenWeather account is subscribed to the specific version you select.
 
-* **Use One Call API 3.0 (Recommended for Efficiency):** While OpenWeatherMap marks this as "deprecated," it is still available to users. Because version 3.0 packages current conditions, daily forecasts, and alerts into a single response, it consumes significantly fewer API hits than the modular 4.0 architecture. Sticking with 3.0 is recommended for users looking to stretch their 1,000 free daily calls as far as possible.
+* **Use One Call API 3.0 (Recommended for Efficiency):** While OpenWeatherMap marks this as "deprecated," it is still available to users. Because version 3.0 packages current conditions, daily forecasts, and alerts into a single response, it consumes fewer API hits than the modular 4.0 architecture. Sticking with 3.0 is recommended for users looking to stretch their 1,000 free daily calls as far as possible.
 
-* **Use One Call API 4.0:** This is OpenWeatherMap's newest standard. Use this if you already have an active 4.0 subscription. Because 4.0 requires multiple endpoint requests to gather the same data, it will consume your 1,000 free daily API calls faster than 3.0. If you select One Call 4.0, consider setting a higher Cache Expiration Time to protect your free tier limit.
+* **Use One Call API 4.0:** This is OpenWeatherMap's newest standard. Use this if you already have an active 4.0 subscription. Because 4.0 requires multiple endpoint requests to gather the same data, it will consume your 1,000 free daily API calls faster than 3.0. If you select One Call 4.0 and want to protect your free tier limit, consider setting a higher Cache Expiration Time.
 
 = Why do I see "Could not retrieve forecast. Server error?" =
 
@@ -280,9 +279,9 @@ This most commonly occurs when there is an issue with your OpenWeather API subsc
 
 = How can I monitor the number of OpenWeather API calls the plugin makes? =
 
-Click on the "Performance Report" tab of the Under The Weather Settings Page to see a graph and data log for the last 7 days of plugin performance. The Performance Report shows the last seven days of information about the requests made by the weather widget. The report displays a comparison of the cached hits and calls to the OpenWeather API. 
+Click on the **"Performance Report"** tab on the Under The Weather Settings Page to compare cached hits and OpenWeather API calls requested by the weather widgets. A graph and data log for the last 7 days of plugin performance show how the plugin's cache system effectively reduces the number of API calls.
 
-Seeing how the plugin's cache system reduces the number of API calls demonstrates its effectiveness. Use the Performance Report to examine how modifying the cache expiration time affects the rate of cached requests.
+Use the Performance Report to examine how modifying the cache expiration time affects the rate of cached requests.
 
 = If I show the weather for the same location on multiple pages, does each page make an API call? =
 
@@ -296,9 +295,9 @@ No. To retrieve fresh weather data every time a widget page loads, you can unche
 
 Cinderella's magic disappears at midnight and weather caches expire at midnight too. Visitors should never see a cache of the previous day's forecast. 
 
-For example, if you set the cache expiration time to 8 hours and a weather cache is created at 10 p.m. on a Friday (using the weather location's time), that cache will expire at midnight, and someone visiting the site the next day at 5 a.m. will not see the previous day's cache even though fewer than 8 hours have passed.
+For example, if you set the cache expiration time to 8 hours and a weather cache is created at 10 p.m., that cache will expire at midnight, and someone visiting the site the next day at 5 a.m. will not see the previous day's cache even though fewer than 8 hours have passed.
 
-The plugin uses whichever expiration time is **shorter** to provide the most effective caching.  You control the maximum cache duration with the "Cache Expiration Time" slider. However, to ensure your visitors never see yesterday's weather, the plugin also calculates the time until midnight in the widget's local timezone. If the time until midnight is shorter than your slider setting, the cache will expire at midnight.
+To ensure your visitors never see yesterday's weather, the plugin calculates the time until midnight in the widget location's local timezone. Even if the cached forecast has not been saved for as long as the max duration set by the "Cache Expiration Time" slider, the cache will expire at midnight.
 
 = The weather isn't updating. Why? =
 
@@ -312,9 +311,9 @@ If you're feeling patient, just wait for the weather widget to update after the 
 
 = Does the Weather Widget work in Fahrenheit or Celsius? =
 
-Both. By default, the weather widget displays the forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). 
+By default, the weather widget displays the forecast in Fahrenheit. If you prefer to see the forecast in Celsius, set data-unit="metric" within the weather-widget div (see configuration instructions). 
 
-Additionally, checking the **"Display Unit Symbol"** box on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
+Checking the **"Display Unit Symbol"** box on the Under The Weather Settings page instructs the weather widget to display the temperature unit symbol (F or C) in the primary temperature display.
 
 Enabling the **"Unit Toggle Switch"** allows visitors to switch back and forth between Fahrenheit and Celsius. 
 
@@ -344,9 +343,9 @@ The recommended and most reliable format for coordinates is **Decimal Degrees (D
 
 However, the **Under The Weather Forecast block** is designed to be user-friendly. If you enter coordinates in other common formats like **DMS** (e.g., `34°07'10.2"N`) or **DDM** (e.g., `34° 7.17' N`), the block will automatically convert them to the correct decimal format for you.
 
-For the manual `<div>` method, it is strongly recommended to use Decimal Degrees. While the front-end script has a fallback to parse other formats, some characters (like the `"` symbol in DMS) can break the HTML structure and lead to incorrect coordinates. The block editor's converter is the most reliable way to handle alternate formats.
+For the manual `<div>` method, it is strongly recommended to use Decimal Degrees. The front-end script has a fallback to parse other formats, but some characters (like the `"` symbol in DMS) can break the HTML structure and lead to incorrect coordinates. The block editor's converter is the most reliable way to handle alternate formats.
 
-If you're unsure what coordinates to use, the **Coordinate Finder** tool is the best way to retrieve accurate coordinates in the correct format.
+If you're unsure what coordinates to use, the **Coordinate Finder** tool will retrieve accurate coordinates in the correct format.
 
 = Where do the weather alerts come from? =
 
@@ -354,7 +353,7 @@ The alerts are provided directly by the OpenWeather API, which sources them from
 
 = What is the brief shimmering effect I see before the weather loads? =
 
-That shimmering animation is a structural placeholder. It instantly reserves the vertical space the weather data will need before the forecast finishes downloading from the server. This prevents the text and images on your page from suddenly jumping down when the widget loads, helping prevent Cumulative Layout Shift (CLS) and protecting your site's SEO and Core Web Vitals scores. 
+That shimmering animation is a structural placeholder. It reserves the vertical space the weather data will need before the forecast finishes downloading from the server. This prevents the text and images on your page from suddenly jumping down when the widget loads, helping prevent Cumulative Layout Shift (CLS) and protecting your site's SEO and Core Web Vitals scores. 
 
 If you prefer a completely transparent space instead of the animation, you can uncheck the **"Shimmer while loading"** box in the plugin's Advanced Settings. Vertical space for the weather data will still be reserved.
 
