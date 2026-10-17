@@ -528,7 +528,7 @@ Under The Weather is built to respect user privacy and does not track or collect
 
 ### 2.9.0
 * NEW: Added an interactive frontend Unit Toggle switch, allowing visitors to instantly convert temperatures and wind speeds between Imperial and Metric units without reloading the page or requiring additional API calls.
-* 
+  
 ### 2.8.0
 * **NEW:** Added full support for the OpenWeather One Call API 4.0 architecture.
 * **NEW:** Added a settings toggle allowing administrators to choose between One Call API 3.0 and 4.0.
