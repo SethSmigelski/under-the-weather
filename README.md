@@ -213,7 +213,7 @@ Adjust the number of days shown in the extended forecast row from 2 to 6. When s
 Selecting this option will display **'Feels Like' and wind** (direction and speed) information beneath the primary display. This setting adds nuance to the current weather conditions display.
 
 **Sunrise & Sunset:** 
-This setting displays the location's sunrise and sunset times, useful for planning outdoor activities.  Choose to show the times in a 12-hour or 24-hour format.
+This setting displays the location's sunrise and sunset times, useful for planning outdoor activities. Choose to show the times in a 12-hour or 24-hour format.
 
 **Weather Alerts:** 
 When enabled, the widget displays active severe weather alerts, like thunderstorm warnings and flood advisories, issued by official authorities for the specified location, providing critical, at-a-glance information for your visitors.
@@ -241,7 +241,7 @@ Check this box to protect your site against excessive API requests from a single
 **Asset Loading:** 
 For the plugin to function correctly, the **Load Plugin CSS** and **Load Plugin JavaScript** boxes should normally remain checked. However, you can uncheck them if you prefer to include the plugin's CSS and JS files in your theme's optimized assets.
 
-Developers who uncheck **Load Plugin JavaScript**, can load the Under The Weather scripts manually on select pages. For most users, simply leaving these boxes checked is the best way to use the weather widget.
+Developers who uncheck **Load Plugin JavaScript** can load the Under The Weather scripts manually on select pages. For most users, simply leaving these boxes checked is the best way to use the weather widget.
 
 **Async CSS Loading:** 
 Enable this option to reduce render-blocking resources for faster initial page loading. 
@@ -275,7 +275,7 @@ Don't know the latitude and longitude for your desired location? No problem. The
 
 ### In the Plugin Settings Page
 
-1. Navigate to **Settings > Under The Weather** and click on the **Coordinate Finder** tab.
+1. Navigate to **Settings > Under The Weather**, then click on the **Coordinate Finder** tab.
 2. Type a location name into the search box (e.g., "Los Angeles, CA").
 3. Click the **"Find Coordinates"** button.
 4. The tool will display the generated `<div>` with the correct coordinates and location name.
@@ -297,7 +297,7 @@ The Under The Weather plugin includes a Performance Report tab on the settings p
 
 * **Average Daily Usage:** A daily average pie chart provides a snapshot of how frequently weather data is served from the cache versus making new calls to the OpenWeatherMap One Call API (which offers a free tier of 1,000 API calls per day).
 
-* **Last 7 Days of Activity:** A 7-day bar chart that displays a more detailed comparison of **cached hits versus new calls to the OpenWeather API**. This chart includes the current day's usage, which is not calculated into the daily average.
+* **Last 7 Days of Activity:** A 7-day bar chart that displays a more detailed comparison of **cached hits versus new calls to the OpenWeather API**. This chart includes today’s usage, which isn't factored into the daily average.
 
 The performance report shows how caching reduces external requests and keeps your site fast. Use this report to fine-tune your **Cache Expiration Time** and observe the impact on your API call rate. 
 
